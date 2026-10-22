@@ -1,1 +1,78 @@
 
+
+create or replace function public.is_school_member(sid uuid)
+returns boolean
+language sql stable security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1 from public.school_members m
+    where m.school_id = sid and m.user_id = auth.uid()
+  );
+$$;
+
+create or replace function public.is_school_creator(sid uuid)
+returns boolean
+language sql stable security definer
+set search_path = ''
+as $$
+  select exists (
+    select 1 from public.schools s
+    where s.id = sid and s.created_by = auth.uid()
+  );
+$$;
+
+alter table public.schools enable row level security;
+alter table public.school_members enable row level security;
+alter table public.students enable row level security;
+alter table public.payments enable row level security;
+
+drop policy if exists "View own schools" on public.schools;
+create policy "View own schools"
+on public.schools for select to authenticated
+using (created_by = auth.uid() or public.is_school_member(id));
+
+drop policy if exists "Create own school" on public.schools;
+create policy "Create own school"
+on public.schools for insert to authenticated
+with check (created_by = auth.uid());
+
+drop policy if exists "View own memberships" on public.school_members;
+create policy "View own memberships"
+on public.school_members for select to authenticated
+using (user_id = auth.uid() or public.is_school_member(school_id));
+
+drop policy if exists "Creator joins own school" on public.school_members;
+create policy "Creator joins own school"
+on public.school_members for insert to authenticated
+with check (
+  user_id = auth.uid()
+  and role = 'admin'
+  and public.is_school_creator(school_id)
+);
+
+drop policy if exists "Members view students" on public.students;
+create policy "Members view students"
+on public.students for select to authenticated
+using (public.is_school_member(school_id));
+
+drop policy if exists "Members add students" on public.students;
+create policy "Members add students"
+on public.students for insert to authenticated
+with check (public.is_school_member(school_id));
+
+drop policy if exists "Members update students" on public.students;
+create policy "Members update students"
+on public.students for update to authenticated
+using (public.is_school_member(school_id))
+with check (public.is_school_member(school_id));
+
+drop policy if exists "Members view fee payments" on public.payments;
+create policy "Members view fee payments"
+on public.payments for select to authenticated
+using (public.is_school_member(school_id));
+
+drop policy if exists "Members record fee payments" on public.payments;
+create policy "Members record fee payments"
+on public.payments for insert to authenticated
+with check (public.is_school_member(school_id));
