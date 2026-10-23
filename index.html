@@ -90,9 +90,9 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
 .pill-s5{background:#ede9fe;color:#5b21b6}
 .pill-s6{background:#fae8ff;color:#86198f}
 
-.msg{padding:10px 14px;border-radius:6px;margin:10px 0;font-size:13px;font-weight:500}
-.msg.success{background:#d1fae5;color:#065f46}
-.msg.error{background:#fee2e2;color:#991b1b}
+.msg{padding:12px 16px;border-radius:8px;margin:12px 0;font-size:13px;font-weight:600}
+.msg.success{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0}
+.msg.error{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
 
 #loginBox{max-width:420px;margin:80px auto;background:white;padding:32px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);border:1px solid var(--line)}
 .hidden{display:none!important}
@@ -338,6 +338,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     <div class="card">
       <h2>Record School Fees Payment</h2>
       <div class="form-grid">
+        <div><label>Search Student (Name or Admission)</label><input id="paymentSearchInput" placeholder="Type to filter students..." oninput="renderStudentSelect()"></div>
         <div><label>Filter by Class</label><select id="paymentClass" onchange="renderStudentSelect()"><option value="">All Classes</option></select></div>
         <div><label>Select Student *</label><select id="paymentStudent"></select></div>
         <div><label>Amount Paid (UGX) *</label><input id="paymentAmount" type="number" min="1" placeholder="Amount"></div>
@@ -546,11 +547,12 @@ function showPage(id){
   document.querySelectorAll("#mainNav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
   if(id==="classes"){renderClasses();renderClassStudents();}
   if(id==="academics"){renderAcadClassSelect();renderAcadStudents();}
+  if(id==="payments"){renderStudentSelect();}
 }
 
 function message(id,text,error=false){
-  $(id).innerHTML='<div class="msg '+(error?'error':'success')+'">'+esc(text)+'</div>';
-  setTimeout(()=>$(id).innerHTML="",5000);
+  $(id).innerHTML='<div class="msg '+(error?'error':'success')+'">✅ '+esc(text)+'</div>';
+  setTimeout(()=>$(id).innerHTML="",6000);
 }
 
 // AUTH & SCHOOLS
@@ -610,7 +612,7 @@ async function createSchool(){
   await db.from("school_members").insert({school_id:sch.id,user_id:currentUser.id,role:"admin"});
   $("newSchoolName").value="";
   await loadSchools();
-  message("schoolMessage","School created successfully!");
+  alert("School created successfully!");
 }
 
 async function changeSchool(){
@@ -720,7 +722,7 @@ function resetStudentForm(){
   $("parentWhatsApp").value="";
   $("studentFormTitle").textContent="Student Registration";
   $("cancelStudentEdit").classList.add("hidden");
-  clearMessage("studentMessage");
+  $("studentMessage").innerHTML="";
 }
 
 async function saveStudent(){
@@ -750,7 +752,9 @@ async function saveStudent(){
   if(error){message("studentMessage",error.message,true);return;}
   resetStudentForm();
   await refreshAll();
-  message("studentMessage",editId?"Student updated successfully!":"Student registered successfully!");
+  const successText = editId ? "Student updated successfully!" : "Student registered successfully!";
+  message("studentMessage", successText);
+  alert("✅ " + successText);
 }
 
 async function archiveStudent(id){
@@ -811,8 +815,13 @@ function renderPaymentClass(){
 function renderStudentSelect(){
   renderPaymentClass();
   const sel=$("paymentClass")?.value||"";
-  const list=activeStudents().filter(s=>!sel||String(s.class_name||"").trim()===sel);
-  $("paymentStudent").innerHTML=list.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.admission_no)+" - "+esc(s.full_name)+" (Balance: "+money(balance(s))+')</option>').join("");
+  const searchQ=($("paymentSearchInput")?.value||"").toLowerCase();
+  const list=activeStudents().filter(s=>{
+    const matchesClass=!sel||String(s.class_name||"").trim()===sel;
+    const matchesSearch=!searchQ||[s.admission_no,s.full_name].some(v=>String(v||"").toLowerCase().includes(searchQ));
+    return matchesClass && matchesSearch;
+  });
+  $("paymentStudent").innerHTML=list.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.admission_no)+" - "+esc(s.full_name)+" ("+esc(s.class_name)+") - Balance: "+money(balance(s))+❜</option>').join("") || '<option value="">No students found</option>';
 }
 
 async function recordPayment(){
@@ -828,7 +837,9 @@ async function recordPayment(){
   const studentObj = students.find(x=>String(x.id)===String(student_id));
   $("paymentAmount").value="";$("paymentReference").value="";
   await refreshAll();
-  message("paymentMessage","Payment recorded successfully!");
+  const successText = "Fees payment recorded successfully for " + (studentObj?.full_name || "student") + " (" + money(amount) + ")!";
+  message("paymentMessage", successText);
+  alert("✅ " + successText);
   
   if(confirm("Print fee payment receipt?"))printReceipt(data);
   if(studentObj?.parent_whatsapp && confirm("Send WhatsApp notification to parent?"))sendWhatsAppPayment(studentObj, data);
@@ -885,7 +896,8 @@ async function addExpense(){
   if(error){message("expenseMessage",error.message,true);return;}
   $("expTitle").value="";$("expAmount").value="";
   await refreshAll();
-  message("expenseMessage","Expense recorded.");
+  message("expenseMessage","Expense recorded successfully!");
+  alert("✅ Expense recorded successfully!");
 }
 
 function renderExpenses(){
@@ -923,7 +935,7 @@ function resetStaffForm(){
   $("staffPhone").value="";
   $("staffFormTitle").textContent="Staff / Teacher Registration";
   $("cancelStaffEdit").classList.add("hidden");
-  clearMessage("staffMessage");
+  $("staffMessage").innerHTML="";
 }
 
 async function saveStaff(){
@@ -947,7 +959,9 @@ async function saveStaff(){
   if(error){message("staffMessage",error.message,true);return;}
   resetStaffForm();
   await refreshAll();
-  message("staffMessage",editId?"Staff updated successfully!":"Staff registered successfully!");
+  const successText = editId ? "Staff member updated successfully!" : "Staff member added successfully!";
+  message("staffMessage", successText);
+  alert("✅ " + successText);
 }
 
 function renderStaff(){
@@ -985,6 +999,7 @@ async function recordSalary(){
   $("salaryAmount").value="";$("salaryReference").value="";
   await refreshAll();
   message("payrollMessage","Salary payment recorded successfully!");
+  alert("✅ Salary payment recorded successfully!");
 }
 
 function renderPayroll(){
@@ -1023,6 +1038,7 @@ async function saveAcademics(){
   ["markMath","markEng","markSci","markSst","markOpt","acadTeacherRemarks","acadHeadRemarks"].forEach(id=>$(id).value="");
   await refreshAll();
   message("acadMessage","Academic report saved successfully!");
+  alert("✅ Academic report saved successfully!");
   if(confirm("Print official report card?"))printReportCard(data);
 }
 
