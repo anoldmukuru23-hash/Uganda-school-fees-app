@@ -433,6 +433,16 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
         </table>
       </div>
     </div>
+
+    <div class="card">
+      <h3>Staff Salary Status & Balance Tracker</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Staff No</th><th>Full Name</th><th>Position</th><th>Expected Monthly Salary</th><th>Total Salary Paid</th><th>Remaining Balance</th></tr></thead>
+          <tbody id="staffSalaryStatusBody"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <!-- PAGE: PAYROLL -->
@@ -671,6 +681,9 @@ function activeStudents(){return students.filter(s=>String(s.status||"Active").t
 function expected(s){return Number(s.fees_expected??s.fee_expected??0);}
 function paid(sid){return payments.filter(p=>String(p.student_id)===String(sid)).reduce((a,p)=>a+Number(p.amount||0),0);}
 function balance(s){return Math.max(0,expected(s)-paid(s.id));}
+function staffExpected(st){return Number(st.monthly_salary||0);}
+function staffPaid(stid){return salaries.filter(p=>String(p.staff_id)===String(stid)).reduce((a,p)=>a+Number(p.amount||0),0);}
+function staffBalance(st){return Math.max(0,staffExpected(st)-staffPaid(st.id));}
 function receiptNo(p){return p.receipt_no||("RCP-"+String(p.id||"").slice(-8).toUpperCase());}
 
 // DASHBOARD
@@ -966,6 +979,8 @@ async function saveStaff(){
 
 function renderStaff(){
   $("staffBody").innerHTML=staff.map(s=>'<tr><td>'+esc(s.staff_no)+'</td><td style="font-weight:600">'+esc(s.full_name)+'</td><td>'+esc(s.position)+'</td><td>'+money(s.monthly_salary)+'</td><td>'+esc(s.phone||"—")+'</td><td><div class="actions"><button class="secondary" onclick="editStaff(\''+s.id+'\')">Edit</button><button class="danger" onclick="deleteStaff(\''+s.id+'\')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="6">No staff registered.</td></tr>';
+  
+  $("staffSalaryStatusBody").innerHTML=staff.map(s=>'<tr><td>'+esc(s.staff_no)+'</td><td style="font-weight:600">'+esc(s.full_name)+'</td><td>'+esc(s.position)+'</td><td>'+money(staffExpected(s))+'</td><td>'+money(staffPaid(s.id))+'</td><td><b>'+money(staffBalance(s))+'</b></td></tr>').join("")||'<tr><td colspan="6">No staff registered.</td></tr>';
 }
 
 function renderStaffSelect(){
