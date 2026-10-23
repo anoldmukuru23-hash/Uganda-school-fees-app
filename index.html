@@ -756,12 +756,14 @@ async function saveStudent(){
 
 async function archiveStudent(id){
   if(!confirm("Archive this student?"))return;
-  await db.from("students").update({status:"Archived"}).eq("id",id).eq("school_id",currentSchoolId);
+  const {error}=await db.from("students").update({status:"Archived"}).eq("id",id).eq("school_id",currentSchoolId);
+  if(error){alert("Error archiving student: "+error.message);return;}
   await refreshAll();
 }
 
 async function restoreStudent(id){
-  await db.from("students").update({status:"Active"}).eq("id",id).eq("school_id",currentSchoolId);
+  const {error}=await db.from("students").update({status:"Active"}).eq("id",id).eq("school_id",currentSchoolId);
+  if(error){alert("Error restoring student: "+error.message);return;}
   await refreshAll();
 }
 
@@ -770,11 +772,18 @@ async function deleteStudent(id){
   if(!s)return;
   if(!confirm("Permanently delete "+s.full_name+" AND all their payment history & academic records? This cannot be undone."))return;
 
-  // Wipe dependent records first to bypass database constraint locks
-  await db.from("payments").delete().eq("student_id",id).eq("school_id",currentSchoolId);
-  await db.from("academics").delete().eq("student_id",id).eq("school_id",currentSchoolId);
+  // 1. Delete dependent payments safely and check errors
+  const payRes = await db.from("payments").delete().eq("student_id",id).eq("school_id",currentSchoolId);
+  if(payRes.error){alert("Failed to delete student payment history: "+payRes.error.message);return;}
+
+  // 2. Delete dependent academics safely and check errors
+  const acadRes = await db.from("academics").delete().eq("student_id",id).eq("school_id",currentSchoolId);
+  if(acadRes.error){alert("Failed to delete student academic records: "+acadRes.error.message);return;}
+
+  // 3. Delete student record
   const {error}=await db.from("students").delete().eq("id",id).eq("school_id",currentSchoolId);
-  if(error){alert("Error deleting student: "+error.message);return;}
+  if(error){alert("Failed to delete student record: "+error.message+"\n\nNote: If Supabase RLS is enabled, make sure a DELETE policy is set for the 'students' table.");return;}
+  
   await refreshAll();
 }
 
@@ -862,7 +871,8 @@ function renderExpenses(){
 
 async function deleteExpense(id){
   if(!confirm("Delete this expense record?"))return;
-  await db.from("expenses").delete().eq("id",id).eq("school_id",currentSchoolId);
+  const {error}=await db.from("expenses").delete().eq("id",id).eq("school_id",currentSchoolId);
+  if(error){alert("Error deleting expense: "+error.message);return;}
   await refreshAll();
 }
 
@@ -930,10 +940,12 @@ async function deleteStaff(id){
   if(!st)return;
   if(!confirm("Permanently delete teacher "+st.full_name+" AND all associated salary history? This cannot be undone."))return;
 
-  // Wipe associated salary payouts first to prevent database constraints
-  await db.from("salary_payments").delete().eq("staff_id",id).eq("school_id",currentSchoolId);
+  // Wipe associated salary payouts first
+  const salRes = await db.from("salary_payments").delete().eq("staff_id",id).eq("school_id",currentSchoolId);
+  if(salRes.error){alert("Failed to delete staff salary history: "+salRes.error.message);return;}
+
   const {error}=await db.from("staff").delete().eq("id",id).eq("school_id",currentSchoolId);
-  if(error){alert("Error deleting staff: "+error.message);return;}
+  if(error){alert("Error deleting staff: "+error.message+"\n\nNote: If Supabase RLS is enabled, make sure a DELETE policy is set for the 'staff' table.");return;}
   await refreshAll();
 }
 
@@ -1013,7 +1025,8 @@ function printReportCard(a){
 
 async function deleteAcademics(id){
   if(!confirm("Delete this academic report?"))return;
-  await db.from("academics").delete().eq("id",id).eq("school_id",currentSchoolId);
+  const {error}=await db.from("academics").delete().eq("id",id).eq("school_id",currentSchoolId);
+  if(error){alert("Error deleting record: "+error.message);return;}
   await refreshAll();
 }
 
