@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#12395e">
-<title>Uganda School Manager</title>
+<title>Uganda School Manager Pro</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--blue:#195ac6;--navy:#12395e;--bg:#f4f7fc;--green:#167447;--red:#b42332;--ink:#182538;--muted:#637083;--line:#e2e8f0}
@@ -35,8 +35,8 @@ nav button.active{background:var(--blue);color:white}
 .error{background:#ffeded;color:#a01c27}
 .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:0 12px}
-input,select{width:100%;min-width:0;padding:12px;margin:7px 0 14px;border:1px solid #cbd5e1;border-radius:9px;background:white;font-size:16px;color:var(--ink)}
-input:focus,select:focus{outline:2px solid #b9d3ff;border-color:var(--blue)}
+input,select,textarea{width:100%;min-width:0;padding:12px;margin:7px 0 14px;border:1px solid #cbd5e1;border-radius:9px;background:white;font-size:16px;color:var(--ink);font-family:inherit}
+input:focus,select:focus,textarea:focus{outline:2px solid #b9d3ff;border-color:var(--blue)}
 label{font-size:13px;font-weight:bold;color:#34445b}
 .table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:10px}
 table{width:100%;min-width:740px;border-collapse:collapse}
@@ -50,7 +50,6 @@ tr:last-child td{border-bottom:0}
 .class-count{font-size:29px;font-weight:800;color:var(--blue)}
 .class-card p{font-size:13px;color:#526175;margin:8px 0}
 .class-card button{margin-top:7px}
-.notice{background:#fff7df;padding:12px;border-radius:9px;font-size:13px;line-height:1.5;color:#634d17}
 hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 #loginBox{max-width:470px;margin:30px auto}
 .section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
@@ -61,8 +60,8 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 </head>
 <body>
 <header>
-<h1>Uganda School Manager</h1>
-<p>School administration • Students • Fees • Staff and payroll</p>
+<h1>Uganda School Manager Pro</h1>
+<p>Administration • Fees • Expenses • Staff Payroll • Academic Report Cards</p>
 </header>
 <main>
 
@@ -106,8 +105,10 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 <button data-page="students" onclick="showPage('students')">Students</button>
 <button data-page="archived" onclick="showPage('archived')">Archived</button>
 <button data-page="payments" onclick="showPage('payments')">Payments</button>
+<button data-page="expenses" onclick="showPage('expenses')">Expenses</button>
 <button data-page="staff" onclick="showPage('staff')">Staff</button>
 <button data-page="payroll" onclick="showPage('payroll')">Payroll</button>
+<button data-page="academics" onclick="showPage('academics')">Academics</button>
 <button data-page="reports" onclick="showPage('reports')">Reports</button>
 </nav>
 
@@ -122,8 +123,8 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 <div class="stat"><span>Expected fees</span><strong id="statExpected">UGX 0</strong></div>
 <div class="stat"><span>Fees collected</span><strong id="statCollected">UGX 0</strong></div>
 <div class="stat"><span>Outstanding fees</span><strong id="statBalance">UGX 0</strong></div>
-<div class="stat"><span>Staff members</span><strong id="statStaff">0</strong></div>
-<div class="stat"><span>Salary payments</span><strong id="statSalary">UGX 0</strong></div>
+<div class="stat"><span>Total expenses</span><strong id="statExpenses">UGX 0</strong></div>
+<div class="stat"><span>Staff payroll</span><strong id="statSalary">UGX 0</strong></div>
 </div>
 <p class="small">Archived students are excluded from active student and fee totals. Amounts are in Uganda shillings.</p>
 <hr>
@@ -136,7 +137,7 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 <h2>Class management</h2>
 <button class="secondary no-print" onclick="window.print()">Print register</button>
 </div>
-<p class="small">Students are grouped by their existing class names. Use consistent names such as P1, P2, Senior 1 or Senior 2.</p>
+<p class="small">Students are grouped by their class names (e.g. P1, P2, Senior 1).</p>
 <div class="form-grid">
 <div><label>Search classes</label><input id="classSearch" placeholder="Type a class name" oninput="renderClasses()"></div>
 <div><label>Choose class</label><select id="classFilter" onchange="renderClassStudents()"><option value="">All classes</option></select></div>
@@ -177,7 +178,7 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 
 <section id="archived" class="hidden">
 <h2>Archived students</h2>
-<p class="small">Restore students to make them active. Archive students with payment history rather than deleting them.</p>
+<p class="small">Restore students to make them active.</p>
 <div class="table-wrap">
 <table>
 <thead><tr><th>Admission</th><th>Student</th><th>Class</th><th>Expected</th><th>Actions</th></tr></thead>
@@ -203,6 +204,28 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 <table>
 <thead><tr><th>Date and time</th><th>Receipt</th><th>Student</th><th>Class</th><th>Amount</th><th>Method</th><th>Reference</th><th>Actions</th></tr></thead>
 <tbody id="paymentsBody"></tbody>
+</table>
+</div>
+</section>
+
+<section id="expenses" class="hidden">
+<h2>School expense tracking</h2>
+<p class="small">Log daily expenditures like utilities, feeding, chalk, repairs, and administrative running costs.</p>
+<div class="form-grid">
+<div><label>Expense title / description *</label><input id="expTitle" placeholder="e.g. Bought exercise books & chalk"></div>
+<div><label>Category</label><select id="expCategory"><option>Teaching Materials</option><option>Food & Feeding</option><option>Utilities (Power/Water)</option><option>Maintenance & Repairs</option><option>Transport</option><option>Administration</option><option>Other</option></select></div>
+<div><label>Amount (UGX) *</label><input id="expAmount" type="number" min="1" placeholder="Amount"></div>
+<div><label>Date</label><input id="expDate" type="date"></div>
+<div><label>Payment method</label><select id="expMethod"><option>Cash</option><option>Mobile Money</option><option>Bank</option><option>Other</option></select></div>
+</div>
+<button onclick="addExpense()">Record expense</button>
+<div id="expenseMessage"></div>
+<hr>
+<h3>Expense records</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Date</th><th>Title</th><th>Category</th><th>Amount</th><th>Method</th><th>Actions</th></tr></thead>
+<tbody id="expensesBody"></tbody>
 </table>
 </div>
 </section>
@@ -249,14 +272,49 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 </div>
 </section>
 
+<section id="academics" class="hidden">
+<h2>Academic marks & report cards</h2>
+<p class="small">Enter student marks per term. Generates UNEB/Standard aggregate scores and printable report cards.</p>
+<div class="form-grid">
+<div><label>Select class</label><select id="acadClassFilter" onchange="renderAcadStudents()"><option value="">Choose class</option></select></div>
+<div><label>Select student</label><select id="acadStudentSelect"></select></div>
+<div><label>Term / Academic Year</label><input id="acadTerm" placeholder="e.g. Term 1, 2026"></div>
+</div>
+<hr>
+<h3>Subject Marks (Out of 100)</h3>
+<div class="form-grid">
+<div><label>Mathematics</label><input id="markMath" type="number" min="0" max="100" placeholder="0-100"></div>
+<div><label>English</label><input id="markEng" type="number" min="0" max="100" placeholder="0-100"></div>
+<div><label>Science / Physics</label><input id="markSci" type="number" min="0" max="100" placeholder="0-100"></div>
+<div><label>SST / Chemistry</label><input id="markSst" type="number" min="0" max="100" placeholder="0-100"></div>
+<div><label>Additional Subject (Optional)</label><input id="markOpt" type="number" min="0" max="100" placeholder="0-100"></div>
+</div>
+<div class="form-grid">
+<div><label>Class Teacher Remarks</label><input id="acadTeacherRemarks" placeholder="e.g. Good performance, disciplined student."></div>
+<div><label>Headteacher Remarks</label><input id="acadHeadRemarks" placeholder="e.g. Promoted to next class."></div>
+</div>
+<button onclick="saveAcademics()">Save academic record & generate report</button>
+<div id="acadMessage"></div>
+<hr>
+<h3>Saved academic records</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Term</th><th>Student</th><th>Class</th><th>Math</th><th>Eng</th><th>Sci</th><th>SST</th><th>Total</th><th>Actions</th></tr></thead>
+<tbody id="acadBody"></tbody>
+</table>
+</div>
+</section>
+
 <section id="reports" class="hidden">
 <h2>Reports and exports</h2>
 <p>Download records as CSV files for Excel or print the current page.</p>
 <div class="actions no-print">
 <button onclick="exportCSV('students')">Export students</button>
 <button onclick="exportCSV('payments')">Export payments</button>
+<button onclick="exportCSV('expenses')">Export expenses</button>
 <button onclick="exportCSV('staff')">Export staff</button>
 <button onclick="exportCSV('salary_payments')">Export payroll</button>
+<button onclick="exportCSV('academics')">Export academics</button>
 <button class="secondary" onclick="window.print()">Print</button>
 </div>
 <hr>
@@ -272,11 +330,12 @@ const SUPABASE_PUBLISHABLE_KEY="sb_publishable_qtxVou_FOx-80AjF4flnuQ_o2Chl6Pc";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 
 let currentUser=null,currentSchoolId=null;
-let schools=[],students=[],payments=[],staff=[],salaries=[];
+let schools=[],students=[],payments=[],staff=[],salaries=[],expenses=[],academics=[];
 
 const $=id=>document.getElementById(id);
 const money=n=>"UGX "+Number(n||0).toLocaleString("en-UG");
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
 function readableDate(value){
  if(!value)return "—";
  const d=new Date(value);
@@ -288,9 +347,10 @@ function message(id,text,error=false){
 }
 function clearMessage(id){$(id).innerHTML="";}
 function showPage(id){
- ["dashboard","classes","students","archived","payments","staff","payroll","reports"].forEach(p=>$(p).classList.toggle("hidden",p!==id));
+ ["dashboard","classes","students","archived","payments","expenses","staff","payroll","academics","reports"].forEach(p=>$(p).classList.toggle("hidden",p!==id));
  document.querySelectorAll("#mainNav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
  if(id==="classes"){renderClasses();renderClassStudents();}
+ if(id==="academics"){renderAcadClassSelect();renderAcadStudents();}
 }
 function activeStudents(){return students.filter(s=>String(s.status||"Active").toLowerCase()!=="archived");}
 function expected(s){return Number(s.fees_expected??s.fee_expected??0);}
@@ -304,7 +364,7 @@ async function signUp(){
  const {data,error}=await db.auth.signUp({email,password});
  if(error){message("authMessage",error.message,true);return;}
  if(data.session)await startApp(data.session.user);
- else message("authMessage","Account created. Confirm your email if required. If email sending is rate-limited, configure SMTP in Supabase or wait for the limit to reset.");
+ else message("authMessage","Account created. Confirm your email if required.");
 }
 async function signIn(){
  const email=$("email").value.trim(),password=$("password").value;
@@ -347,42 +407,53 @@ async function createSchool(){
  message("schoolMessage","School created successfully.");
 }
 async function changeSchool(){currentSchoolId=$("schoolSelect").value||null;await refreshAll();}
-function clearTables(){students=[];payments=[];staff=[];salaries=[];renderAll();}
+function clearTables(){students=[];payments=[];staff=[];salaries=[];expenses=[];academics=[];renderAll();}
+
 async function refreshAll(){
  if(!currentSchoolId){clearTables();return;}
  const results=await Promise.all([
   db.from("students").select("*").eq("school_id",currentSchoolId),
   db.from("payments").select("*").eq("school_id",currentSchoolId).order("paid_at",{ascending:false}),
   db.from("staff").select("*").eq("school_id",currentSchoolId),
-  db.from("salary_payments").select("*").eq("school_id",currentSchoolId).order("paid_at",{ascending:false})
+  db.from("salary_payments").select("*").eq("school_id",currentSchoolId).order("paid_at",{ascending:false}),
+  db.from("expenses").select("*").eq("school_id",currentSchoolId).order("date",{ascending:false}),
+  db.from("academics").select("*").eq("school_id",currentSchoolId)
  ]);
- const names=["students","payments","staff","salary_payments"];
- for(let i=0;i<results.length;i++){
-  if(results[i].error){alert("Could not load "+names[i]+": "+results[i].error.message);return;}
- }
- students=results[0].data||[];payments=results[1].data||[];
- staff=results[2].data||[];salaries=results[3].data||[];
+ students=results[0].data||[];
+ payments=results[1].data||[];
+ staff=results[2].data||[];
+ salaries=results[3].data||[];
+ expenses=results[4].data||[];
+ academics=results[5].data||[];
  renderAll();
 }
+
 function renderAll(){
  renderDashboard();renderClasses();renderStudents();renderArchived();
- renderStudentSelect();renderPayments();renderStaff();renderStaffSelect();renderPayroll();
+ renderStudentSelect();renderPayments();renderExpenses();renderStaff();renderStaffSelect();renderPayroll();
+ renderAcadClassSelect();renderAcadStudents();renderAcademicsTable();
  const s=schools.find(x=>x.id===currentSchoolId);
  $("schoolInfo").textContent=s?"School: "+s.name+" | Account: "+(currentUser?.email||""):"No school selected.";
 }
+
 function classNames(){
  return [...new Set(activeStudents().map(s=>String(s.class_name||"").trim()).filter(Boolean))]
  .sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:"base"}));
 }
+
 function renderDashboard(){
  const list=activeStudents(),exp=list.reduce((a,s)=>a+expected(s),0),col=list.reduce((a,s)=>a+paid(s.id),0);
+ const totalExp=expenses.reduce((a,e)=>a+Number(e.amount||0),0);
+ const totalSal=salaries.reduce((a,p)=>a+Number(p.amount||0),0);
+ 
  $("statStudents").textContent=list.length;
  $("statClasses").textContent=classNames().length;
  $("statExpected").textContent=money(exp);
  $("statCollected").textContent=money(col);
  $("statBalance").textContent=money(Math.max(0,exp-col));
- $("statStaff").textContent=staff.length;
- $("statSalary").textContent=money(salaries.reduce((a,p)=>a+Number(p.amount||0),0));
+ $("statExpenses").textContent=money(totalExp);
+ $("statSalary").textContent=money(totalSal);
+
  const classes=classNames();
  $("dashboardClasses").innerHTML=classes.map(c=>{
   const members=list.filter(s=>String(s.class_name||"").trim()===c);
@@ -391,6 +462,7 @@ function renderDashboard(){
   return '<div class="class-card"><h3>'+esc(c)+'</h3><div class="class-count">'+members.length+'</div><p>Students enrolled</p><p>Expected: <b>'+money(expectedTotal)+'</b></p><p>Collected: <b>'+money(paidTotal)+'</b></p><button onclick="openClassRegister('+JSON.stringify(c).replace(/</g,"\\u003c")+')">View class</button></div>';
  }).join("")||'<p class="small">Register students and assign a class to see class summaries here.</p>';
 }
+
 function renderClasses(){
  const classes=classNames(),search=($("classSearch")?.value||"").toLowerCase();
  const filter=$("classFilter"),old=filter.value;
@@ -405,10 +477,12 @@ function renderClasses(){
  }).join("")||'<p>No classes found. Register students with a class name first.</p>';
  renderClassStudents();renderPaymentClass();
 }
+
 function openClassRegister(className){
  $("classFilter").value=className;
  renderClassStudents();
 }
+
 function renderClassStudents(){
  if(!$("classFilter"))return;
  const selected=$("classFilter").value,q=($("classStudentSearch")?.value||"").toLowerCase();
@@ -416,21 +490,25 @@ function renderClassStudents(){
  $("classRegisterTitle").textContent=(selected?"Class register: "+selected:"All class registers")+" ("+list.length+" students)";
  $("classStudentsBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td></tr>').join("")||'<tr><td colspan="6">No students found for this selection.</td></tr>';
 }
+
 function renderStudents(){
  const q=($("studentSearch")?.value||"").toLowerCase();
  const list=activeStudents().filter(s=>[s.admission_no,s.full_name,s.class_name].some(v=>String(v||"").toLowerCase().includes(q)));
  $("studentsBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td><td><div class="actions"><button onclick="archiveStudent('+JSON.stringify(s.id)+')">Archive</button><button class="secondary" onclick="deleteStudent('+JSON.stringify(s.id)+')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="7">No active students found.</td></tr>';
 }
+
 function renderArchived(){
  const list=students.filter(s=>String(s.status||"Active").toLowerCase()==="archived");
  $("archivedBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td><div class="actions"><button onclick="restoreStudent('+JSON.stringify(s.id)+')">Restore</button><button class="danger" onclick="deleteStudent('+JSON.stringify(s.id)+')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="5">No archived students.</td></tr>';
 }
+
 function renderPaymentClass(){
  const el=$("paymentClass");if(!el)return;
  const old=el.value,classes=classNames();
  el.innerHTML='<option value="">All classes</option>'+classes.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
  if(classes.includes(old))el.value=old;
 }
+
 function renderStudentSelect(){
  renderPaymentClass();
  const selected=$("paymentClass")?.value||"";
@@ -439,11 +517,12 @@ function renderStudentSelect(){
  $("paymentStudent").innerHTML=list.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.admission_no)+" - "+esc(s.full_name)+" | Balance: "+money(balance(s))+'</option>').join("");
  if(list.some(s=>String(s.id)===old))$("paymentStudent").value=old;
 }
+
 async function addStudent(){
  if(!currentSchoolId){message("studentMessage","Create or select a school first.",true);return;}
  const admission_no=$("admission").value.trim(),full_name=$("studentName").value.trim(),class_name=$("studentClass").value.trim(),fees=Number($("expectedFees").value||0),parent_whatsapp=$("parentWhatsApp").value.trim();
  if(!admission_no||!full_name||!class_name||!Number.isFinite(fees)||fees<0){message("studentMessage","Complete the required fields and enter valid fees.",true);return;}
- if(students.some(s=>String(s.admission_no).toLowerCase()===admission_no.toLowerCase())){message("studentMessage","Admission number already exists in the loaded school records.",true);return;}
+ if(students.some(s=>String(s.admission_no).toLowerCase()===admission_no.toLowerCase())){message("studentMessage","Admission number already exists.",true);return;}
  const base={school_id:currentSchoolId,admission_no,full_name,class_name,parent_whatsapp:parent_whatsapp||null,status:"Active"};
  let r=await db.from("students").insert({...base,fees_expected:fees}).select().single();
  if(r.error&&/fees_expected|fee_expected|column/i.test(r.error.message))r=await db.from("students").insert({...base,fee_expected:fees}).select().single();
@@ -451,41 +530,47 @@ async function addStudent(){
  ["admission","studentName","studentClass","parentWhatsApp"].forEach(id=>$(id).value="");
  $("expectedFees").value="0";await refreshAll();message("studentMessage","Student registered successfully.");
 }
+
 async function archiveStudent(id){
  const s=students.find(x=>String(x.id)===String(id));if(!s||!confirm("Archive "+s.full_name+"?"))return;
  const {error}=await db.from("students").update({status:"Archived"}).eq("id",id).eq("school_id",currentSchoolId);
  if(error){alert("Could not archive: "+error.message);return;}await refreshAll();
 }
+
 async function restoreStudent(id){
  const {error}=await db.from("students").update({status:"Active"}).eq("id",id).eq("school_id",currentSchoolId);
  if(error){alert("Could not restore: "+error.message);return;}await refreshAll();
 }
+
 async function deleteStudent(id){
  const s=students.find(x=>String(x.id)===String(id));if(!s)return;
- if(payments.some(p=>String(p.student_id)===String(id))){alert("This student has payment history. Archive the student instead to protect financial records.");return;}
+ if(payments.some(p=>String(p.student_id)===String(id))){alert("This student has payment history. Archive the student instead.");return;}
  if(!confirm("Permanently delete "+s.full_name+"?"))return;
  const {error}=await db.from("students").delete().eq("id",id).eq("school_id",currentSchoolId);
  if(error){alert("Could not delete: "+error.message);return;}await refreshAll();
 }
+
 async function recordPayment(){
  const studentId=$("paymentStudent").value,amount=Number($("paymentAmount").value),method=$("paymentMethod").value,reference=$("paymentReference").value.trim();
  if(!currentSchoolId||!studentId||!Number.isFinite(amount)||amount<=0){message("paymentMessage","Select a student and enter an amount greater than zero.",true);return;}
  const s=students.find(x=>String(x.id)===String(studentId));
  if(!s||String(s.status||"Active").toLowerCase()==="archived"){message("paymentMessage","Select an active student.",true);return;}
- if(amount>balance(s)&&!confirm("Payment exceeds the current balance. Record it anyway?"))return;
+ if(amount>balance(s)&&!confirm("Payment exceeds the current balance. Record anyway?"))return;
  const {data,error}=await db.from("payments").insert({school_id:currentSchoolId,student_id:studentId,amount,method,reference:reference||null,paid_at:new Date().toISOString()}).select().single();
  if(error){message("paymentMessage","Could not record payment: "+error.message,true);return;}
  $("paymentAmount").value="";$("paymentReference").value="";
  await refreshAll();message("paymentMessage","Payment recorded successfully.");
- if(confirm("Payment saved. Print the receipt now?"))printReceipt(data);
- if(s.parent_whatsapp&&confirm("Open WhatsApp with a payment confirmation for the parent?"))sendWhatsApp(s,data);
+ if(confirm("Payment saved. Print receipt now?"))printReceipt(data);
+ if(s.parent_whatsapp&&confirm("Open WhatsApp with payment confirmation?"))sendWhatsApp(s,data);
 }
+
 function renderPayments(){
  $("paymentsBody").innerHTML=payments.map(p=>{
   const s=students.find(x=>String(x.id)===String(p.student_id));
   return '<tr><td class="date-cell">'+esc(readableDate(p.paid_at))+'</td><td>'+esc(receiptNo(p))+'</td><td class="name-cell">'+esc(s?.full_name||"Unknown student")+'</td><td>'+esc(s?.class_name||"—")+'</td><td>'+money(p.amount)+'</td><td>'+esc(p.method||"")+'</td><td>'+esc(p.reference||"—")+'</td><td><div class="actions"><button onclick="printReceiptById('+JSON.stringify(p.id)+')">Receipt</button>'+(s?.parent_whatsapp?'<button class="secondary" onclick="whatsappById('+JSON.stringify(p.id)+')">WhatsApp</button>':"")+'</div></td></tr>';
  }).join("")||'<tr><td colspan="8">No payments recorded.</td></tr>';
 }
+
 function printReceiptById(id){const p=payments.find(x=>String(x.id)===String(id));if(p)printReceipt(p);}
 function printReceipt(p){
  const s=students.find(x=>String(x.id)===String(p.student_id)),school=schools.find(x=>x.id===currentSchoolId);
@@ -494,14 +579,37 @@ function printReceipt(p){
  const w=window.open("","_blank");if(!w){alert("Allow pop-ups to print receipts.");return;}
  w.document.open();w.document.write(html);w.document.close();
 }
+
 function sendWhatsApp(s,p){
  const number=String(s.parent_whatsapp||"").replace(/\D/g,"");
- if(!number){alert("Enter the parent's WhatsApp number first.");return;}
+ if(!number){alert("Enter parent's WhatsApp number first.");return;}
  const school=schools.find(x=>x.id===currentSchoolId);
  const text="PAYMENT CONFIRMATION\nSchool: "+(school?.name||"School")+"\nStudent: "+s.full_name+"\nAdmission: "+s.admission_no+"\nClass: "+(s.class_name||"")+"\nAmount received: "+money(p.amount)+"\nTotal paid: "+money(paid(s.id))+"\nBalance: "+money(balance(s))+"\nReceipt: "+receiptNo(p)+"\nDate: "+readableDate(p.paid_at)+"\nThank you.";
  window.open("https://wa.me/"+number+"?text="+encodeURIComponent(text),"_blank");
 }
 function whatsappById(id){const p=payments.find(x=>String(x.id)===String(id)),s=p&&students.find(x=>String(x.id)===String(p.student_id));if(p&&s)sendWhatsApp(s,p);}
+
+// Expenses Management
+async function addExpense(){
+ const title=$("expTitle").value.trim(),category=$("expCategory").value,amount=Number($("expAmount").value),date=$("expDate").value||new Date().toISOString().slice(0,10),method=$("expMethod").value;
+ if(!currentSchoolId||!title||!Number.isFinite(amount)||amount<=0){message("expenseMessage","Enter a title and valid expense amount.",true);return;}
+ const {error}=await db.from("expenses").insert({school_id:currentSchoolId,title,category,amount,date,method});
+ if(error){message("expenseMessage","Could not record expense: "+error.message,true);return;}
+ $("expTitle").value="";$("expAmount").value="";
+ await refreshAll();message("expenseMessage","Expense recorded successfully.");
+}
+
+function renderExpenses(){
+ $("expensesBody").innerHTML=expenses.map(e=>'<tr><td class="date-cell">'+esc(e.date)+'</td><td class="name-cell">'+esc(e.title)+'</td><td>'+esc(e.category)+'</td><td>'+money(e.amount)+'</td><td>'+esc(e.method)+'</td><td><button class="secondary" onclick="deleteExpense('+JSON.stringify(e.id)+')">Delete</button></td></tr>').join("")||'<tr><td colspan="6">No expenses recorded.</td></tr>';
+}
+
+async function deleteExpense(id){
+ if(!confirm("Delete this expense record?"))return;
+ const {error}=await db.from("expenses").delete().eq("id",id).eq("school_id",currentSchoolId);
+ if(error){alert("Could not delete expense: "+error.message);return;}
+ await refreshAll();
+}
+
 async function addStaff(){
  const staff_no=$("staffNo").value.trim(),full_name=$("staffName").value.trim(),position=$("staffPosition").value.trim(),monthly_salary=Number($("staffSalary").value||0),phone=$("staffPhone").value.trim();
  if(!currentSchoolId||!staff_no||!full_name||!position||!Number.isFinite(monthly_salary)||monthly_salary<0){message("staffMessage","Complete staff fields and enter a valid salary.",true);return;}
@@ -510,34 +618,106 @@ async function addStaff(){
  ["staffNo","staffName","staffPosition","staffPhone"].forEach(id=>$(id).value="");$("staffSalary").value="0";
  await refreshAll();message("staffMessage","Staff member registered.");
 }
+
 function renderStaff(){
  $("staffBody").innerHTML=staff.map(s=>'<tr><td>'+esc(s.staff_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.position)+'</td><td>'+money(s.monthly_salary)+'</td><td>'+esc(s.phone||"—")+'</td><td><button class="secondary" onclick="deleteStaff('+JSON.stringify(s.id)+')">Delete</button></td></tr>').join("")||'<tr><td colspan="6">No staff registered.</td></tr>';
 }
+
 function renderStaffSelect(){
  const old=$("salaryStaff").value;
  $("salaryStaff").innerHTML=staff.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.staff_no)+" - "+esc(s.full_name)+'</option>').join("");
  if(staff.some(s=>String(s.id)===old))$("salaryStaff").value=old;
 }
+
 async function deleteStaff(id){
- if(salaries.some(p=>String(p.staff_id)===String(id))){alert("This staff member has salary history. Keep the record to preserve payroll history.");return;}
+ if(salaries.some(p=>String(p.staff_id)===String(id))){alert("This staff member has salary history.");return;}
  if(!confirm("Delete this staff member?"))return;
  const {error}=await db.from("staff").delete().eq("id",id).eq("school_id",currentSchoolId);
  if(error){alert("Could not delete staff: "+error.message);return;}await refreshAll();
 }
+
 async function recordSalary(){
  const staffId=$("salaryStaff").value,amount=Number($("salaryAmount").value),month=$("salaryMonth").value,method=$("salaryMethod").value,reference=$("salaryReference").value.trim();
- if(!currentSchoolId||!staffId||!Number.isFinite(amount)||amount<=0||!month){message("payrollMessage","Select staff, month and a valid amount.",true);return;}
+ if(!currentSchoolId||!staffId||!Number.isFinite(amount)||amount<=0||!month){message("payrollMessage","Select staff, month and valid amount.",true);return;}
  const {error}=await db.from("salary_payments").insert({school_id:currentSchoolId,staff_id:staffId,amount,month,method,reference:reference||null,paid_at:new Date().toISOString()});
  if(error){message("payrollMessage","Could not record salary: "+error.message,true);return;}
  $("salaryAmount").value="";$("salaryReference").value="";
  await refreshAll();message("payrollMessage","Salary payment recorded.");
 }
+
 function renderPayroll(){
  $("payrollBody").innerHTML=salaries.map(p=>{
   const s=staff.find(x=>String(x.id)===String(p.staff_id));
   return '<tr><td class="date-cell">'+esc(readableDate(p.paid_at))+'</td><td class="name-cell">'+esc(s?.full_name||"Unknown staff")+'</td><td>'+esc(p.month||"")+'</td><td>'+money(p.amount)+'</td><td>'+esc(p.method||"")+'</td><td>'+esc(p.reference||"—")+'</td></tr>';
  }).join("")||'<tr><td colspan="6">No salary payments recorded.</td></tr>';
 }
+
+// Academics & Report Cards
+function renderAcadClassSelect(){
+ const el=$("acadClassFilter");if(!el)return;
+ const old=el.value,classes=classNames();
+ el.innerHTML='<option value="">Choose class</option>'+classes.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
+ if(classes.includes(old))el.value=old;
+}
+
+function renderAcadStudents(){
+ const sel=$("acadClassFilter").value;
+ const studentEl=$("acadStudentSelect");
+ const list=activeStudents().filter(s=>!sel||String(s.class_name||"").trim()===sel);
+ studentEl.innerHTML=list.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.admission_no)+" - "+esc(s.full_name)+'</option>').join("");
+}
+
+async function saveAcademics(){
+ const studentId=$("acadStudentSelect").value,term=$("acadTerm").value.trim();
+ const math=Number($("markMath").value||0),eng=Number($("markEng").value||0),sci=Number($("markSci").value||0),sst=Number($("markSst").value||0),opt=Number($("markOpt").value||0);
+ const teacher_remarks=$("acadTeacherRemarks").value.trim(),head_remarks=$("acadHeadRemarks").value.trim();
+ if(!currentSchoolId||!studentId||!term){message("acadMessage","Select a student and term.",true);return;}
+
+ const dataPayload={
+  school_id:currentSchoolId,
+  student_id:studentId,
+  term,
+  math,eng,sci,sst,opt,
+  teacher_remarks,
+  head_remarks
+ };
+
+ const {data,error}=await db.from("academics").insert(dataPayload).select().single();
+ if(error){message("acadMessage","Could not save academic record: "+error.message,true);return;}
+ 
+ ["markMath","markEng","markSci","markSst","markOpt","acadTeacherRemarks","acadHeadRemarks"].forEach(id=>$(id).value="");
+ await refreshAll();
+ message("acadMessage","Academic record saved successfully.");
+ if(confirm("Report record saved. Print/View Report Card now?"))printReportCard(data);
+}
+
+function renderAcademicsTable(){
+ $("acadBody").innerHTML=academics.map(a=>{
+  const s=students.find(x=>String(x.id)===String(a.student_id));
+  const total=Number(a.math||0)+Number(a.eng||0)+Number(a.sci||0)+Number(a.sst||0)+Number(a.opt||0);
+  return '<tr><td>'+esc(a.term)+'</td><td class="name-cell">'+esc(s?.full_name||"Unknown")+'</td><td>'+esc(s?.class_name||"—")+'</td><td>'+a.math+'</td><td>'+a.eng+'</td><td>'+a.sci+'</td><td>'+a.sst+'</td><td><b>'+total+'</b></td><td><div class="actions"><button onclick="printReportCardById('+JSON.stringify(a.id)+')">Report Card</button><button class="secondary" onclick="deleteAcademics('+JSON.stringify(a.id)+')">Delete</button></div></td></tr>';
+ }).join("")||'<tr><td colspan="9">No academic records found.</td></tr>';
+}
+
+function printReportCardById(id){const a=academics.find(x=>String(x.id)===String(id));if(a)printReportCard(a);}
+
+function printReportCard(a){
+ const s=students.find(x=>String(x.id)===String(a.student_id)),school=schools.find(x=>x.id===currentSchoolId);
+ if(!s){alert("Student record not found.");return;}
+ const total=Number(a.math||0)+Number(a.eng||0)+Number(a.sci||0)+Number(a.sst||0)+Number(a.opt||0);
+ const avg=(total/4).toFixed(1);
+ const html='<!doctype html><html><head><meta charset="utf-8"><title>Termly Report Card</title><style>body{font-family:Arial;padding:24px}.card{max-width:700px;margin:auto;border:2px solid #12395e;padding:24px}h2,p.center{text-align:center;margin:4px 0}table{width:100%;border-collapse:collapse;margin:16px 0}th,td{padding:10px;border:1px solid #aaa;text-align:left;font-size:13px}th{background:#f0f5fc}.remarks{background:#f8fafc;padding:12px;border:1px solid #cbd5e1;margin-top:14px;border-radius:6px}</style></head><body><div class="card"><h2>'+esc(school?.name||"School")+'</h2><p class="center"><b>OFFICIAL TERMLY ACADEMIC REPORT CARD</b></p><p class="center">'+esc(a.term)+'</p><hr><p><b>Admission No:</b> '+esc(s.admission_no)+' | <b>Student Name:</b> '+esc(s.full_name)+' | <b>Class:</b> '+esc(s.class_name)+'</p><table><thead><tr><th>Subject</th><th>Score (100)</th><th>Grade / Remark</th></tr></thead><tbody><tr><td>Mathematics</td><td>'+a.math+'</td><td>'+(a.math>=75?'Distinction 1':a.math>=50?'Credit':a.math>=35?'Pass':'Fail')+'</td></tr><tr><td>English</td><td>'+a.eng+'</td><td>'+(a.eng>=75?'Distinction 1':a.eng>=50?'Credit':a.eng>=35?'Pass':'Fail')+'</td></tr><tr><td>Science / Physics</td><td>'+a.sci+'</td><td>'+(a.sci>=75?'Distinction 1':a.sci>=50?'Credit':a.sci>=35?'Pass':'Fail')+'</td></tr><tr><td>SST / Chemistry</td><td>'+a.sst+'</td><td>'+(a.sst>=75?'Distinction 1':a.sst>=50?'Credit':a.sst>=35?'Pass':'Fail')+'</td></tr>'+(a.opt>0?'<tr><td>Optional Subject</td><td>'+a.opt+'</td><td>Pass</td></tr>':'')+'<tr><td><b>Total Marks</b></td><td colspan="2"><b>'+total+' / 400 (Average: '+avg+'%)</b></td></tr></tbody></table><div class="remarks"><p><b>Class Teacher Remarks:</b> '+esc(a.teacher_remarks||"None")+'</p><p><b>Headteacher Remarks:</b> '+esc(a.head_remarks||"None")+'</p></div><p style="margin-top:30px">Headteacher Signature: ___________________ Stamp: ___________________</p></div><script>window.onload=function(){window.print()}<\/script></body></html>';
+ const w=window.open("","_blank");if(!w){alert("Allow pop-ups to print report cards.");return;}
+ w.document.open();w.document.write(html);w.document.close();
+}
+
+async function deleteAcademics(id){
+ if(!confirm("Delete this academic record?"))return;
+ const {error}=await db.from("academics").delete().eq("id",id).eq("school_id",currentSchoolId);
+ if(error){alert("Could not delete record: "+error.message);return;}
+ await refreshAll();
+}
+
 function exportCSV(type){
  let rows=[];
  if(type==="students"){
@@ -546,26 +726,35 @@ function exportCSV(type){
  }else if(type==="payments"){
   rows=[["Date","Receipt","Admission","Student","Class","Amount","Method","Reference"]];
   payments.forEach(p=>{const s=students.find(x=>String(x.id)===String(p.student_id));rows.push([readableDate(p.paid_at),receiptNo(p),s?.admission_no||"",s?.full_name||"",s?.class_name||"",p.amount,p.method,p.reference||""]);});
+ }else if(type==="expenses"){
+  rows=[["Date","Title","Category","Amount","Method"]];
+  expenses.forEach(e=>rows.push([e.date,e.title,e.category,e.amount,e.method]));
  }else if(type==="staff"){
   rows=[["Staff No","Name","Position","Monthly Salary","Phone"]];
   staff.forEach(s=>rows.push([s.staff_no,s.full_name,s.position,s.monthly_salary,s.phone||""]));
  }else if(type==="salary_payments"){
   rows=[["Date","Staff No","Name","Month","Amount","Method","Reference"]];
   salaries.forEach(p=>{const s=staff.find(x=>String(x.id)===String(p.staff_id));rows.push([readableDate(p.paid_at),s?.staff_no||"",s?.full_name||"",p.month,p.amount,p.method,p.reference||""]);});
+ }else if(type==="academics"){
+  rows=[["Term","Admission","Student","Class","Math","English","Science","SST","Total"]];
+  academics.forEach(a=>{const s=students.find(x=>String(x.id)===String(a.student_id));const tot=Number(a.math||0)+Number(a.eng||0)+Number(a.sci||0)+Number(a.sst||0)+Number(a.opt||0);rows.push([a.term,s?.admission_no||"",s?.full_name||"",s?.class_name||"",a.math,a.eng,a.sci,a.sst,tot]);});
  }
  const csv=rows.map(row=>row.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
  const url=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"}));
  const a=document.createElement("a");a.href=url;a.download=type+"_"+new Date().toISOString().slice(0,10)+".csv";
  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
 }
+
 db.auth.onAuthStateChange((event)=>{
  if(event==="SIGNED_OUT"){
   currentUser=null;currentSchoolId=null;
   $("app").classList.add("hidden");$("loginBox").classList.remove("hidden");
  }
 });
+
 (async()=>{
  $("salaryMonth").value=new Date().toISOString().slice(0,7);
+ $("expDate").value=new Date().toISOString().slice(0,10);
  const {data,error}=await db.auth.getSession();
  if(error){message("authMessage",error.message,true);return;}
  if(data.session)await startApp(data.session.user);
