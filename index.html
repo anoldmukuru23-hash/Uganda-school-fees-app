@@ -828,14 +828,7 @@ function renderStudentSelect(){
     return matchesClass && matchesSearch;
   });
 
-  $("paymentStudent").innerHTML = list.map(s =>
-    '<option value="' + esc(s.id) + '">' +
-    esc(s.admission_no) + " - " +
-    esc(s.full_name) + " (" +
-    esc(s.class_name) + ") - Balance: " +
-    money(balance(s)) +
-    '</option>'
-  ).join("") || '<option value="">No students found</option>';
+  $("paymentStudent").innerHTML=list.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.admission_no)+" - "+esc(s.full_name)+" ("+esc(s.class_name)+") - Balance: "+money(balance(s))+'</option>').join("") || '<option value="">No students found</option>';
 }
 
 async function recordPayment(){
