@@ -27,6 +27,10 @@
 *{box-sizing:border-box}
 body{margin:0;font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);display:flex;min-height:100vh}
 
+#loginScreen{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172a;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px}
+#loginBox{max-width:420px;width:100%;background:white;padding:32px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5);border:1px solid var(--line)}
+.hidden{display:none!important}
+
 aside{width:260px;background:var(--sidebar-bg);color:#cbd5e1;display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:100;box-shadow:2px 0 10px rgba(0,0,0,0.05)}
 .brand{padding:20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #1e293b}
 .brand-logo{background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:18px;box-shadow:0 2px 5px rgba(0,0,0,0.2)}
@@ -94,9 +98,6 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
 .msg.success{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0}
 .msg.error{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
 
-#loginBox{max-width:420px;margin:80px auto;background:white;padding:32px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);border:1px solid var(--line)}
-.hidden{display:none!important}
-
 @media(max-width:768px){
   aside{width:70px}
   aside .brand h2,aside .brand p,.menu span,.school-badge{display:none}
@@ -105,6 +106,25 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
 </style>
 </head>
 <body>
+
+<div id="loginScreen">
+  <div id="loginBox">
+    <div style="text-align:center;margin-bottom:24px">
+      <div class="brand-logo" style="width:54px;height:54px;margin:auto;font-size:24px">🇺🇬</div>
+      <h2 style="margin:12px 0 4px;color:#0f172a">School Portal Sign In</h2>
+      <p style="color:var(--muted);font-size:13px">Uganda Secondary School Administration</p>
+    </div>
+    <label>Email Address</label>
+    <input id="email" type="email" placeholder="admin@school.ug" autocomplete="email">
+    <label style="margin-top:12px">Password</label>
+    <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
+    <div style="display:flex;gap:10px;margin-top:20px">
+      <button style="flex:1" onclick="signIn()">Sign In</button>
+      <button class="secondary" style="flex:1" onclick="signUp()">Register</button>
+    </div>
+    <div id="authMessage"></div>
+  </div>
+</div>
 
 <aside class="no-print">
 <div class="brand">
@@ -153,28 +173,8 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
 
 <content>
 
-<!-- LOGIN SCREEN -->
-<div id="loginBox">
-  <div style="text-align:center;margin-bottom:24px">
-    <div class="brand-logo" style="width:54px;height:54px;margin:auto;font-size:24px">🇺🇬</div>
-    <h2 style="margin:12px 0 4px;color:var(--navy)">School Portal Sign In</h2>
-    <p style="color:var(--muted);font-size:13px">Uganda Secondary School Administration</p>
-  </div>
-  <label>Email Address</label>
-  <input id="email" type="email" placeholder="admin@school.ug" autocomplete="email">
-  <label style="margin-top:12px">Password</label>
-  <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
-  <div style="display:flex;gap:10px;margin-top:20px">
-    <button style="flex:1" onclick="signIn()">Sign In</button>
-    <button class="secondary" style="flex:1" onclick="signUp()">Register</button>
-  </div>
-  <div id="authMessage"></div>
-</div>
-
-<!-- APP DASHBOARD CONTAINER -->
 <div id="app" class="hidden">
 
-  <!-- SCHOOL SELECTOR BAR -->
   <div class="card no-print" style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
     <div style="display:flex;align-items:center;gap:12px">
       <label style="margin:0">Active School:</label>
@@ -188,7 +188,6 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
   </div>
   <div id="schoolMessage"></div>
 
-  <!-- PAGE: DASHBOARD -->
   <div id="page-dashboard" class="page-section">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
       <div>
@@ -248,7 +247,6 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
-  <!-- PAGE: STUDENTS -->
   <div id="page-students" class="page-section hidden">
     <div class="card">
       <h2 id="studentFormTitle">Student Registration</h2>
@@ -291,7 +289,6 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
-  <!-- PAGE: CLASSES -->
   <div id="page-classes" class="page-section hidden">
     <div class="card">
       <h2>Class Registers (S.1 through S.6)</h2>
@@ -319,7 +316,6 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
-  <!-- PAGE: ARCHIVED -->
   <div id="page-archived" class="page-section hidden">
     <div class="card">
       <h2>Archived Students</h2>
@@ -333,7 +329,6 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
-  <!-- PAGE: PAYMENTS -->
   <div id="page-payments" class="page-section hidden">
     <div class="card">
       <h2>Record School Fees Payment</h2>
@@ -368,7 +363,6 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
-  <!-- PAGE: EXPENSES -->
   <div id="page-expenses" class="page-section hidden">
     <div class="card">
       <h2>School Expense Tracking</h2>
@@ -405,7 +399,6 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
-  <!-- PAGE: STAFF -->
   <div id="page-staff" class="page-section hidden">
     <div class="card">
       <h2 id="staffFormTitle">Staff / Teacher Registration</h2>
@@ -433,9 +426,18 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
         </table>
       </div>
     </div>
+
+    <div class="card">
+      <h3>Staff Salary Status & Balance Tracker</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Staff No</th><th>Full Name</th><th>Position</th><th>Expected Monthly Salary</th><th>Total Salary Paid</th><th>Remaining Balance</th></tr></thead>
+          <tbody id="staffSalaryStatusBody"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
-  <!-- PAGE: PAYROLL -->
   <div id="page-payroll" class="page-section hidden">
     <div class="card">
       <h2>Staff Payroll & Salary Disbursements</h2>
@@ -461,7 +463,6 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
-  <!-- PAGE: ACADEMICS -->
   <div id="page-academics" class="page-section hidden">
     <div class="card">
       <h2>Academic Marks & Report Cards (S.1 - S.6)</h2>
@@ -498,7 +499,6 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
-  <!-- PAGE: REPORTS -->
   <div id="page-reports" class="page-section hidden">
     <div class="card">
       <h2>Reports & Data Exports</h2>
@@ -555,7 +555,6 @@ function message(id,text,error=false){
   setTimeout(()=>$(id).innerHTML="",6000);
 }
 
-// AUTH & SCHOOLS
 async function signUp(){
   const email=$("email").value.trim(), password=$("password").value;
   if(!email||password.length<6){message("authMessage","Enter valid email and password (min 6 chars).",true);return;}
@@ -577,14 +576,14 @@ async function signOut(){
   await db.auth.signOut();
   currentUser=null;currentSchoolId=null;
   $("app").classList.add("hidden");
-  $("loginBox").classList.remove("hidden");
+  $("loginScreen").classList.remove("hidden");
 }
 
 async function startApp(user){
   currentUser=user;
   $("userNameDisplay").textContent=user.email.split("@")[0];
   $("userAvatar").textContent=user.email[0].toUpperCase();
-  $("loginBox").classList.add("hidden");
+  $("loginScreen").classList.add("hidden");
   $("app").classList.remove("hidden");
   $("currentDateStr").textContent=new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
   await loadSchools();
@@ -666,14 +665,15 @@ function renderAll(){
   }
 }
 
-// HELPERS
 function activeStudents(){return students.filter(s=>String(s.status||"Active").toLowerCase()!=="archived");}
 function expected(s){return Number(s.fees_expected??s.fee_expected??0);}
 function paid(sid){return payments.filter(p=>String(p.student_id)===String(sid)).reduce((a,p)=>a+Number(p.amount||0),0);}
 function balance(s){return Math.max(0,expected(s)-paid(s.id));}
+function staffExpected(st){return Number(st.monthly_salary||0);}
+function staffPaid(stid){return salaries.filter(p=>String(p.staff_id)===String(stid)).reduce((a,p)=>a+Number(p.amount||0),0);}
+function staffBalance(st){return Math.max(0,staffExpected(st)-staffPaid(st.id));}
 function receiptNo(p){return p.receipt_no||("RCP-"+String(p.id||"").slice(-8).toUpperCase());}
 
-// DASHBOARD
 function renderDashboard(){
   const list=activeStudents();
   const exp=list.reduce((a,s)=>a+expected(s),0);
@@ -692,7 +692,6 @@ function renderDashboard(){
   }).join("");
 }
 
-// STUDENTS & EDIT & DELETE WITH HISTORY
 function renderStudents(){
   const q=($("studentSearch")?.value||"").toLowerCase();
   const list=activeStudents().filter(s=>[s.admission_no,s.full_name,s.class_name].some(v=>String(v||"").toLowerCase().includes(q)));
@@ -792,7 +791,6 @@ function renderArchived(){
   $("archivedBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td>'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td><div class="actions"><button class="secondary" onclick="restoreStudent(\''+s.id+'\')">Restore</button><button class="danger" onclick="deleteStudent(\''+s.id+'\')">Delete Permanently</button></div></td></tr>').join("")||'<tr><td colspan="5">No archived students.</td></tr>';
 }
 
-// CLASSES
 function renderClasses(){
   renderClassStudents();
 }
@@ -804,7 +802,6 @@ function renderClassStudents(){
   $("classStudentsBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td style="font-weight:600">'+esc(s.full_name)+'</td><td><span class="pill pill-'+String(s.class_name||"s1").toLowerCase().replace(".","")+'">'+esc(s.class_name)+'</span></td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td></tr>').join("")||'<tr><td colspan="6">No students found.</td></tr>';
 }
 
-// PAYMENTS & WHATSAPP
 function renderPaymentClass(){
   const el=$("paymentClass");if(!el)return;
   const old=el.value;
@@ -814,14 +811,31 @@ function renderPaymentClass(){
 
 function renderStudentSelect(){
   renderPaymentClass();
-  const sel=$("paymentClass")?.value||"";
-  const searchQ=($("paymentSearchInput")?.value||"").toLowerCase();
-  const list=activeStudents().filter(s=>{
-    const matchesClass=!sel||String(s.class_name||"").trim()===sel;
-    const matchesSearch=!searchQ||[s.admission_no,s.full_name].some(v=>String(v||"").toLowerCase().includes(searchQ));
+
+  const sel = $("paymentClass")?.value || "";
+  const searchQ = ($("paymentSearchInput")?.value || "").toLowerCase();
+
+  const list = activeStudents().filter(s => {
+    const matchesClass =
+      !sel || String(s.class_name || "").trim() === sel;
+
+    const matchesSearch =
+      !searchQ ||
+      [s.admission_no, s.full_name].some(v =>
+        String(v || "").toLowerCase().includes(searchQ)
+      );
+
     return matchesClass && matchesSearch;
   });
-  $("paymentStudent").innerHTML=list.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.admission_no)+" - "+esc(s.full_name)+" ("+esc(s.class_name)+") - Balance: "+money(balance(s))+❜</option>').join("") || '<option value="">No students found</option>';
+
+  $("paymentStudent").innerHTML = list.map(s =>
+    '<option value="' + esc(s.id) + '">' +
+    esc(s.admission_no) + " - " +
+    esc(s.full_name) + " (" +
+    esc(s.class_name) + ") - Balance: " +
+    money(balance(s)) +
+    '</option>'
+  ).join("") || '<option value="">No students found</option>';
 }
 
 async function recordPayment(){
@@ -884,7 +898,6 @@ function printReceipt(p){
   w.document.close();
 }
 
-// EXPENSES
 async function addExpense(){
   const title=$("expTitle").value.trim();
   const category=$("expCategory").value;
@@ -911,7 +924,6 @@ async function deleteExpense(id){
   await refreshAll();
 }
 
-// STAFF & EDIT & DELETE WITH HISTORY
 function editStaff(id){
   const st=staff.find(x=>String(x.id)===String(id));
   if(!st)return;
@@ -966,6 +978,8 @@ async function saveStaff(){
 
 function renderStaff(){
   $("staffBody").innerHTML=staff.map(s=>'<tr><td>'+esc(s.staff_no)+'</td><td style="font-weight:600">'+esc(s.full_name)+'</td><td>'+esc(s.position)+'</td><td>'+money(s.monthly_salary)+'</td><td>'+esc(s.phone||"—")+'</td><td><div class="actions"><button class="secondary" onclick="editStaff(\''+s.id+'\')">Edit</button><button class="danger" onclick="deleteStaff(\''+s.id+'\')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="6">No staff registered.</td></tr>';
+  
+  $("staffSalaryStatusBody").innerHTML=staff.map(s=>'<tr><td>'+esc(s.staff_no)+'</td><td style="font-weight:600">'+esc(s.full_name)+'</td><td>'+esc(s.position)+'</td><td>'+money(staffExpected(s))+'</td><td>'+money(staffPaid(s.id))+'</td><td><b>'+money(staffBalance(s))+'</b></td></tr>').join("")||'<tr><td colspan="6">No staff registered.</td></tr>';
 }
 
 function renderStaffSelect(){
@@ -985,7 +999,6 @@ async function deleteStaff(id){
   await refreshAll();
 }
 
-// PAYROLL
 async function recordSalary(){
   const staff_id=$("salaryStaff").value;
   const amount=Number($("salaryAmount").value);
@@ -1009,7 +1022,6 @@ function renderPayroll(){
   }).join("")||'<tr><td colspan="6">No salary disbursements recorded.</td></tr>';
 }
 
-// ACADEMICS
 function renderAcadClassSelect(){
   $("acadClassFilter").innerHTML='<option value="">Choose Class</option>'+ALLOWED_CLASSES.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
 }
@@ -1068,7 +1080,6 @@ async function deleteAcademics(id){
   await refreshAll();
 }
 
-// EXPORTS
 function exportCSV(type){
   let rows=[];
   if(type==="students"){
@@ -1106,13 +1117,15 @@ function handleGlobalSearch(q){
 db.auth.onAuthStateChange((event)=>{
   if(event==="SIGNED_OUT"){
     currentUser=null;currentSchoolId=null;
-    $("app").classList.add("hidden");$("loginBox").classList.remove("hidden");
+    $("app").classList.add("hidden");
+    $("loginScreen").classList.remove("hidden");
   }
 });
 
 (async()=>{
   const {data}=await db.auth.getSession();
   if(data.session)await startApp(data.session.user);
+  else $("loginScreen").classList.remove("hidden");
 })();
 </script>
 </body>
