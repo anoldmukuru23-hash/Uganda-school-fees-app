@@ -3,78 +3,124 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#12395e">
+<meta name="theme-color" content="#0f2b46">
 <title>Uganda Secondary School Manager Pro</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--blue:#195ac6;--navy:#12395e;--bg:#f4f7fc;--green:#167447;--red:#b42332;--ink:#182538;--muted:#637083;--line:#e2e8f0}
+:root{
+  --primary:#1e40af;
+  --primary-hover:#1d4ed8;
+  --navy:#0f2b46;
+  --bg:#f8fafc;
+  --card-bg:#ffffff;
+  --green:#047857;
+  --red:#dc2626;
+  --ink:#0f172a;
+  --muted:#475569;
+  --line:#e2e8f0;
+  --radius:12px;
+}
 *{box-sizing:border-box}
-body{margin:0;font:15px Arial,sans-serif;background:var(--bg);color:var(--ink)}
-header{background:linear-gradient(120deg,#102e50,#195ac6);color:white;padding:24px 16px}
-header h1{margin:0;font-size:clamp(23px,5vw,34px)}
-header p{margin:8px 0 0;color:#e1ebff}
-main{max-width:1240px;margin:auto;padding:14px}
-section{background:white;padding:18px;margin:12px 0;border:1px solid #e8edf5;border-radius:14px;box-shadow:0 5px 20px #172c4d08;min-width:0}
-h2{margin:0 0 16px;color:var(--navy)}
-h3{margin-top:0;color:var(--navy)}
-nav{display:flex;flex-wrap:wrap;gap:7px;padding:10px;background:white;border:1px solid var(--line);border-radius:12px}
-button{border:0;border-radius:9px;padding:11px 14px;background:var(--blue);color:white;font-weight:bold;cursor:pointer;font-size:14px}
-button:hover{filter:brightness(.96)}
-nav button{background:#edf3fc;color:#23466f}
-nav button.active{background:var(--blue);color:white}
-.secondary{background:#526175}
+body{margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+
+header{background:linear-gradient(135deg,#0f2b46,#1e40af);color:white;padding:32px 20px;box-shadow:0 4px 12px rgba(15,43,70,0.15)}
+header h1{margin:0;font-size:clamp(24px,4vw,32px);font-weight:700;letter-spacing:-0.5px}
+header p{margin:8px 0 0;color:#cbd5e1;font-size:14px}
+
+main{max-width:1280px;margin:auto;padding:20px 16px}
+
+section{background:var(--card-bg);padding:24px;margin:16px 0;border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 1px 3px rgba(0,0,0,0.05),0 1px 2px rgba(0,0,0,0.03)}
+
+h2{margin:0 0 20px;color:var(--navy);font-size:20px;font-weight:700}
+h3{margin:0 0 14px;color:var(--navy);font-size:17px;font-weight:600}
+
+nav{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:white;border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 1px 3px rgba(0,0,0,0.02)}
+button{border:0;border-radius:8px;padding:10px 16px;background:var(--primary);color:white;font-weight:600;cursor:pointer;font-size:14px;transition:all .15s ease}
+button:hover{background:var(--primary-hover);transform:translateY(-1px)}
+nav button{background:#f1f5f9;color:#334155;border:1px solid transparent}
+nav button.active{background:var(--primary);color:white;border-color:transparent}
+nav button:hover{background:#e2e8f0;color:var(--ink)}
+
+.secondary{background:#64748b}
+.secondary:hover{background:#475569}
 .danger{background:var(--red)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:12px}
-.stat{background:linear-gradient(145deg,#f4f8ff,#eaf2ff);padding:16px;border:1px solid #e1eaff;border-radius:12px;overflow-wrap:anywhere}
-.stat span{font-size:13px;color:#50617b}
-.stat strong{display:block;font-size:clamp(20px,4vw,26px);margin-top:9px;color:#173f78;overflow-wrap:anywhere}
-.small{font-size:12px;color:var(--muted);line-height:1.5}
+.danger:hover{background:#b91c1c}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.stat{background:linear-gradient(135deg,#f8fafc,#eff6ff);padding:20px;border:1px solid #dbeafe;border-radius:var(--radius);position:relative;overflow:hidden}
+.stat::after{content:"";position:absolute;top:0;left:0;width:4px;height:100%;background:var(--primary)}
+.stat span{font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.stat strong{display:block;font-size:clamp(22px,3vw,28px);margin-top:8px;color:var(--navy);font-weight:700}
+
+.small{font-size:13px;color:var(--muted);line-height:1.6}
 .hidden{display:none!important}
-.msg,.error{padding:12px;border-radius:9px;margin:10px 0;overflow-wrap:anywhere}
-.msg{background:#e8f6ed;color:#145c34}
-.error{background:#ffeded;color:#a01c27}
-.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:0 12px}
-input,select,textarea{width:100%;min-width:0;padding:12px;margin:7px 0 14px;border:1px solid #cbd5e1;border-radius:9px;background:white;font-size:16px;color:var(--ink);font-family:inherit}
-input:focus,select:focus,textarea:focus{outline:2px solid #b9d3ff;border-color:var(--blue)}
-label{font-size:13px;font-weight:bold;color:#34445b}
-.table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:10px}
-table{width:100%;min-width:740px;border-collapse:collapse}
-th,td{padding:12px;border-bottom:1px solid var(--line);text-align:left;font-size:13px;white-space:nowrap;vertical-align:middle}
-th{background:#f0f5fc;color:#263b59;font-size:12px;text-transform:uppercase;letter-spacing:.3px}
+
+.msg,.error{padding:12px 16px;border-radius:8px;margin:12px 0;font-weight:500;font-size:14px}
+.msg{background:#ecfdf5;color:#065f46;border:1px solid #a7f3d0}
+.error{background:#fef2f2;color:#991b1b;border:1px solid #fecaca}
+
+.actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0 16px}
+input,select,textarea{width:100%;padding:11px 14px;margin:6px 0 14px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;font-size:15px;color:var(--ink);transition:border-color .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(30,64,175,0.15)}
+label{font-size:13px;font-weight:600;color:#334155}
+
+.table-wrap{width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+table{width:100%;min-width:760px;border-collapse:collapse}
+th,td{padding:12px 16px;border-bottom:1px solid var(--line);text-align:left;font-size:14px;white-space:nowrap;vertical-align:middle}
+th{background:#f8fafc;color:#334155;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
 tr:last-child td{border-bottom:0}
-.name-cell{white-space:normal;min-width:140px}
-.date-cell{min-width:150px}
-.class-card{background:linear-gradient(135deg,#fff,#edf4ff);border:1px solid #dce7f8;border-radius:13px;padding:17px;min-width:0}
-.class-card h3{margin:0 0 8px}
-.class-count{font-size:29px;font-weight:800;color:var(--blue)}
-.class-card p{font-size:13px;color:#526175;margin:8px 0}
-.class-card button{margin-top:7px}
-hr{border:0;border-top:1px solid var(--line);margin:22px 0}
-#loginBox{max-width:470px;margin:30px auto}
-.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-.pill{display:inline-block;border-radius:99px;padding:5px 9px;background:#e8f6ed;color:#145c34;font-size:11px;font-weight:bold}
-@media(max-width:520px){main{padding:8px}section{padding:13px;margin:9px 0}nav{gap:5px;padding:8px}nav button{padding:10px;font-size:12px;flex:1 1 auto}.stat{padding:13px}}
-@media print{body{background:white}header,nav,.no-print,button,#loginBox{display:none!important}main{padding:0}section{box-shadow:none;border:0;padding:0}.hidden{display:none!important}.table-wrap{overflow:visible;border:0}table{min-width:0;width:100%}th,td{white-space:normal;font-size:10px;padding:5px}}
+tr:hover td{background:#fafafa}
+
+.name-cell{white-space:normal;min-width:160px;font-weight:500}
+.date-cell{min-width:140px}
+
+.class-card{background:linear-gradient(135deg,#ffffff,#f8fafc);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.02);transition:transform .15s,box-shadow .15s}
+.class-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.05)}
+.class-card h3{margin:0 0 6px;color:var(--navy);font-size:18px}
+.class-count{font-size:32px;font-weight:800;color:var(--primary);margin:4px 0}
+.class-card p{font-size:13px;color:var(--muted);margin:6px 0}
+.class-card button{margin-top:10px;width:100%;padding:8px}
+
+hr{border:0;border-top:1px solid var(--line);margin:24px 0}
+#loginBox{max-width:440px;margin:50px auto;padding:32px}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.pill{display:inline-block;border-radius:20px;padding:4px 12px;background:#e0f2fe;color:#0369a1;font-size:12px;font-weight:700}
+
+@media(max-width:640px){
+  main{padding:12px 8px}
+  section{padding:16px;margin:10px 0}
+  nav{padding:8px;gap:6px}
+  nav button{padding:8px 12px;font-size:13px;flex:1 1 auto}
+}
+@media print{
+  body{background:white}
+  header,nav,.no-print,button,#loginBox{display:none!important}
+  main{padding:0}
+  section{box-shadow:none;border:0;padding:0}
+  .table-wrap{overflow:visible;border:0}
+  table{min-width:0;width:100%}
+  th,td{white-space:normal;font-size:11px;padding:6px}
+}
 </style>
 </head>
 <body>
 <header>
 <h1>Uganda Secondary School Manager Pro</h1>
-<p>S.1 - S.6 Administration • Fees • Expenses • Staff Payroll • Academic Report Cards</p>
+<p>S.1 - S.6 Administration • Fees Tracking • Expenses • Payroll • Academic Report Cards</p>
 </header>
 <main>
 
 <section id="loginBox">
-<h2>Welcome back</h2>
-<p>Sign in or create an account to manage your secondary school.</p>
+<h2>Welcome Back</h2>
+<p class="small" style="margin-bottom:16px">Sign in or create an account to manage your secondary school.</p>
 <label>Email address</label>
-<input id="email" type="email" placeholder="you@example.com" autocomplete="email">
+<input id="email" type="email" placeholder="admin@school.ug" autocomplete="email">
 <label>Password</label>
 <input id="password" type="password" placeholder="At least 6 characters" autocomplete="current-password">
-<div class="actions">
-<button onclick="signIn()">Sign in</button>
-<button class="secondary" onclick="signUp()">Create account</button>
+<div class="actions" style="margin-top:8px">
+<button style="flex:1" onclick="signIn()">Sign in</button>
+<button class="secondary" style="flex:1" onclick="signUp()">Create account</button>
 </div>
 <div id="authMessage" aria-live="polite"></div>
 </section>
@@ -89,11 +135,11 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 <div>
 <label>Create another school</label>
 <input id="newSchoolName" placeholder="School name">
-<button onclick="createSchool()">Create school</button>
+<button style="margin-top:6px" onclick="createSchool()">Create school</button>
 </div>
 </div>
 <div id="schoolMessage"></div>
-<div class="actions">
+<div class="actions" style="margin-top:12px">
 <button class="secondary" onclick="refreshAll()">Refresh records</button>
 <button class="danger" onclick="signOut()">Sign out</button>
 </div>
@@ -115,7 +161,7 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 <section id="dashboard">
 <div class="section-head">
 <h2>School dashboard</h2>
-<span class="pill">Live records</span>
+<span class="pill">Live Records</span>
 </div>
 <div class="grid">
 <div class="stat"><span>Active students</span><strong id="statStudents">0</strong></div>
@@ -126,7 +172,7 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 <div class="stat"><span>Total expenses</span><strong id="statExpenses">UGX 0</strong></div>
 <div class="stat"><span>Staff payroll</span><strong id="statSalary">UGX 0</strong></div>
 </div>
-<p class="small">Restricted strictly to S.1 through S.6 levels. Amounts are in Uganda shillings.</p>
+<p class="small" style="margin-top:16px">Restricted strictly to S.1 through S.6 levels. Financial figures in Uganda shillings (UGX).</p>
 <hr>
 <h3>Students by class (S.1 - S.6)</h3>
 <div id="dashboardClasses" class="grid"></div>
@@ -143,7 +189,7 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 <div><label>Choose class</label><select id="classFilter" onchange="renderClassStudents()"><option value="">All classes (S.1 - S.6)</option></select></div>
 <div><label>Search register</label><input id="classStudentSearch" placeholder="Name or admission number" oninput="renderClassStudents()"></div>
 </div>
-<div id="classCards" class="grid"></div>
+<div id="classCards" class="grid" style="margin-top:16px"></div>
 <hr>
 <h3 id="classRegisterTitle">Class register</h3>
 <div class="table-wrap">
@@ -178,7 +224,7 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 <hr>
 <h3>Active students</h3>
 <input id="studentSearch" placeholder="Search admission, name or class" oninput="renderStudents()">
-<div class="table-wrap">
+<div class="table-wrap" style="margin-top:12px">
 <table>
 <thead><tr><th>Admission</th><th>Student</th><th>Class</th><th>Expected</th><th>Paid</th><th>Balance</th><th>Actions</th></tr></thead>
 <tbody id="studentsBody"></tbody>
@@ -188,7 +234,7 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 
 <section id="archived" class="hidden">
 <h2>Archived students</h2>
-<p class="small">Restore students to make them active.</p>
+<p class="small">Restore students to make them active, or delete them permanently.</p>
 <div class="table-wrap">
 <table>
 <thead><tr><th>Admission</th><th>Student</th><th>Class</th><th>Expected</th><th>Actions</th></tr></thead>
@@ -210,7 +256,7 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 <div id="paymentMessage"></div>
 <hr>
 <h3>Payment history</h3>
-<div class="table-wrap">
+<div class="table-wrap" style="margin-top:12px">
 <table>
 <thead><tr><th>Date and time</th><th>Receipt</th><th>Student</th><th>Class</th><th>Amount</th><th>Method</th><th>Reference</th><th>Actions</th></tr></thead>
 <tbody id="paymentsBody"></tbody>
@@ -232,7 +278,7 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 <div id="expenseMessage"></div>
 <hr>
 <h3>Expense records</h3>
-<div class="table-wrap">
+<div class="table-wrap" style="margin-top:12px">
 <table>
 <thead><tr><th>Date</th><th>Title</th><th>Category</th><th>Amount</th><th>Method</th><th>Actions</th></tr></thead>
 <tbody id="expensesBody"></tbody>
@@ -253,7 +299,7 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 <div id="staffMessage"></div>
 <hr>
 <h3>Staff records</h3>
-<div class="table-wrap">
+<div class="table-wrap" style="margin-top:12px">
 <table>
 <thead><tr><th>Staff number</th><th>Name</th><th>Position</th><th>Monthly salary</th><th>Phone</th><th>Actions</th></tr></thead>
 <tbody id="staffBody"></tbody>
@@ -274,7 +320,7 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 <div id="payrollMessage"></div>
 <hr>
 <h3>Salary history</h3>
-<div class="table-wrap">
+<div class="table-wrap" style="margin-top:12px">
 <table>
 <thead><tr><th>Date</th><th>Staff</th><th>Month</th><th>Amount</th><th>Method</th><th>Reference</th></tr></thead>
 <tbody id="payrollBody"></tbody>
@@ -307,7 +353,7 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 <div id="acadMessage"></div>
 <hr>
 <h3>Saved academic records</h3>
-<div class="table-wrap">
+<div class="table-wrap" style="margin-top:12px">
 <table>
 <thead><tr><th>Term</th><th>Student</th><th>Class</th><th>Math</th><th>Eng</th><th>Sub 3</th><th>Sub 4</th><th>Sub 5</th><th>Total</th><th>Actions</th></tr></thead>
 <tbody id="acadBody"></tbody>
@@ -317,7 +363,7 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 
 <section id="reports" class="hidden">
 <h2>Reports and exports</h2>
-<p>Download records as CSV files for Excel or print the current page.</p>
+<p class="small" style="margin-bottom:16px">Download records as CSV files for Excel or print the current page.</p>
 <div class="actions no-print">
 <button onclick="exportCSV('students')">Export students</button>
 <button onclick="exportCSV('payments')">Export payments</button>
@@ -325,7 +371,7 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 <button onclick="exportCSV('staff')">Export staff</button>
 <button onclick="exportCSV('salary_payments')">Export payroll</button>
 <button onclick="exportCSV('academics')">Export academics</button>
-<button class="secondary" onclick="window.print()">Print</button>
+<button class="secondary" onclick="window.print()">Print page</button>
 </div>
 <hr>
 <h3>School information</h3>
@@ -504,12 +550,12 @@ function renderClassStudents(){
 function renderStudents(){
  const q=($("studentSearch")?.value||"").toLowerCase();
  const list=activeStudents().filter(s=>[s.admission_no,s.full_name,s.class_name].some(v=>String(v||"").toLowerCase().includes(q)));
- $("studentsBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td><td><div class="actions"><button onclick="archiveStudent(\''+s.id+'\')">Archive</button><button class="secondary" onclick="deleteStudent(\''+s.id+'\')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="7">No active students found.</td></tr>';
+ $("studentsBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td><td><div class="actions"><button onclick="archiveStudent(\''+s.id+'\')">Archive</button><button class="danger" onclick="deleteStudent(\''+s.id+'\')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="7">No active students found.</td></tr>';
 }
 
 function renderArchived(){
  const list=students.filter(s=>String(s.status||"Active").toLowerCase()==="archived");
- $("archivedBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td><div class="actions"><button onclick="restoreStudent(\''+s.id+'\')">Restore</button><button class="danger" onclick="deleteStudent(\''+s.id+'\')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="5">No archived students.</td></tr>';
+ $("archivedBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td><div class="actions"><button onclick="restoreStudent(\''+s.id+'\')">Restore</button><button class="danger" onclick="deleteStudent(\''+s.id+'\')">Delete permanently</button></div></td></tr>').join("")||'<tr><td colspan="5">No archived students.</td></tr>';
 }
 
 function renderPaymentClass(){
@@ -557,8 +603,17 @@ async function restoreStudent(id){
 async function deleteStudent(id){
  const s=students.find(x=>String(x.id)===String(id));
  if(!s)return;
- if(payments.some(p=>String(p.student_id)===String(id))){alert("This student has payment history. Archive the student instead.");return;}
- if(!confirm("Permanently delete "+s.full_name+"?"))return;
+ 
+ let warningMsg="Permanently delete "+s.full_name+"? This action cannot be undone.";
+ if(payments.some(p=>String(p.student_id)===String(id))){
+  warningMsg="WARNING: "+s.full_name+" has payment history. Deleting this student will also permanently remove or unlink their payment records. Proceed with permanent deletion?";
+ }
+ 
+ if(!confirm(warningMsg))return;
+
+ await db.from("payments").delete().eq("student_id",id).eq("school_id",currentSchoolId);
+ await db.from("academics").delete().eq("student_id",id).eq("school_id",currentSchoolId);
+
  const {error}=await db.from("students").delete().eq("id",id).eq("school_id",currentSchoolId);
  if(error){console.error("Delete error:",error);alert("Could not delete: "+error.message);return;}
  await refreshAll();
@@ -719,7 +774,7 @@ function printReportCard(a){
  if(!s){alert("Student record not found.");return;}
  const total=Number(a.math||0)+Number(a.eng||0)+Number(a.sci||0)+Number(a.sst||0)+Number(a.opt||0);
  const avg=(total/5).toFixed(1);
- const html='<!doctype html><html><head><meta charset="utf-8"><title>Termly Report Card</title><style>body{font-family:Arial;padding:24px}.card{max-width:700px;margin:auto;border:2px solid #12395e;padding:24px}h2,p.center{text-align:center;margin:4px 0}table{width:100%;border-collapse:collapse;margin:16px 0}th,td{padding:10px;border:1px solid #aaa;text-align:left;font-size:13px}th{background:#f0f5fc}.remarks{background:#f8fafc;padding:12px;border:1px solid #cbd5e1;margin-top:14px;border-radius:6px}</style></head><body><div class="card"><h2>'+esc(school?.name||"School")+'</h2><p class="center"><b>OFFICIAL SEC. SCHOOL TERMLY REPORT CARD</b></p><p class="center">'+esc(a.term)+'</p><hr><p><b>Admission No:</b> '+esc(s.admission_no)+' | <b>Student Name:</b> '+esc(s.full_name)+' | <b>Class:</b> '+esc(s.class_name)+'</p><table><thead><tr><th>Subject</th><th>Score (100)</th><th>Grade / Remark</th></tr></thead><tbody><tr><td>Mathematics</td><td>'+a.math+'</td><td>'+(a.math>=75?'Distinction':a.math>=50?'Credit':a.math>=35?'Pass':'Fail')+'</td></tr><tr><td>English Language</td><td>'+a.eng+'</td><td>'+(a.eng>=75?'Distinction':a.eng>=50?'Credit':a.eng>=35?'Pass':'Fail')+'</td></tr><tr><td>Subject 3</td><td>'+a.sci+'</td><td>'+(a.sci>=75?'Distinction':a.sci>=50?'Credit':a.sci>=35?'Pass':'Fail')+'</td></tr><tr><td>Subject 4</td><td>'+a.sst+'</td><td>'+(a.sst>=75?'Distinction':a.sst>=50?'Credit':a.sst>=35?'Pass':'Fail')+'</td></tr><tr><td>Subject 5</td><td>'+a.opt+'</td><td>'+(a.opt>=75?'Distinction':a.opt>=50?'Credit':a.opt>=35?'Pass':'Fail')+'</td></tr><tr><td><b>Total / Average</b></td><td colspan="2"><b>'+total+' / 500 (Average Score: '+avg+'%)</b></td></tr></tbody></table><div class="remarks"><p><b>Class Teacher Remarks:</b> '+esc(a.teacher_remarks||"None")+'</p><p><b>Headteacher Remarks:</b> '+esc(a.head_remarks||"None")+'</p></div><p style="margin-top:30px">Headteacher Signature: ___________________ Stamp: ___________________</p></div><script>window.onload=function(){window.print()}<\/script></body></html>';
+ const html='<!doctype html><html><head><meta charset="utf-8"><title>Termly Report Card</title><style>body{font-family:Arial;padding:24px}.card{max-width:700px;margin:auto;border:2px solid #0f2b46;padding:24px}h2,p.center{text-align:center;margin:4px 0}table{width:100%;border-collapse:collapse;margin:16px 0}th,td{padding:10px;border:1px solid #aaa;text-align:left;font-size:13px}th{background:#f8fafc}.remarks{background:#f8fafc;padding:12px;border:1px solid #cbd5e1;margin-top:14px;border-radius:6px}</style></head><body><div class="card"><h2>'+esc(school?.name||"School")+'</h2><p class="center"><b>OFFICIAL SEC. SCHOOL TERMLY REPORT CARD</b></p><p class="center">'+esc(a.term)+'</p><hr><p><b>Admission No:</b> '+esc(s.admission_no)+' | <b>Student Name:</b> '+esc(s.full_name)+' | <b>Class:</b> '+esc(s.class_name)+'</p><table><thead><tr><th>Subject</th><th>Score (100)</th><th>Grade / Remark</th></tr></thead><tbody><tr><td>Mathematics</td><td>'+a.math+'</td><td>'+(a.math>=75?'Distinction':a.math>=50?'Credit':a.math>=35?'Pass':'Fail')+'</td></tr><tr><td>English Language</td><td>'+a.eng+'</td><td>'+(a.eng>=75?'Distinction':a.eng>=50?'Credit':a.eng>=35?'Pass':'Fail')+'</td></tr><tr><td>Subject 3</td><td>'+a.sci+'</td><td>'+(a.sci>=75?'Distinction':a.sci>=50?'Credit':a.sci>=35?'Pass':'Fail')+'</td></tr><tr><td>Subject 4</td><td>'+a.sst+'</td><td>'+(a.sst>=75?'Distinction':a.sst>=50?'Credit':a.sst>=35?'Pass':'Fail')+'</td></tr><tr><td>Subject 5</td><td>'+a.opt+'</td><td>'+(a.opt>=75?'Distinction':a.opt>=50?'Credit':a.opt>=35?'Pass':'Fail')+'</td></tr><tr><td><b>Total / Average</b></td><td colspan="2"><b>'+total+' / 500 (Average Score: '+avg+'%)</b></td></tr></tbody></table><div class="remarks"><p><b>Class Teacher Remarks:</b> '+esc(a.teacher_remarks||"None")+'</p><p><b>Headteacher Remarks:</b> '+esc(a.head_remarks||"None")+'</p></div><p style="margin-top:30px">Headteacher Signature: ___________________ Stamp: ___________________</p></div><script>window.onload=function(){window.print()}<\/script></body></html>';
  const w=window.open("","_blank");if(!w){alert("Allow pop-ups to print report cards.");return;}
  w.document.open();w.document.write(html);w.document.close();
 }
