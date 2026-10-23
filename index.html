@@ -201,7 +201,8 @@ hr{border:0;border-top:1px solid var(--line);margin:24px 0}
 </section>
 
 <section id="students" class="hidden">
-<h2>Student registration</h2>
+<h2><span id="studentFormTitle">Student Registration</span></h2>
+<input type="hidden" id="editStudentId">
 <div class="form-grid">
 <div><label>Admission number *</label><input id="admission" placeholder="e.g. S.1/001"></div>
 <div><label>Student full name *</label><input id="studentName" placeholder="Full name"></div>
@@ -219,7 +220,10 @@ hr{border:0;border-top:1px solid var(--line);margin:24px 0}
 <div><label>Expected fees (UGX)</label><input id="expectedFees" type="number" min="0" value="0"></div>
 <div><label>Parent WhatsApp number</label><input id="parentWhatsApp" type="tel" placeholder="e.g. 2567XXXXXXXX"></div>
 </div>
-<button onclick="addStudent()">Register student</button>
+<div class="actions">
+<button onclick="saveStudent()">Save student</button>
+<button class="secondary hidden" id="cancelStudentEdit" onclick="resetStudentForm()">Cancel edit</button>
+</div>
 <div id="studentMessage"></div>
 <hr>
 <h3>Active students</h3>
@@ -287,15 +291,19 @@ hr{border:0;border-top:1px solid var(--line);margin:24px 0}
 </section>
 
 <section id="staff" class="hidden">
-<h2>Staff registration</h2>
+<h2><span id="staffFormTitle">Staff Registration</span></h2>
+<input type="hidden" id="editStaffId">
 <div class="form-grid">
-<div><label>Staff number</label><input id="staffNo" placeholder="e.g. T001"></div>
-<div><label>Full name</label><input id="staffName" placeholder="Full name"></div>
-<div><label>Position</label><input id="staffPosition" placeholder="e.g. Teacher / Director of Studies"></div>
+<div><label>Staff number *</label><input id="staffNo" placeholder="e.g. T001"></div>
+<div><label>Full name *</label><input id="staffName" placeholder="Full name"></div>
+<div><label>Position *</label><input id="staffPosition" placeholder="e.g. Teacher / DOS"></div>
 <div><label>Monthly salary (UGX)</label><input id="staffSalary" type="number" min="0" value="0"></div>
 <div><label>Phone number</label><input id="staffPhone" type="tel" placeholder="Phone number"></div>
 </div>
-<button onclick="addStaff()">Register staff</button>
+<div class="actions">
+<button onclick="saveStaff()">Save staff</button>
+<button class="secondary hidden" id="cancelStaffEdit" onclick="resetStaffForm()">Cancel edit</button>
+</div>
 <div id="staffMessage"></div>
 <hr>
 <h3>Staff records</h3>
@@ -550,7 +558,7 @@ function renderClassStudents(){
 function renderStudents(){
  const q=($("studentSearch")?.value||"").toLowerCase();
  const list=activeStudents().filter(s=>[s.admission_no,s.full_name,s.class_name].some(v=>String(v||"").toLowerCase().includes(q)));
- $("studentsBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td><td><div class="actions"><button onclick="archiveStudent(\''+s.id+'\')">Archive</button><button class="danger" onclick="deleteStudent(\''+s.id+'\')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="7">No active students found.</td></tr>';
+ $("studentsBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td><td><div class="actions"><button class="secondary" onclick="editStudent(\''+s.id+'\')">Edit</button><button onclick="archiveStudent(\''+s.id+'\')">Archive</button><button class="danger" onclick="deleteStudent(\''+s.id+'\')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="7">No active students found.</td></tr>';
 }
 
 function renderArchived(){
@@ -574,16 +582,82 @@ function renderStudentSelect(){
  if(list.some(s=>String(s.id)===old))$("paymentStudent").value=old;
 }
 
-async function addStudent(){
- const admission_no=$("admission").value.trim(),full_name=$("studentName").value.trim(),class_name=$("studentClass").value.trim(),fees=Number($("expectedFees").value||0),parent_whatsapp=$("parentWhatsApp").value.trim();
- if(!currentSchoolId||!admission_no||!full_name||!class_name||!Number.isFinite(fees)||fees<0){message("studentMessage","Complete required fields and enter valid fees.",true);return;}
- if(students.some(s=>String(s.admission_no).toLowerCase()===admission_no.toLowerCase())){message("studentMessage","Admission number already exists.",true);return;}
- const base={school_id:currentSchoolId,admission_no,full_name,class_name,parent_whatsapp:parent_whatsapp||null,status:"Active"};
- let r=await db.from("students").insert({...base,fees_expected:fees}).select().single();
- if(r.error&&/fees_expected|fee_expected|column/i.test(r.error.message))r=await db.from("students").insert({...base,fee_expected:fees}).select().single();
- if(r.error){message("studentMessage","Registration failed: "+r.error.message,true);return;}
- ["admission","studentName","parentWhatsApp"].forEach(id=>$(id).value="");
- $("expectedFees").value="0";await refreshAll();message("studentMessage","Student registered successfully.");
+function editStudent(id){
+ const s=students.find(x=>String(x.id)===String(id));
+ if(!s)return;
+ $("editStudentId").value=s.id;
+ $("admission").value=s.admission_no||"";
+ $("studentName").value=s.full_name||"";
+ $("studentClass").value=s.class_name||"S.1";
+ $("expectedFees").value=expected(s);
+ $("parentWhatsApp").value=s.parent_whatsapp||"";
+ $("studentFormTitle").textContent="Edit Student: "+s.full_name;
+ $("cancelStudentEdit").classList.remove("hidden");
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function resetStudentForm(){
+ $("editStudentId").value="";
+ $("admission").value="";
+ $("studentName").value="";
+ $("studentClass").value="S.1";
+ $("expectedFees").value="0";
+ $("parentWhatsApp").value="";
+ $("studentFormTitle").textContent="Student Registration";
+ $("cancelStudentEdit").classList.add("hidden");
+ clearMessage("studentMessage");
+}
+
+async function saveStudent(){
+ const editId=$("editStudentId").value;
+ const admission_no=$("admission").value.trim();
+ const full_name=$("studentName").value.trim();
+ const class_name=$("studentClass").value.trim();
+ const fees=Number($("expectedFees").value||0);
+ const parent_whatsapp=$("parentWhatsApp").value.trim();
+
+ if(!currentSchoolId||!admission_no||!full_name||!class_name||!Number.isFinite(fees)||fees<0){
+  message("studentMessage","Complete required fields and enter valid fees.",true);
+  return;
+ }
+
+ if(!editId && students.some(s=>String(s.admission_no).toLowerCase()===admission_no.toLowerCase())){
+  message("studentMessage","Admission number already exists.",true);
+  return;
+ }
+
+ const payload={
+  school_id:currentSchoolId,
+  admission_no,
+  full_name,
+  class_name,
+  fees_expected:fees,
+  parent_whatsapp:parent_whatsapp||null
+ };
+
+ let error=null;
+ if(editId){
+  const res=await db.from("students").update(payload).eq("id",editId).eq("school_id",currentSchoolId);
+  error=res.error;
+ } else {
+  payload.status="Active";
+  let res=await db.from("students").insert(payload).select().single();
+  if(res.error&&/fees_expected|fee_expected|column/i.test(res.error.message)){
+   delete payload.fees_expected;
+   payload.fee_expected=fees;
+   res=await db.from("students").insert(payload).select().single();
+  }
+  error=res.error;
+ }
+
+ if(error){
+  message("studentMessage","Operation failed: "+error.message,true);
+  return;
+ }
+
+ resetStudentForm();
+ await refreshAll();
+ message("studentMessage",editId?"Student updated successfully!":"Student registered successfully!");
 }
 
 async function archiveStudent(id){
@@ -604,16 +678,13 @@ async function deleteStudent(id){
  const s=students.find(x=>String(x.id)===String(id));
  if(!s)return;
  
- let warningMsg="Permanently delete "+s.full_name+"? This action cannot be undone.";
- if(!confirm(warningMsg))return;
+ if(!confirm("Permanently delete "+s.full_name+" and all their payment and academic history?"))return;
 
  // 1. Delete linked payment records
- const payDel=await db.from("payments").delete().eq("student_id",id).eq("school_id",currentSchoolId);
- if(payDel.error){console.error("Payment delete error:", payDel.error);}
+ await db.from("payments").delete().eq("student_id",id).eq("school_id",currentSchoolId);
 
  // 2. Delete linked academic records
- const acadDel=await db.from("academics").delete().eq("student_id",id).eq("school_id",currentSchoolId);
- if(acadDel.error){console.error("Academics delete error:", acadDel.error);}
+ await db.from("academics").delete().eq("student_id",id).eq("school_id",currentSchoolId);
 
  // 3. Delete student record
  const {error}=await db.from("students").delete().eq("id",id).eq("school_id",currentSchoolId);
@@ -685,17 +756,75 @@ async function deleteExpense(id){
  await refreshAll();
 }
 
-async function addStaff(){
- const staff_no=$("staffNo").value.trim(),full_name=$("staffName").value.trim(),position=$("staffPosition").value.trim(),monthly_salary=Number($("staffSalary").value||0),phone=$("staffPhone").value.trim();
- if(!currentSchoolId||!staff_no||!full_name||!position||!Number.isFinite(monthly_salary)||monthly_salary<0){message("staffMessage","Complete staff fields and enter a valid salary.",true);return;}
- const {error}=await db.from("staff").insert({school_id:currentSchoolId,staff_no,full_name,position,monthly_salary,phone});
- if(error){message("staffMessage","Could not register staff: "+error.message,true);return;}
- ["staffNo","staffName","staffPosition","staffPhone"].forEach(id=>$(id).value="");$("staffSalary").value="0";
- await refreshAll();message("staffMessage","Staff member registered.");
+function editStaff(id){
+ const st=staff.find(x=>String(x.id)===String(id));
+ if(!st)return;
+ $("editStaffId").value=st.id;
+ $("staffNo").value=st.staff_no||"";
+ $("staffName").value=st.full_name||"";
+ $("staffPosition").value=st.position||"";
+ $("staffSalary").value=st.monthly_salary||0;
+ $("staffPhone").value=st.phone||"";
+ $("staffFormTitle").textContent="Edit Staff: "+st.full_name;
+ $("cancelStaffEdit").classList.remove("hidden");
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function resetStaffForm(){
+ $("editStaffId").value="";
+ $("staffNo").value="";
+ $("staffName").value="";
+ $("staffPosition").value="";
+ $("staffSalary").value="0";
+ $("staffPhone").value="";
+ $("staffFormTitle").textContent="Staff Registration";
+ $("cancelStaffEdit").classList.add("hidden");
+ clearMessage("staffMessage");
+}
+
+async function saveStaff(){
+ const editId=$("editStaffId").value;
+ const staff_no=$("staffNo").value.trim();
+ const full_name=$("staffName").value.trim();
+ const position=$("staffPosition").value.trim();
+ const monthly_salary=Number($("staffSalary").value||0);
+ const phone=$("staffPhone").value.trim();
+
+ if(!currentSchoolId||!staff_no||!full_name||!position||!Number.isFinite(monthly_salary)||monthly_salary<0){
+  message("staffMessage","Complete staff fields and enter a valid salary.",true);
+  return;
+ }
+
+ const payload={
+  school_id:currentSchoolId,
+  staff_no,
+  full_name,
+  position,
+  monthly_salary,
+  phone:phone||null
+ };
+
+ let error=null;
+ if(editId){
+  const res=await db.from("staff").update(payload).eq("id",editId).eq("school_id",currentSchoolId);
+  error=res.error;
+ } else {
+  const res=await db.from("staff").insert(payload);
+  error=res.error;
+ }
+
+ if(error){
+  message("staffMessage","Staff operation failed: "+error.message,true);
+  return;
+ }
+
+ resetStaffForm();
+ await refreshAll();
+ message("staffMessage",editId?"Staff updated successfully!":"Staff registered successfully!");
 }
 
 function renderStaff(){
- $("staffBody").innerHTML=staff.map(s=>'<tr><td>'+esc(s.staff_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.position)+'</td><td>'+money(s.monthly_salary)+'</td><td>'+esc(s.phone||"—")+'</td><td><button class="secondary" onclick="deleteStaff(\''+s.id+'\')">Delete</button></td></tr>').join("")||'<tr><td colspan="6">No staff registered.</td></tr>';
+ $("staffBody").innerHTML=staff.map(s=>'<tr><td>'+esc(s.staff_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.position)+'</td><td>'+money(s.monthly_salary)+'</td><td>'+esc(s.phone||"—")+'</td><td><div class="actions"><button class="secondary" onclick="editStaff(\''+s.id+'\')">Edit</button><button class="danger" onclick="deleteStaff(\''+s.id+'\')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="6">No staff registered.</td></tr>';
 }
 
 function renderStaffSelect(){
@@ -705,8 +834,14 @@ function renderStaffSelect(){
 }
 
 async function deleteStaff(id){
- if(salaries.some(p=>String(p.staff_id)===String(id))){alert("This staff member has salary history.");return;}
- if(!confirm("Delete this staff member?"))return;
+ const st=staff.find(x=>String(x.id)===String(id));
+ if(!st)return;
+ if(!confirm("Permanently delete staff member "+st.full_name+" and all associated salary history?"))return;
+
+ // 1. Delete associated salary history first
+ await db.from("salary_payments").delete().eq("staff_id",id).eq("school_id",currentSchoolId);
+
+ // 2. Delete staff member
  const {error}=await db.from("staff").delete().eq("id",id).eq("school_id",currentSchoolId);
  if(error){console.error("Delete staff error:",error);alert("Could not delete staff: "+error.message);return;}
  await refreshAll();
