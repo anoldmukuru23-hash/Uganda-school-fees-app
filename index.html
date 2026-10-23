@@ -94,7 +94,8 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
 .msg.success{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0}
 .msg.error{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
 
-#loginBox{max-width:420px;margin:80px auto;background:white;padding:32px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.08);border:1px solid var(--line)}
+#loginScreen{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172a;z-index:9999;display:flex;align-items:center;justify-content:center}
+#loginBox{max-width:420px;width:100%;background:white;padding:32px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.2);border:1px solid var(--line)}
 .hidden{display:none!important}
 
 @media(max-width:768px){
@@ -105,6 +106,26 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
 </style>
 </head>
 <body>
+
+<!-- DEDICATED LOGIN SCREEN OVERLAY -->
+<div id="loginScreen">
+  <div id="loginBox">
+    <div style="text-align:center;margin-bottom:24px">
+      <div class="brand-logo" style="width:54px;height:54px;margin:auto;font-size:24px">🇺🇬</div>
+      <h2 style="margin:12px 0 4px;color:var(--navy)">School Portal Sign In</h2>
+      <p style="color:var(--muted);font-size:13px">Uganda Secondary School Administration</p>
+    </div>
+    <label>Email Address</label>
+    <input id="email" type="email" placeholder="admin@school.ug" autocomplete="email">
+    <label style="margin-top:12px">Password</label>
+    <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
+    <div style="display:flex;gap:10px;margin-top:20px">
+      <button style="flex:1" onclick="signIn()">Sign In</button>
+      <button class="secondary" style="flex:1" onclick="signUp()">Register</button>
+    </div>
+    <div id="authMessage"></div>
+  </div>
+</div>
 
 <aside class="no-print">
 <div class="brand">
@@ -152,24 +173,6 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
 </topbar>
 
 <content>
-
-<!-- LOGIN SCREEN -->
-<div id="loginBox">
-  <div style="text-align:center;margin-bottom:24px">
-    <div class="brand-logo" style="width:54px;height:54px;margin:auto;font-size:24px">🇺🇬</div>
-    <h2 style="margin:12px 0 4px;color:var(--navy)">School Portal Sign In</h2>
-    <p style="color:var(--muted);font-size:13px">Uganda Secondary School Administration</p>
-  </div>
-  <label>Email Address</label>
-  <input id="email" type="email" placeholder="admin@school.ug" autocomplete="email">
-  <label style="margin-top:12px">Password</label>
-  <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
-  <div style="display:flex;gap:10px;margin-top:20px">
-    <button style="flex:1" onclick="signIn()">Sign In</button>
-    <button class="secondary" style="flex:1" onclick="signUp()">Register</button>
-  </div>
-  <div id="authMessage"></div>
-</div>
 
 <!-- APP DASHBOARD CONTAINER -->
 <div id="app" class="hidden">
@@ -587,14 +590,14 @@ async function signOut(){
   await db.auth.signOut();
   currentUser=null;currentSchoolId=null;
   $("app").classList.add("hidden");
-  $("loginBox").classList.remove("hidden");
+  $("loginScreen").classList.remove("hidden");
 }
 
 async function startApp(user){
   currentUser=user;
   $("userNameDisplay").textContent=user.email.split("@")[0];
   $("userAvatar").textContent=user.email[0].toUpperCase();
-  $("loginBox").classList.add("hidden");
+  $("loginScreen").classList.add("hidden");
   $("app").classList.remove("hidden");
   $("currentDateStr").textContent=new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
   await loadSchools();
@@ -1121,7 +1124,7 @@ function handleGlobalSearch(q){
 db.auth.onAuthStateChange((event)=>{
   if(event==="SIGNED_OUT"){
     currentUser=null;currentSchoolId=null;
-    $("app").classList.add("hidden");$("loginBox").classList.remove("hidden");
+    $("app").classList.add("hidden");$("loginScreen").classList.remove("hidden");
   }
 });
 
