@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#12395e">
-<title>Uganda School Manager Pro</title>
+<title>Uganda Secondary School Manager Pro</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--blue:#195ac6;--navy:#12395e;--bg:#f4f7fc;--green:#167447;--red:#b42332;--ink:#182538;--muted:#637083;--line:#e2e8f0}
@@ -60,14 +60,14 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 </head>
 <body>
 <header>
-<h1>Uganda School Manager Pro</h1>
-<p>Administration • Fees • Expenses • Staff Payroll • Academic Report Cards</p>
+<h1>Uganda Secondary School Manager Pro</h1>
+<p>S.1 - S.6 Administration • Fees • Expenses • Staff Payroll • Academic Report Cards</p>
 </header>
 <main>
 
 <section id="loginBox">
 <h2>Welcome back</h2>
-<p>Sign in or create an account to manage your school.</p>
+<p>Sign in or create an account to manage your secondary school.</p>
 <label>Email address</label>
 <input id="email" type="email" placeholder="you@example.com" autocomplete="email">
 <label>Password</label>
@@ -101,7 +101,7 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 
 <nav class="no-print" id="mainNav">
 <button data-page="dashboard" onclick="showPage('dashboard')">Dashboard</button>
-<button data-page="classes" onclick="showPage('classes')">Classes</button>
+<button data-page="classes" onclick="showPage('classes')">Classes (S.1-S.6)</button>
 <button data-page="students" onclick="showPage('students')">Students</button>
 <button data-page="archived" onclick="showPage('archived')">Archived</button>
 <button data-page="payments" onclick="showPage('payments')">Payments</button>
@@ -119,28 +119,28 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 </div>
 <div class="grid">
 <div class="stat"><span>Active students</span><strong id="statStudents">0</strong></div>
-<div class="stat"><span>Classes</span><strong id="statClasses">0</strong></div>
+<div class="stat"><span>Active classes</span><strong id="statClasses">0</strong></div>
 <div class="stat"><span>Expected fees</span><strong id="statExpected">UGX 0</strong></div>
 <div class="stat"><span>Fees collected</span><strong id="statCollected">UGX 0</strong></div>
 <div class="stat"><span>Outstanding fees</span><strong id="statBalance">UGX 0</strong></div>
 <div class="stat"><span>Total expenses</span><strong id="statExpenses">UGX 0</strong></div>
 <div class="stat"><span>Staff payroll</span><strong id="statSalary">UGX 0</strong></div>
 </div>
-<p class="small">Archived students are excluded from active student and fee totals. Amounts are in Uganda shillings.</p>
+<p class="small">Restricted strictly to S.1 through S.6 levels. Amounts are in Uganda shillings.</p>
 <hr>
-<h3>Students by class</h3>
+<h3>Students by class (S.1 - S.6)</h3>
 <div id="dashboardClasses" class="grid"></div>
 </section>
 
 <section id="classes" class="hidden">
 <div class="section-head">
-<h2>Class management</h2>
+<h2>Class management (S.1 - S.6)</h2>
 <button class="secondary no-print" onclick="window.print()">Print register</button>
 </div>
-<p class="small">Students are grouped by their class names (e.g. P1, P2, Senior 1).</p>
+<p class="small">Showing secondary school classes from Senior 1 to Senior 6.</p>
 <div class="form-grid">
-<div><label>Search classes</label><input id="classSearch" placeholder="Type a class name" oninput="renderClasses()"></div>
-<div><label>Choose class</label><select id="classFilter" onchange="renderClassStudents()"><option value="">All classes</option></select></div>
+<div><label>Search classes</label><input id="classSearch" placeholder="Type S.1, S.2, etc." oninput="renderClasses()"></div>
+<div><label>Choose class</label><select id="classFilter" onchange="renderClassStudents()"><option value="">All classes (S.1 - S.6)</option></select></div>
 <div><label>Search register</label><input id="classStudentSearch" placeholder="Name or admission number" oninput="renderClassStudents()"></div>
 </div>
 <div id="classCards" class="grid"></div>
@@ -157,9 +157,19 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 <section id="students" class="hidden">
 <h2>Student registration</h2>
 <div class="form-grid">
-<div><label>Admission number *</label><input id="admission" placeholder="e.g. S001"></div>
+<div><label>Admission number *</label><input id="admission" placeholder="e.g. S.1/001"></div>
 <div><label>Student full name *</label><input id="studentName" placeholder="Full name"></div>
-<div><label>Class *</label><input id="studentClass" list="classOptions" placeholder="e.g. Senior 1"><datalist id="classOptions"></datalist></div>
+<div>
+<label>Class (S.1 to S.6) *</label>
+<select id="studentClass">
+<option value="S.1">Senior 1 (S.1)</option>
+<option value="S.2">Senior 2 (S.2)</option>
+<option value="S.3">Senior 3 (S.3)</option>
+<option value="S.4">Senior 4 (S.4)</option>
+<option value="S.5">Senior 5 (S.5)</option>
+<option value="S.6">Senior 6 (S.6)</option>
+</select>
+</div>
 <div><label>Expected fees (UGX)</label><input id="expectedFees" type="number" min="0" value="0"></div>
 <div><label>Parent WhatsApp number</label><input id="parentWhatsApp" type="tel" placeholder="e.g. 2567XXXXXXXX"></div>
 </div>
@@ -210,10 +220,10 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 
 <section id="expenses" class="hidden">
 <h2>School expense tracking</h2>
-<p class="small">Log daily expenditures like utilities, feeding, chalk, repairs, and administrative running costs.</p>
+<p class="small">Log daily expenditures like utilities, feeding, textbooks, laboratory reagents, and administrative running costs.</p>
 <div class="form-grid">
-<div><label>Expense title / description *</label><input id="expTitle" placeholder="e.g. Bought exercise books & chalk"></div>
-<div><label>Category</label><select id="expCategory"><option>Teaching Materials</option><option>Food & Feeding</option><option>Utilities (Power/Water)</option><option>Maintenance & Repairs</option><option>Transport</option><option>Administration</option><option>Other</option></select></div>
+<div><label>Expense title / description *</label><input id="expTitle" placeholder="e.g. Bought Chemistry lab chemicals"></div>
+<div><label>Category</label><select id="expCategory"><option>Teaching Materials & Books</option><option>Laboratory Reagents</option><option>Food & Feeding</option><option>Utilities (Power/Water)</option><option>Maintenance & Repairs</option><option>Transport</option><option>Administration</option><option>Other</option></select></div>
 <div><label>Amount (UGX) *</label><input id="expAmount" type="number" min="1" placeholder="Amount"></div>
 <div><label>Date</label><input id="expDate" type="date"></div>
 <div><label>Payment method</label><select id="expMethod"><option>Cash</option><option>Mobile Money</option><option>Bank</option><option>Other</option></select></div>
@@ -235,7 +245,7 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 <div class="form-grid">
 <div><label>Staff number</label><input id="staffNo" placeholder="e.g. T001"></div>
 <div><label>Full name</label><input id="staffName" placeholder="Full name"></div>
-<div><label>Position</label><input id="staffPosition" placeholder="e.g. Teacher"></div>
+<div><label>Position</label><input id="staffPosition" placeholder="e.g. Teacher / Director of Studies"></div>
 <div><label>Monthly salary (UGX)</label><input id="staffSalary" type="number" min="0" value="0"></div>
 <div><label>Phone number</label><input id="staffPhone" type="tel" placeholder="Phone number"></div>
 </div>
@@ -273,24 +283,24 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 </section>
 
 <section id="academics" class="hidden">
-<h2>Academic marks & report cards</h2>
-<p class="small">Enter student marks per term. Generates UNEB/Standard aggregate scores and printable report cards.</p>
+<h2>Secondary academic marks & report cards (S.1 - S.6)</h2>
+<p class="small">Enter student subject marks. Generates UNEB standard grade aggregates and printable report cards.</p>
 <div class="form-grid">
 <div><label>Select class</label><select id="acadClassFilter" onchange="renderAcadStudents()"><option value="">Choose class</option></select></div>
 <div><label>Select student</label><select id="acadStudentSelect"></select></div>
 <div><label>Term / Academic Year</label><input id="acadTerm" placeholder="e.g. Term 1, 2026"></div>
 </div>
 <hr>
-<h3>Subject Marks (Out of 100)</h3>
+<h3>Subject Scores (Out of 100)</h3>
 <div class="form-grid">
 <div><label>Mathematics</label><input id="markMath" type="number" min="0" max="100" placeholder="0-100"></div>
-<div><label>English</label><input id="markEng" type="number" min="0" max="100" placeholder="0-100"></div>
-<div><label>Science / Physics</label><input id="markSci" type="number" min="0" max="100" placeholder="0-100"></div>
-<div><label>SST / Chemistry</label><input id="markSst" type="number" min="0" max="100" placeholder="0-100"></div>
-<div><label>Additional Subject (Optional)</label><input id="markOpt" type="number" min="0" max="100" placeholder="0-100"></div>
+<div><label>English Language</label><input id="markEng" type="number" min="0" max="100" placeholder="0-100"></div>
+<div><label>Physics / History</label><input id="markSci" type="number" min="0" max="100" placeholder="0-100"></div>
+<div><label>Chemistry / Geography</label><input id="markSst" type="number" min="0" max="100" placeholder="0-100"></div>
+<div><label>Biology / Literature / Entrepreneurship</label><input id="markOpt" type="number" min="0" max="100" placeholder="0-100"></div>
 </div>
 <div class="form-grid">
-<div><label>Class Teacher Remarks</label><input id="acadTeacherRemarks" placeholder="e.g. Good performance, disciplined student."></div>
+<div><label>Class Teacher Remarks</label><input id="acadTeacherRemarks" placeholder="e.g. Good grasp of concepts, keep it up."></div>
 <div><label>Headteacher Remarks</label><input id="acadHeadRemarks" placeholder="e.g. Promoted to next class."></div>
 </div>
 <button onclick="saveAcademics()">Save academic record & generate report</button>
@@ -299,7 +309,7 @@ hr{border:0;border-top:1px solid var(--line);margin:22px 0}
 <h3>Saved academic records</h3>
 <div class="table-wrap">
 <table>
-<thead><tr><th>Term</th><th>Student</th><th>Class</th><th>Math</th><th>Eng</th><th>Sci</th><th>SST</th><th>Total</th><th>Actions</th></tr></thead>
+<thead><tr><th>Term</th><th>Student</th><th>Class</th><th>Math</th><th>Eng</th><th>Sub 3</th><th>Sub 4</th><th>Sub 5</th><th>Total</th><th>Actions</th></tr></thead>
 <tbody id="acadBody"></tbody>
 </table>
 </div>
@@ -331,6 +341,8 @@ const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 
 let currentUser=null,currentSchoolId=null;
 let schools=[],students=[],payments=[],staff=[],salaries=[],expenses=[],academics=[];
+
+const ALLOWED_CLASSES=["S.1","S.2","S.3","S.4","S.5","S.6"];
 
 const $=id=>document.getElementById(id);
 const money=n=>"UGX "+Number(n||0).toLocaleString("en-UG");
@@ -437,8 +449,7 @@ function renderAll(){
 }
 
 function classNames(){
- return [...new Set(activeStudents().map(s=>String(s.class_name||"").trim()).filter(Boolean))]
- .sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:"base"}));
+ return ALLOWED_CLASSES;
 }
 
 function renderDashboard(){
@@ -447,34 +458,33 @@ function renderDashboard(){
  const totalSal=salaries.reduce((a,p)=>a+Number(p.amount||0),0);
  
  $("statStudents").textContent=list.length;
- $("statClasses").textContent=classNames().length;
+ $("statClasses").textContent=ALLOWED_CLASSES.length;
  $("statExpected").textContent=money(exp);
  $("statCollected").textContent=money(col);
  $("statBalance").textContent=money(Math.max(0,exp-col));
  $("statExpenses").textContent=money(totalExp);
  $("statSalary").textContent=money(totalSal);
 
- const classes=classNames();
- $("dashboardClasses").innerHTML=classes.map(c=>{
+ $("dashboardClasses").innerHTML=ALLOWED_CLASSES.map(c=>{
   const members=list.filter(s=>String(s.class_name||"").trim()===c);
   const expectedTotal=members.reduce((a,s)=>a+expected(s),0);
   const paidTotal=members.reduce((a,s)=>a+paid(s.id),0);
   return '<div class="class-card"><h3>'+esc(c)+'</h3><div class="class-count">'+members.length+'</div><p>Students enrolled</p><p>Expected: <b>'+money(expectedTotal)+'</b></p><p>Collected: <b>'+money(paidTotal)+'</b></p><button onclick="openClassRegister('+JSON.stringify(c).replace(/</g,"\\u003c")+')">View class</button></div>';
- }).join("")||'<p class="small">Register students and assign a class to see class summaries here.</p>';
+ }).join("");
 }
 
 function renderClasses(){
- const classes=classNames(),search=($("classSearch")?.value||"").toLowerCase();
+ const search=($("classSearch")?.value||"").toLowerCase();
  const filter=$("classFilter"),old=filter.value;
- filter.innerHTML='<option value="">All classes</option>'+classes.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
- if(classes.includes(old))filter.value=old;
- $("classOptions").innerHTML=classes.map(c=>'<option value="'+esc(c)+'"></option>').join("");
- const visible=classes.filter(c=>c.toLowerCase().includes(search));
+ filter.innerHTML='<option value="">All classes (S.1 - S.6)</option>'+ALLOWED_CLASSES.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
+ if(ALLOWED_CLASSES.includes(old))filter.value=old;
+ 
+ const visible=ALLOWED_CLASSES.filter(c=>c.toLowerCase().includes(search));
  $("classCards").innerHTML=visible.map(c=>{
   const members=activeStudents().filter(s=>String(s.class_name||"").trim()===c);
   const ex=members.reduce((a,s)=>a+expected(s),0),col=members.reduce((a,s)=>a+paid(s.id),0);
   return '<div class="class-card"><h3>'+esc(c)+'</h3><div class="class-count">'+members.length+'</div><p>Students enrolled</p><p>Expected fees: <b>'+money(ex)+'</b></p><p>Fees paid: <b>'+money(col)+'</b></p><p>Outstanding: <b>'+money(Math.max(0,ex-col))+'</b></p><button onclick="openClassRegister('+JSON.stringify(c).replace(/</g,"\\u003c")+')">View register</button></div>';
- }).join("")||'<p>No classes found. Register students with a class name first.</p>';
+ }).join("");
  renderClassStudents();renderPaymentClass();
 }
 
@@ -487,26 +497,26 @@ function renderClassStudents(){
  if(!$("classFilter"))return;
  const selected=$("classFilter").value,q=($("classStudentSearch")?.value||"").toLowerCase();
  const list=activeStudents().filter(s=>(!selected||String(s.class_name||"").trim()===selected)&&[s.admission_no,s.full_name,s.class_name].some(v=>String(v||"").toLowerCase().includes(q))).sort((a,b)=>String(a.full_name||"").localeCompare(String(b.full_name||"")));
- $("classRegisterTitle").textContent=(selected?"Class register: "+selected:"All class registers")+" ("+list.length+" students)";
+ $("classRegisterTitle").textContent=(selected?"Class register: "+selected:"All class registers (S.1 - S.6)")+" ("+list.length+" students)";
  $("classStudentsBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td></tr>').join("")||'<tr><td colspan="6">No students found for this selection.</td></tr>';
 }
 
 function renderStudents(){
  const q=($("studentSearch")?.value||"").toLowerCase();
  const list=activeStudents().filter(s=>[s.admission_no,s.full_name,s.class_name].some(v=>String(v||"").toLowerCase().includes(q)));
- $("studentsBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td><td><div class="actions"><button onclick="archiveStudent('+JSON.stringify(s.id)+')">Archive</button><button class="secondary" onclick="deleteStudent('+JSON.stringify(s.id)+')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="7">No active students found.</td></tr>';
+ $("studentsBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td><td><div class="actions"><button onclick="archiveStudent(\''+s.id+'\')">Archive</button><button class="secondary" onclick="deleteStudent(\''+s.id+'\')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="7">No active students found.</td></tr>';
 }
 
 function renderArchived(){
  const list=students.filter(s=>String(s.status||"Active").toLowerCase()==="archived");
- $("archivedBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td><div class="actions"><button onclick="restoreStudent('+JSON.stringify(s.id)+')">Restore</button><button class="danger" onclick="deleteStudent('+JSON.stringify(s.id)+')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="5">No archived students.</td></tr>';
+ $("archivedBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td><div class="actions"><button onclick="restoreStudent(\''+s.id+'\')">Restore</button><button class="danger" onclick="deleteStudent(\''+s.id+'\')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="5">No archived students.</td></tr>';
 }
 
 function renderPaymentClass(){
  const el=$("paymentClass");if(!el)return;
- const old=el.value,classes=classNames();
- el.innerHTML='<option value="">All classes</option>'+classes.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
- if(classes.includes(old))el.value=old;
+ const old=el.value;
+ el.innerHTML='<option value="">All classes</option>'+ALLOWED_CLASSES.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
+ if(ALLOWED_CLASSES.includes(old))el.value=old;
 }
 
 function renderStudentSelect(){
@@ -519,35 +529,39 @@ function renderStudentSelect(){
 }
 
 async function addStudent(){
- if(!currentSchoolId){message("studentMessage","Create or select a school first.",true);return;}
  const admission_no=$("admission").value.trim(),full_name=$("studentName").value.trim(),class_name=$("studentClass").value.trim(),fees=Number($("expectedFees").value||0),parent_whatsapp=$("parentWhatsApp").value.trim();
- if(!admission_no||!full_name||!class_name||!Number.isFinite(fees)||fees<0){message("studentMessage","Complete the required fields and enter valid fees.",true);return;}
+ if(!currentSchoolId||!admission_no||!full_name||!class_name||!Number.isFinite(fees)||fees<0){message("studentMessage","Complete required fields and enter valid fees.",true);return;}
  if(students.some(s=>String(s.admission_no).toLowerCase()===admission_no.toLowerCase())){message("studentMessage","Admission number already exists.",true);return;}
  const base={school_id:currentSchoolId,admission_no,full_name,class_name,parent_whatsapp:parent_whatsapp||null,status:"Active"};
  let r=await db.from("students").insert({...base,fees_expected:fees}).select().single();
  if(r.error&&/fees_expected|fee_expected|column/i.test(r.error.message))r=await db.from("students").insert({...base,fee_expected:fees}).select().single();
  if(r.error){message("studentMessage","Registration failed: "+r.error.message,true);return;}
- ["admission","studentName","studentClass","parentWhatsApp"].forEach(id=>$(id).value="");
+ ["admission","studentName","parentWhatsApp"].forEach(id=>$(id).value="");
  $("expectedFees").value="0";await refreshAll();message("studentMessage","Student registered successfully.");
 }
 
 async function archiveStudent(id){
- const s=students.find(x=>String(x.id)===String(id));if(!s||!confirm("Archive "+s.full_name+"?"))return;
+ const s=students.find(x=>String(x.id)===String(id));
+ if(!s||!confirm("Archive "+s.full_name+"?"))return;
  const {error}=await db.from("students").update({status:"Archived"}).eq("id",id).eq("school_id",currentSchoolId);
- if(error){alert("Could not archive: "+error.message);return;}await refreshAll();
+ if(error){console.error("Archive error:",error);alert("Could not archive: "+error.message);return;}
+ await refreshAll();
 }
 
 async function restoreStudent(id){
  const {error}=await db.from("students").update({status:"Active"}).eq("id",id).eq("school_id",currentSchoolId);
- if(error){alert("Could not restore: "+error.message);return;}await refreshAll();
+ if(error){console.error("Restore error:",error);alert("Could not restore: "+error.message);return;}
+ await refreshAll();
 }
 
 async function deleteStudent(id){
- const s=students.find(x=>String(x.id)===String(id));if(!s)return;
+ const s=students.find(x=>String(x.id)===String(id));
+ if(!s)return;
  if(payments.some(p=>String(p.student_id)===String(id))){alert("This student has payment history. Archive the student instead.");return;}
  if(!confirm("Permanently delete "+s.full_name+"?"))return;
  const {error}=await db.from("students").delete().eq("id",id).eq("school_id",currentSchoolId);
- if(error){alert("Could not delete: "+error.message);return;}await refreshAll();
+ if(error){console.error("Delete error:",error);alert("Could not delete: "+error.message);return;}
+ await refreshAll();
 }
 
 async function recordPayment(){
@@ -555,7 +569,7 @@ async function recordPayment(){
  if(!currentSchoolId||!studentId||!Number.isFinite(amount)||amount<=0){message("paymentMessage","Select a student and enter an amount greater than zero.",true);return;}
  const s=students.find(x=>String(x.id)===String(studentId));
  if(!s||String(s.status||"Active").toLowerCase()==="archived"){message("paymentMessage","Select an active student.",true);return;}
- if(amount>balance(s)&&!confirm("Payment exceeds the current balance. Record anyway?"))return;
+ if(amount>balance(s)&&!confirm("Payment exceeds current balance. Record anyway?"))return;
  const {data,error}=await db.from("payments").insert({school_id:currentSchoolId,student_id:studentId,amount,method,reference:reference||null,paid_at:new Date().toISOString()}).select().single();
  if(error){message("paymentMessage","Could not record payment: "+error.message,true);return;}
  $("paymentAmount").value="";$("paymentReference").value="";
@@ -567,7 +581,7 @@ async function recordPayment(){
 function renderPayments(){
  $("paymentsBody").innerHTML=payments.map(p=>{
   const s=students.find(x=>String(x.id)===String(p.student_id));
-  return '<tr><td class="date-cell">'+esc(readableDate(p.paid_at))+'</td><td>'+esc(receiptNo(p))+'</td><td class="name-cell">'+esc(s?.full_name||"Unknown student")+'</td><td>'+esc(s?.class_name||"—")+'</td><td>'+money(p.amount)+'</td><td>'+esc(p.method||"")+'</td><td>'+esc(p.reference||"—")+'</td><td><div class="actions"><button onclick="printReceiptById('+JSON.stringify(p.id)+')">Receipt</button>'+(s?.parent_whatsapp?'<button class="secondary" onclick="whatsappById('+JSON.stringify(p.id)+')">WhatsApp</button>':"")+'</div></td></tr>';
+  return '<tr><td class="date-cell">'+esc(readableDate(p.paid_at))+'</td><td>'+esc(receiptNo(p))+'</td><td class="name-cell">'+esc(s?.full_name||"Unknown student")+'</td><td>'+esc(s?.class_name||"—")+'</td><td>'+money(p.amount)+'</td><td>'+esc(p.method||"")+'</td><td>'+esc(p.reference||"—")+'</td><td><div class="actions"><button onclick="printReceiptById(\''+p.id+'\')">Receipt</button>'+(s?.parent_whatsapp?'<button class="secondary" onclick="whatsappById(\''+p.id+'\')">WhatsApp</button>':"")+'</div></td></tr>';
  }).join("")||'<tr><td colspan="8">No payments recorded.</td></tr>';
 }
 
@@ -589,7 +603,6 @@ function sendWhatsApp(s,p){
 }
 function whatsappById(id){const p=payments.find(x=>String(x.id)===String(id)),s=p&&students.find(x=>String(x.id)===String(p.student_id));if(p&&s)sendWhatsApp(s,p);}
 
-// Expenses Management
 async function addExpense(){
  const title=$("expTitle").value.trim(),category=$("expCategory").value,amount=Number($("expAmount").value),date=$("expDate").value||new Date().toISOString().slice(0,10),method=$("expMethod").value;
  if(!currentSchoolId||!title||!Number.isFinite(amount)||amount<=0){message("expenseMessage","Enter a title and valid expense amount.",true);return;}
@@ -600,13 +613,13 @@ async function addExpense(){
 }
 
 function renderExpenses(){
- $("expensesBody").innerHTML=expenses.map(e=>'<tr><td class="date-cell">'+esc(e.date)+'</td><td class="name-cell">'+esc(e.title)+'</td><td>'+esc(e.category)+'</td><td>'+money(e.amount)+'</td><td>'+esc(e.method)+'</td><td><button class="secondary" onclick="deleteExpense('+JSON.stringify(e.id)+')">Delete</button></td></tr>').join("")||'<tr><td colspan="6">No expenses recorded.</td></tr>';
+ $("expensesBody").innerHTML=expenses.map(e=>'<tr><td class="date-cell">'+esc(e.date)+'</td><td class="name-cell">'+esc(e.title)+'</td><td>'+esc(e.category)+'</td><td>'+money(e.amount)+'</td><td>'+esc(e.method)+'</td><td><button class="secondary" onclick="deleteExpense(\''+e.id+'\')">Delete</button></td></tr>').join("")||'<tr><td colspan="6">No expenses recorded.</td></tr>';
 }
 
 async function deleteExpense(id){
  if(!confirm("Delete this expense record?"))return;
  const {error}=await db.from("expenses").delete().eq("id",id).eq("school_id",currentSchoolId);
- if(error){alert("Could not delete expense: "+error.message);return;}
+ if(error){console.error("Delete expense error:",error);alert("Could not delete expense: "+error.message);return;}
  await refreshAll();
 }
 
@@ -620,7 +633,7 @@ async function addStaff(){
 }
 
 function renderStaff(){
- $("staffBody").innerHTML=staff.map(s=>'<tr><td>'+esc(s.staff_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.position)+'</td><td>'+money(s.monthly_salary)+'</td><td>'+esc(s.phone||"—")+'</td><td><button class="secondary" onclick="deleteStaff('+JSON.stringify(s.id)+')">Delete</button></td></tr>').join("")||'<tr><td colspan="6">No staff registered.</td></tr>';
+ $("staffBody").innerHTML=staff.map(s=>'<tr><td>'+esc(s.staff_no)+'</td><td class="name-cell">'+esc(s.full_name)+'</td><td>'+esc(s.position)+'</td><td>'+money(s.monthly_salary)+'</td><td>'+esc(s.phone||"—")+'</td><td><button class="secondary" onclick="deleteStaff(\''+s.id+'\')">Delete</button></td></tr>').join("")||'<tr><td colspan="6">No staff registered.</td></tr>';
 }
 
 function renderStaffSelect(){
@@ -633,7 +646,8 @@ async function deleteStaff(id){
  if(salaries.some(p=>String(p.staff_id)===String(id))){alert("This staff member has salary history.");return;}
  if(!confirm("Delete this staff member?"))return;
  const {error}=await db.from("staff").delete().eq("id",id).eq("school_id",currentSchoolId);
- if(error){alert("Could not delete staff: "+error.message);return;}await refreshAll();
+ if(error){console.error("Delete staff error:",error);alert("Could not delete staff: "+error.message);return;}
+ await refreshAll();
 }
 
 async function recordSalary(){
@@ -652,12 +666,11 @@ function renderPayroll(){
  }).join("")||'<tr><td colspan="6">No salary payments recorded.</td></tr>';
 }
 
-// Academics & Report Cards
 function renderAcadClassSelect(){
  const el=$("acadClassFilter");if(!el)return;
- const old=el.value,classes=classNames();
- el.innerHTML='<option value="">Choose class</option>'+classes.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
- if(classes.includes(old))el.value=old;
+ const old=el.value;
+ el.innerHTML='<option value="">Choose class</option>'+ALLOWED_CLASSES.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
+ if(ALLOWED_CLASSES.includes(old))el.value=old;
 }
 
 function renderAcadStudents(){
@@ -688,15 +701,15 @@ async function saveAcademics(){
  ["markMath","markEng","markSci","markSst","markOpt","acadTeacherRemarks","acadHeadRemarks"].forEach(id=>$(id).value="");
  await refreshAll();
  message("acadMessage","Academic record saved successfully.");
- if(confirm("Report record saved. Print/View Report Card now?"))printReportCard(data);
+ if(confirm("Report record saved. Print report card now?"))printReportCard(data);
 }
 
 function renderAcademicsTable(){
  $("acadBody").innerHTML=academics.map(a=>{
   const s=students.find(x=>String(x.id)===String(a.student_id));
   const total=Number(a.math||0)+Number(a.eng||0)+Number(a.sci||0)+Number(a.sst||0)+Number(a.opt||0);
-  return '<tr><td>'+esc(a.term)+'</td><td class="name-cell">'+esc(s?.full_name||"Unknown")+'</td><td>'+esc(s?.class_name||"—")+'</td><td>'+a.math+'</td><td>'+a.eng+'</td><td>'+a.sci+'</td><td>'+a.sst+'</td><td><b>'+total+'</b></td><td><div class="actions"><button onclick="printReportCardById('+JSON.stringify(a.id)+')">Report Card</button><button class="secondary" onclick="deleteAcademics('+JSON.stringify(a.id)+')">Delete</button></div></td></tr>';
- }).join("")||'<tr><td colspan="9">No academic records found.</td></tr>';
+  return '<tr><td>'+esc(a.term)+'</td><td class="name-cell">'+esc(s?.full_name||"Unknown")+'</td><td>'+esc(s?.class_name||"—")+'</td><td>'+a.math+'</td><td>'+a.eng+'</td><td>'+a.sci+'</td><td>'+a.sst+'</td><td>'+a.opt+'</td><td><b>'+total+'</b></td><td><div class="actions"><button onclick="printReportCardById(\''+a.id+'\')">Report Card</button><button class="secondary" onclick="deleteAcademics(\''+a.id+'\')">Delete</button></div></td></tr>';
+ }).join("")||'<tr><td colspan="10">No academic records found.</td></tr>';
 }
 
 function printReportCardById(id){const a=academics.find(x=>String(x.id)===String(id));if(a)printReportCard(a);}
@@ -705,8 +718,8 @@ function printReportCard(a){
  const s=students.find(x=>String(x.id)===String(a.student_id)),school=schools.find(x=>x.id===currentSchoolId);
  if(!s){alert("Student record not found.");return;}
  const total=Number(a.math||0)+Number(a.eng||0)+Number(a.sci||0)+Number(a.sst||0)+Number(a.opt||0);
- const avg=(total/4).toFixed(1);
- const html='<!doctype html><html><head><meta charset="utf-8"><title>Termly Report Card</title><style>body{font-family:Arial;padding:24px}.card{max-width:700px;margin:auto;border:2px solid #12395e;padding:24px}h2,p.center{text-align:center;margin:4px 0}table{width:100%;border-collapse:collapse;margin:16px 0}th,td{padding:10px;border:1px solid #aaa;text-align:left;font-size:13px}th{background:#f0f5fc}.remarks{background:#f8fafc;padding:12px;border:1px solid #cbd5e1;margin-top:14px;border-radius:6px}</style></head><body><div class="card"><h2>'+esc(school?.name||"School")+'</h2><p class="center"><b>OFFICIAL TERMLY ACADEMIC REPORT CARD</b></p><p class="center">'+esc(a.term)+'</p><hr><p><b>Admission No:</b> '+esc(s.admission_no)+' | <b>Student Name:</b> '+esc(s.full_name)+' | <b>Class:</b> '+esc(s.class_name)+'</p><table><thead><tr><th>Subject</th><th>Score (100)</th><th>Grade / Remark</th></tr></thead><tbody><tr><td>Mathematics</td><td>'+a.math+'</td><td>'+(a.math>=75?'Distinction 1':a.math>=50?'Credit':a.math>=35?'Pass':'Fail')+'</td></tr><tr><td>English</td><td>'+a.eng+'</td><td>'+(a.eng>=75?'Distinction 1':a.eng>=50?'Credit':a.eng>=35?'Pass':'Fail')+'</td></tr><tr><td>Science / Physics</td><td>'+a.sci+'</td><td>'+(a.sci>=75?'Distinction 1':a.sci>=50?'Credit':a.sci>=35?'Pass':'Fail')+'</td></tr><tr><td>SST / Chemistry</td><td>'+a.sst+'</td><td>'+(a.sst>=75?'Distinction 1':a.sst>=50?'Credit':a.sst>=35?'Pass':'Fail')+'</td></tr>'+(a.opt>0?'<tr><td>Optional Subject</td><td>'+a.opt+'</td><td>Pass</td></tr>':'')+'<tr><td><b>Total Marks</b></td><td colspan="2"><b>'+total+' / 400 (Average: '+avg+'%)</b></td></tr></tbody></table><div class="remarks"><p><b>Class Teacher Remarks:</b> '+esc(a.teacher_remarks||"None")+'</p><p><b>Headteacher Remarks:</b> '+esc(a.head_remarks||"None")+'</p></div><p style="margin-top:30px">Headteacher Signature: ___________________ Stamp: ___________________</p></div><script>window.onload=function(){window.print()}<\/script></body></html>';
+ const avg=(total/5).toFixed(1);
+ const html='<!doctype html><html><head><meta charset="utf-8"><title>Termly Report Card</title><style>body{font-family:Arial;padding:24px}.card{max-width:700px;margin:auto;border:2px solid #12395e;padding:24px}h2,p.center{text-align:center;margin:4px 0}table{width:100%;border-collapse:collapse;margin:16px 0}th,td{padding:10px;border:1px solid #aaa;text-align:left;font-size:13px}th{background:#f0f5fc}.remarks{background:#f8fafc;padding:12px;border:1px solid #cbd5e1;margin-top:14px;border-radius:6px}</style></head><body><div class="card"><h2>'+esc(school?.name||"School")+'</h2><p class="center"><b>OFFICIAL SEC. SCHOOL TERMLY REPORT CARD</b></p><p class="center">'+esc(a.term)+'</p><hr><p><b>Admission No:</b> '+esc(s.admission_no)+' | <b>Student Name:</b> '+esc(s.full_name)+' | <b>Class:</b> '+esc(s.class_name)+'</p><table><thead><tr><th>Subject</th><th>Score (100)</th><th>Grade / Remark</th></tr></thead><tbody><tr><td>Mathematics</td><td>'+a.math+'</td><td>'+(a.math>=75?'Distinction':a.math>=50?'Credit':a.math>=35?'Pass':'Fail')+'</td></tr><tr><td>English Language</td><td>'+a.eng+'</td><td>'+(a.eng>=75?'Distinction':a.eng>=50?'Credit':a.eng>=35?'Pass':'Fail')+'</td></tr><tr><td>Subject 3</td><td>'+a.sci+'</td><td>'+(a.sci>=75?'Distinction':a.sci>=50?'Credit':a.sci>=35?'Pass':'Fail')+'</td></tr><tr><td>Subject 4</td><td>'+a.sst+'</td><td>'+(a.sst>=75?'Distinction':a.sst>=50?'Credit':a.sst>=35?'Pass':'Fail')+'</td></tr><tr><td>Subject 5</td><td>'+a.opt+'</td><td>'+(a.opt>=75?'Distinction':a.opt>=50?'Credit':a.opt>=35?'Pass':'Fail')+'</td></tr><tr><td><b>Total / Average</b></td><td colspan="2"><b>'+total+' / 500 (Average Score: '+avg+'%)</b></td></tr></tbody></table><div class="remarks"><p><b>Class Teacher Remarks:</b> '+esc(a.teacher_remarks||"None")+'</p><p><b>Headteacher Remarks:</b> '+esc(a.head_remarks||"None")+'</p></div><p style="margin-top:30px">Headteacher Signature: ___________________ Stamp: ___________________</p></div><script>window.onload=function(){window.print()}<\/script></body></html>';
  const w=window.open("","_blank");if(!w){alert("Allow pop-ups to print report cards.");return;}
  w.document.open();w.document.write(html);w.document.close();
 }
@@ -714,7 +727,7 @@ function printReportCard(a){
 async function deleteAcademics(id){
  if(!confirm("Delete this academic record?"))return;
  const {error}=await db.from("academics").delete().eq("id",id).eq("school_id",currentSchoolId);
- if(error){alert("Could not delete record: "+error.message);return;}
+ if(error){console.error("Delete academics error:",error);alert("Could not delete record: "+error.message);return;}
  await refreshAll();
 }
 
@@ -736,8 +749,8 @@ function exportCSV(type){
   rows=[["Date","Staff No","Name","Month","Amount","Method","Reference"]];
   salaries.forEach(p=>{const s=staff.find(x=>String(x.id)===String(p.staff_id));rows.push([readableDate(p.paid_at),s?.staff_no||"",s?.full_name||"",p.month,p.amount,p.method,p.reference||""]);});
  }else if(type==="academics"){
-  rows=[["Term","Admission","Student","Class","Math","English","Science","SST","Total"]];
-  academics.forEach(a=>{const s=students.find(x=>String(x.id)===String(a.student_id));const tot=Number(a.math||0)+Number(a.eng||0)+Number(a.sci||0)+Number(a.sst||0)+Number(a.opt||0);rows.push([a.term,s?.admission_no||"",s?.full_name||"",s?.class_name||"",a.math,a.eng,a.sci,a.sst,tot]);});
+  rows=[["Term","Admission","Student","Class","Math","English","Sub 3","Sub 4","Sub 5","Total"]];
+  academics.forEach(a=>{const s=students.find(x=>String(x.id)===String(a.student_id));const tot=Number(a.math||0)+Number(a.eng||0)+Number(a.sci||0)+Number(a.sst||0)+Number(a.opt||0);rows.push([a.term,s?.admission_no||"",s?.full_name||"",s?.class_name||"",a.math,a.eng,a.sci,a.sst,a.opt,tot]);});
  }
  const csv=rows.map(row=>row.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
  const url=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"}));
