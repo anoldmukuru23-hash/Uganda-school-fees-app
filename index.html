@@ -605,17 +605,24 @@ async function deleteStudent(id){
  if(!s)return;
  
  let warningMsg="Permanently delete "+s.full_name+"? This action cannot be undone.";
- if(payments.some(p=>String(p.student_id)===String(id))){
-  warningMsg="WARNING: "+s.full_name+" has payment history. Deleting this student will also permanently remove or unlink their payment records. Proceed with permanent deletion?";
- }
- 
  if(!confirm(warningMsg))return;
 
- await db.from("payments").delete().eq("student_id",id).eq("school_id",currentSchoolId);
- await db.from("academics").delete().eq("student_id",id).eq("school_id",currentSchoolId);
+ // 1. Delete linked payment records
+ const payDel=await db.from("payments").delete().eq("student_id",id).eq("school_id",currentSchoolId);
+ if(payDel.error){console.error("Payment delete error:", payDel.error);}
 
+ // 2. Delete linked academic records
+ const acadDel=await db.from("academics").delete().eq("student_id",id).eq("school_id",currentSchoolId);
+ if(acadDel.error){console.error("Academics delete error:", acadDel.error);}
+
+ // 3. Delete student record
  const {error}=await db.from("students").delete().eq("id",id).eq("school_id",currentSchoolId);
- if(error){console.error("Delete error:",error);alert("Could not delete: "+error.message);return;}
+ if(error){
+  console.error("Delete student error:",error);
+  alert("Could not permanently delete student: "+error.message);
+  return;
+ }
+ 
  await refreshAll();
 }
 
