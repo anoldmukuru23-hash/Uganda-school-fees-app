@@ -27,6 +27,11 @@
 *{box-sizing:border-box}
 body{margin:0;font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);display:flex;min-height:100vh}
 
+/* STRICT OVERLAY LOGIN SCREEN */
+#loginScreen{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172a;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px}
+#loginBox{max-width:420px;width:100%;background:white;padding:32px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5);border:1px solid var(--line)}
+.hidden{display:none!important}
+
 aside{width:260px;background:var(--sidebar-bg);color:#cbd5e1;display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:100;box-shadow:2px 0 10px rgba(0,0,0,0.05)}
 .brand{padding:20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #1e293b}
 .brand-logo{background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:18px;box-shadow:0 2px 5px rgba(0,0,0,0.2)}
@@ -94,10 +99,6 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
 .msg.success{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0}
 .msg.error{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
 
-#loginScreen{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172a;z-index:9999;display:flex;align-items:center;justify-content:center}
-#loginBox{max-width:420px;width:100%;background:white;padding:32px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,0.2);border:1px solid var(--line)}
-.hidden{display:none!important}
-
 @media(max-width:768px){
   aside{width:70px}
   aside .brand h2,aside .brand p,.menu span,.school-badge{display:none}
@@ -107,7 +108,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
 </head>
 <body>
 
-<!-- DEDICATED LOGIN SCREEN OVERLAY -->
+<!-- ABSOLUTE LOGIN SCREEN OVERLAY -->
 <div id="loginScreen">
   <div id="loginBox">
     <div style="text-align:center;margin-bottom:24px">
@@ -1124,13 +1125,15 @@ function handleGlobalSearch(q){
 db.auth.onAuthStateChange((event)=>{
   if(event==="SIGNED_OUT"){
     currentUser=null;currentSchoolId=null;
-    $("app").classList.add("hidden");$("loginScreen").classList.remove("hidden");
+    $("app").classList.add("hidden");
+    $("loginScreen").classList.remove("hidden");
   }
 });
 
 (async()=>{
   const {data}=await db.auth.getSession();
   if(data.session)await startApp(data.session.user);
+  else $("loginScreen").classList.remove("hidden");
 })();
 </script>
 </body>
