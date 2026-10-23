@@ -4,134 +4,201 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Uganda School Management System</title>
+<meta name="theme-color" content="#123c69">
+<title>Uganda School Manager</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+:root {
+  --navy:#123c69;
+  --blue:#1769aa;
+  --blue-light:#eaf3ff;
+  --bg:#f3f6fb;
+  --text:#202938;
+  --muted:#65748b;
+  --border:#e1e8f0;
+  --green:#167345;
+  --red:#b42318;
+  --white:#fff;
+}
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f3f6fb;color:#202938}
-header{background:#123c69;color:white;padding:20px}
-header h1{margin:0 0 6px;font-size:23px}
-nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
-button{border:0;border-radius:6px;padding:11px 14px;background:#1769aa;color:white;cursor:pointer}
-button:hover{opacity:.88}
-button:disabled{opacity:.6;cursor:not-allowed}
-nav button{background:#285477}
-main{max-width:1100px;margin:auto;padding:18px}
-.card{background:white;padding:18px;border-radius:10px;margin-bottom:16px;box-shadow:0 2px 8px #0000000d}
-h2{margin-top:0;color:#123c69}
-input,select{width:100%;padding:11px;margin:6px 0 12px;border:1px solid #ccd5df;border-radius:6px;background:white}
-label{font-size:14px;font-weight:bold}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
-.stat{background:white;border-left:4px solid #1769aa;border-radius:8px;padding:17px}
-.stat strong{display:block;font-size:23px;margin-top:8px;overflow-wrap:anywhere}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{text-align:left;padding:10px;border-bottom:1px solid #e3e8ef}
-th{background:#edf3f8}
-.table-wrap{overflow-x:auto}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{background:linear-gradient(120deg,#123c69,#1769aa);color:white;padding:20px}
+.header-inner{max-width:1250px;margin:auto}
+header h1{margin:0;font-size:23px}
+header p{margin:7px 0 0;color:#dbeafe;font-size:14px}
+nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+button{border:0;border-radius:9px;padding:11px 15px;background:var(--blue);color:white;font-weight:600;cursor:pointer}
+button:hover{filter:brightness(.94)}
+button:disabled{opacity:.55;cursor:not-allowed}
+nav button{background:#ffffff20;border:1px solid #ffffff40}
+nav button.active{background:white;color:var(--navy)}
+button.secondary{background:#e8eef6;color:#263b53}
+button.danger{background:#b42318}
+button.small-btn{padding:7px 10px;font-size:12px}
+main{max-width:1250px;margin:auto;padding:20px}
+.card{background:white;border:1px solid var(--border);border-radius:15px;padding:20px;margin-bottom:18px;box-shadow:0 3px 14px #142b4b08}
+h2{color:var(--navy);font-size:20px;margin:0 0 17px}
+h3{font-size:16px;margin:0 0 12px}
+p{line-height:1.5}
+label{display:block;font-weight:600;font-size:13px;margin:9px 0 5px}
+input,select{width:100%;padding:12px;border:1px solid #ccd6e2;border-radius:9px;background:white;color:var(--text);font:inherit;min-height:44px}
+input:focus,select:focus{outline:2px solid #9bc8ff;border-color:var(--blue)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(205px,1fr));gap:15px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0 15px}
+.stat{background:white;border:1px solid var(--border);border-radius:13px;padding:18px;min-width:0}
+.stat .stat-label{font-size:13px;color:var(--muted)}
+.stat strong{display:block;font-size:clamp(19px,3vw,25px);margin-top:9px;color:var(--navy);overflow-wrap:anywhere}
+.stat .stat-note{font-size:12px;color:var(--muted);margin-top:7px}
+.page-title{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 15px}
+.page-title h2{margin:0}
+.small{font-size:13px;color:var(--muted)}
+.notice{padding:13px 15px;border-radius:10px;margin:12px 0;background:#eaf3ff;color:#174777;white-space:pre-wrap;overflow-wrap:anywhere}
+.notice.error{background:#fff0f0;color:var(--red)}
+.notice.success{background:#e8f8ee;color:#166534}
 .hidden{display:none!important}
-.notice{padding:12px;border-radius:6px;background:#edf5ff;margin:12px 0;white-space:pre-wrap;overflow-wrap:anywhere}
-.error{background:#fff0f0;color:#9b1c1c}
-.success{background:#e8f8ec;color:#166534}
-.small{font-size:13px;color:#596579}
-.school-choice{margin:6px 6px 6px 0}
-@media(max-width:500px){
- main{padding:10px}
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:650px}
+th,td{text-align:left;padding:12px;border-bottom:1px solid var(--border);vertical-align:top}
+th{background:#f0f5fa;color:#344b65;white-space:nowrap}
+tbody tr:hover{background:#f9fbfe}
+tbody tr:last-child td{border-bottom:0}
+.badge{display:inline-block;padding:5px 9px;border-radius:30px;font-size:11px;font-weight:700;background:#edf0f4;color:#475467;white-space:nowrap}
+.badge.green{background:#dcfce7;color:#166534}
+.badge.orange{background:#fff0d4;color:#8a4b08}
+.badge.red{background:#fee2e2;color:#991b1b}
+.badge.blue{background:#dbeafe;color:#1d4ed8}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}
+.toolbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:14px}
+.toolbar input,.toolbar select{margin:0}
+.balance-box{background:#f0f7ff;border:1px solid #cfe4ff;border-radius:12px;padding:15px;margin:14px 0}
+.balance-line{display:flex;justify-content:space-between;gap:10px;padding:5px 0;font-size:14px}
+.balance-line strong{text-align:right}
+.balance-line.total{border-top:1px solid #cfe4ff;margin-top:6px;padding-top:10px;font-size:16px;color:var(--navy)}
+.connection{font-size:12px;color:#dbeafe;margin-top:10px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+hr{border:0;border-top:1px solid var(--border);margin:18px 0}
+@media(max-width:600px){
  header{padding:16px}
  header h1{font-size:20px}
- .card{padding:13px}
+ main{padding:11px}
+ .card{padding:14px;border-radius:12px}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .stat{padding:12px}
+ .stat strong{font-size:18px}
+ nav button{padding:9px 10px;font-size:12px}
+ .balance-line{font-size:13px}
+}
+@media(max-width:360px){.grid{grid-template-columns:1fr}}
+@media print{
+ header,nav,.no-print,footer{display:none!important}
+ body{background:white}
+ main{padding:0;max-width:none}
+ .card{box-shadow:none;border:0}
 }
 </style>
 </head>
 
 <body>
 <header>
-  <h1>Uganda School Management System</h1>
-  <div>School fees, students, staff and payroll</div>
-
-  <nav id="navigation" class="hidden">
-    <button type="button" onclick="showPage('dashboard')">Dashboard</button>
-    <button type="button" onclick="showPage('students')">Students</button>
-    <button type="button" onclick="showPage('fees')">Fee Payments</button>
-    <button type="button" onclick="showPage('staff')">Staff</button>
-    <button type="button" onclick="showPage('payroll')">Salary Payments</button>
-    <button type="button" onclick="logout()">Log Out</button>
-  </nav>
+  <div class="header-inner">
+    <h1>Uganda School Manager</h1>
+    <p>Students · School fees · Staff · Payroll</p>
+    <div id="connectionStatus" class="connection">Checking connection…</div>
+    <nav id="navigation" class="hidden">
+      <button data-page="dashboard" onclick="showPage('dashboard')">Dashboard</button>
+      <button data-page="students" onclick="showPage('students')">Students</button>
+      <button data-page="fees" onclick="showPage('fees')">Fee Payments</button>
+      <button data-page="staff" onclick="showPage('staff')">Staff</button>
+      <button data-page="payroll" onclick="showPage('payroll')">Payroll</button>
+      <button onclick="logout()">Log Out</button>
+    </nav>
+  </div>
 </header>
 
 <main>
   <div id="notice" class="notice hidden" role="status" aria-live="polite"></div>
 
   <section id="authPage" class="card">
-    <h2>Sign in or Create Account</h2>
-    <p class="small">Create an account to start setting up your school.</p>
-
+    <h2>Welcome back</h2>
+    <p class="small">Sign in to manage your school's records, fees and payroll.</p>
     <label for="email">Email address</label>
-    <input id="email" type="email" placeholder="you@example.com"
-           autocomplete="email" required>
-
+    <input id="email" type="email" autocomplete="email" placeholder="you@example.com">
     <label for="password">Password</label>
-    <input id="password" type="password" placeholder="At least 6 characters"
-           autocomplete="current-password" minlength="6" required>
-
-    <div class="grid">
-      <button type="button" onclick="signUp()">Create Account</button>
-      <button type="button" onclick="signIn()">Log In</button>
+    <input id="password" type="password" autocomplete="current-password" minlength="6" placeholder="At least 6 characters">
+    <div class="actions">
+      <button onclick="signIn()">Log In</button>
+      <button class="secondary" onclick="signUp()">Create Account</button>
     </div>
   </section>
 
   <section id="schoolPage" class="card hidden">
     <h2>Set Up Your School</h2>
+    <p class="small">Create a school or select one you already manage.</p>
     <label for="schoolName">School name</label>
-    <input id="schoolName" placeholder="Enter your school name">
-    <button type="button" onclick="createSchool()">Create School</button>
-    <div id="schoolList"></div>
+    <input id="schoolName" placeholder="e.g. Kampala Secondary School">
+    <button onclick="createSchool()">Create School</button>
+    <div id="schoolList" class="actions"></div>
   </section>
 
   <div id="appPages" class="hidden">
 
     <section id="dashboard" class="page">
       <div class="card">
-        <h2>Dashboard</h2>
-        <p>Current school: <strong id="currentSchool">School management overview</strong></p>
-        <p class="small">Figures below cover the currently selected school.</p>
+        <div class="page-title">
+          <h2>Dashboard</h2>
+          <button class="secondary no-print" onclick="loadAll()">Refresh</button>
+        </div>
+        <p>Current school: <strong id="currentSchool">—</strong></p>
+        <p class="small">Summary of records for the selected school.</p>
       </div>
 
       <div class="grid">
-        <div class="stat">Registered students<strong id="studentCount">0</strong></div>
-        <div class="stat">Expected fees<strong id="expectedTotal">UGX 0</strong></div>
-        <div class="stat">Fees collected<strong id="collectedTotal">UGX 0</strong></div>
-        <div class="stat">Staff members<strong id="staffCount">0</strong></div>
-        <div class="stat">Salaries paid<strong id="salaryTotal">UGX 0</strong></div>
+        <div class="stat"><div class="stat-label">Registered students</div><strong id="studentCount">0</strong><div class="stat-note">Total student records</div></div>
+        <div class="stat"><div class="stat-label">Expected fees</div><strong id="expectedTotal">UGX 0</strong><div class="stat-note">All registered students</div></div>
+        <div class="stat"><div class="stat-label">Fees collected</div><strong id="collectedTotal">UGX 0</strong><div class="stat-note">Recorded payments</div></div>
+        <div class="stat"><div class="stat-label">Fees outstanding</div><strong id="outstandingTotal">UGX 0</strong><div class="stat-note">Expected fees less payments</div></div>
+        <div class="stat"><div class="stat-label">Staff members</div><strong id="staffCount">0</strong><div class="stat-note">Registered staff</div></div>
+        <div class="stat"><div class="stat-label">Salaries paid</div><strong id="salaryTotal">UGX 0</strong><div class="stat-note">Recorded salary payments</div></div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <h2>Students with outstanding fees</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Admission No.</th><th>Student</th><th>Class</th><th>Expected</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead>
+            <tbody id="outstandingRows"></tbody>
+          </table>
+        </div>
       </div>
     </section>
 
     <section id="students" class="page hidden">
       <div class="card">
         <h2>Register Student</h2>
-
-        <label for="admissionNo">Admission number</label>
-        <input id="admissionNo" placeholder="e.g. ST001">
-
-        <label for="studentName">Full name</label>
-        <input id="studentName" placeholder="Student's full name">
-
-        <label for="studentClass">Class</label>
-        <input id="studentClass" placeholder="e.g. Senior 2">
-
-        <label for="studentFees">Expected fees (UGX)</label>
-        <input id="studentFees" type="number" min="0" step="1" placeholder="500000">
-
-        <button type="button" onclick="addStudent()">Save Student</button>
+        <div class="form-grid">
+          <div><label for="admissionNo">Admission number</label><input id="admissionNo" placeholder="ST001"></div>
+          <div><label for="studentName">Full name</label><input id="studentName" placeholder="Student's full name"></div>
+          <div><label for="studentClass">Class</label><input id="studentClass" placeholder="Senior 2"></div>
+          <div><label for="studentFees">Expected fees (UGX)</label><input id="studentFees" type="number" min="0" step="1" placeholder="500000"></div>
+        </div>
+        <button onclick="addStudent()">Save Student</button>
       </div>
 
       <div class="card">
-        <h2>Students</h2>
+        <div class="page-title"><h2>Student Records</h2><button class="secondary no-print" onclick="exportStudents()">Export CSV</button></div>
+        <div class="toolbar">
+          <input id="studentSearch" placeholder="Search name or admission no." oninput="renderStudents()">
+          <select id="studentFilter" onchange="renderStudents()">
+            <option value="">All fee statuses</option>
+            <option value="Not Paid">Not Paid</option>
+            <option value="Partially Paid">Partially Paid</option>
+            <option value="Fully Paid">Fully Paid</option>
+          </select>
+        </div>
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr><th>Admission No.</th><th>Name</th><th>Class</th><th>Expected Fees</th></tr>
-            </thead>
+            <thead><tr><th>Admission No.</th><th>Name</th><th>Class</th><th>Expected Fees</th><th>Amount Paid</th><th>Remaining Balance</th><th>Status</th></tr></thead>
             <tbody id="studentRows"></tbody>
           </table>
         </div>
@@ -141,34 +208,33 @@ th{background:#edf3f8}
     <section id="fees" class="page hidden">
       <div class="card">
         <h2>Record School Fee Payment</h2>
+        <p class="small">Choose the student to see their current balance before recording a payment.</p>
 
         <label for="feeStudent">Student</label>
-        <select id="feeStudent"></select>
+        <select id="feeStudent" onchange="updateFeePreview()"><option value="">Select student</option></select>
 
-        <label for="feeAmount">Amount (UGX)</label>
-        <input id="feeAmount" type="number" min="1" step="1" placeholder="100000">
+        <div class="balance-box">
+          <div class="balance-line"><span>Expected fees</span><strong id="previewExpected">UGX 0</strong></div>
+          <div class="balance-line"><span>Previously paid</span><strong id="previewPaid">UGX 0</strong></div>
+          <div class="balance-line total"><span>Balance before payment</span><strong id="previewBalance">UGX 0</strong></div>
+          <div class="balance-line"><span>Amount being paid</span><strong id="previewAmount">UGX 0</strong></div>
+          <div class="balance-line total"><span>Estimated balance after payment</span><strong id="previewAfter">UGX 0</strong></div>
+        </div>
 
-        <label for="feeReceipt">Receipt number (optional)</label>
-        <input id="feeReceipt" placeholder="e.g. RCP001">
-
-        <label for="feeMethod">Payment method</label>
-        <select id="feeMethod">
-          <option>Cash</option>
-          <option>Mobile Money</option>
-          <option>Bank</option>
-          <option>Other</option>
-        </select>
-
-        <button type="button" onclick="addFee()">Record Payment</button>
+        <div class="form-grid">
+          <div><label for="feeAmount">Amount (UGX)</label><input id="feeAmount" type="number" min="1" step="1" placeholder="100000" oninput="updateFeePreview()"></div>
+          <div><label for="feeReceipt">Receipt number (optional)</label><input id="feeReceipt" placeholder="Leave blank for automatic receipt"></div>
+          <div><label for="feeMethod">Payment method</label><select id="feeMethod"><option>Cash</option><option>Mobile Money</option><option>Bank</option><option>Other</option></select></div>
+        </div>
+        <button id="recordFeeButton" onclick="addFee()">Record Payment</button>
       </div>
 
       <div class="card">
-        <h2>Fee Payment Records</h2>
+        <div class="page-title"><h2>Fee Payment Records</h2><button class="secondary no-print" onclick="exportFees()">Export CSV</button></div>
+        <div class="toolbar"><input id="feeSearch" placeholder="Search student or receipt" oninput="renderFeeRows()"></div>
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr><th>Date</th><th>Student</th><th>Receipt</th><th>Amount</th><th>Method</th></tr>
-            </thead>
+            <thead><tr><th>Date</th><th>Student</th><th>Receipt</th><th>Amount</th><th>Method</th><th>Balance now</th><th>Receipt</th></tr></thead>
             <tbody id="feeRows"></tbody>
           </table>
         </div>
@@ -178,32 +244,21 @@ th{background:#edf3f8}
     <section id="staff" class="page hidden">
       <div class="card">
         <h2>Register Staff Member</h2>
-
-        <label for="staffNo">Staff number</label>
-        <input id="staffNo" placeholder="e.g. STF001">
-
-        <label for="staffName">Full name</label>
-        <input id="staffName" placeholder="Staff member's name">
-
-        <label for="staffJob">Job title</label>
-        <input id="staffJob" placeholder="e.g. Teacher">
-
-        <label for="staffPhone">Phone</label>
-        <input id="staffPhone" type="tel" placeholder="Phone number">
-
-        <label for="staffSalary">Monthly salary (UGX)</label>
-        <input id="staffSalary" type="number" min="0" step="1" placeholder="600000">
-
-        <button type="button" onclick="addStaff()">Save Staff Member</button>
+        <div class="form-grid">
+          <div><label for="staffNo">Staff number</label><input id="staffNo" placeholder="STF001"></div>
+          <div><label for="staffName">Full name</label><input id="staffName" placeholder="Staff member's name"></div>
+          <div><label for="staffJob">Job title</label><input id="staffJob" placeholder="Teacher"></div>
+          <div><label for="staffPhone">Phone</label><input id="staffPhone" type="tel" placeholder="Phone number"></div>
+          <div><label for="staffSalary">Monthly salary (UGX)</label><input id="staffSalary" type="number" min="0" step="1" placeholder="600000"></div>
+        </div>
+        <button onclick="addStaff()">Save Staff Member</button>
       </div>
-
       <div class="card">
-        <h2>Staff Records</h2>
+        <div class="page-title"><h2>Staff Records</h2><button class="secondary no-print" onclick="exportStaff()">Export CSV</button></div>
+        <div class="toolbar"><input id="staffSearch" placeholder="Search staff name or number" oninput="renderStaff()"></div>
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr><th>Staff No.</th><th>Name</th><th>Job Title</th><th>Monthly Salary</th></tr>
-            </thead>
+            <thead><tr><th>Staff No.</th><th>Name</th><th>Job Title</th><th>Phone</th><th>Monthly Salary</th></tr></thead>
             <tbody id="staffRows"></tbody>
           </table>
         </div>
@@ -213,37 +268,21 @@ th{background:#edf3f8}
     <section id="payroll" class="page hidden">
       <div class="card">
         <h2>Record Salary Payment</h2>
-
-        <label for="salaryStaff">Staff member</label>
-        <select id="salaryStaff"></select>
-
-        <label for="salaryMonth">Salary month</label>
-        <input id="salaryMonth" type="month" required>
-
-        <label for="salaryAmount">Amount paid (UGX)</label>
-        <input id="salaryAmount" type="number" min="1" step="1" placeholder="600000">
-
-        <label for="salaryReceipt">Receipt number (optional)</label>
-        <input id="salaryReceipt" placeholder="e.g. SAL001">
-
-        <label for="salaryMethod">Payment method</label>
-        <select id="salaryMethod">
-          <option>Bank</option>
-          <option>Mobile Money</option>
-          <option>Cash</option>
-          <option>Other</option>
-        </select>
-
-        <button type="button" onclick="addSalary()">Record Salary Payment</button>
+        <div class="form-grid">
+          <div><label for="salaryStaff">Staff member</label><select id="salaryStaff"><option value="">Select staff member</option></select></div>
+          <div><label for="salaryMonth">Salary month</label><input id="salaryMonth" type="month"></div>
+          <div><label for="salaryAmount">Amount paid (UGX)</label><input id="salaryAmount" type="number" min="1" step="1" placeholder="600000"></div>
+          <div><label for="salaryReceipt">Receipt/reference (optional)</label><input id="salaryReceipt" placeholder="SAL001"></div>
+          <div><label for="salaryMethod">Payment method</label><select id="salaryMethod"><option>Bank</option><option>Mobile Money</option><option>Cash</option><option>Other</option></select></div>
+        </div>
+        <button onclick="addSalary()">Record Salary Payment</button>
       </div>
-
       <div class="card">
-        <h2>Salary Payment Records</h2>
+        <div class="page-title"><h2>Salary Payment Records</h2><button class="secondary no-print" onclick="exportSalaries()">Export CSV</button></div>
+        <div class="toolbar"><input id="salarySearch" placeholder="Search staff or month" oninput="renderSalaryRows()"></div>
         <div class="table-wrap">
           <table>
-            <thead>
-              <tr><th>Month</th><th>Staff</th><th>Receipt</th><th>Amount</th><th>Method</th></tr>
-            </thead>
+            <thead><tr><th>Month</th><th>Staff</th><th>Reference</th><th>Amount</th><th>Method</th></tr></thead>
             <tbody id="salaryRows"></tbody>
           </table>
         </div>
@@ -252,12 +291,13 @@ th{background:#edf3f8}
 
   </div>
 </main>
+<footer>Uganda School Manager · Keep your login credentials private.</footer>
 
 <script>
 "use strict";
 
-// Use only the Supabase project URL and publishable key in browser code.
-// Never place a Supabase secret/service-role key in this file.
+// Browser code must contain only the Supabase project URL and publishable key.
+// Never put a Supabase secret or service-role key here.
 const SUPABASE_URL = "https://tmefeqwtmtxtzrbchzuu.supabase.co";
 const SUPABASE_KEY = "sb_publishable_qtxVou_FOx-80AjF4flnuQ_o2Chl6Pc";
 
@@ -271,518 +311,591 @@ let staff = [];
 let salaryPayments = [];
 let busy = false;
 
+const $ = id => document.getElementById(id);
+
 function message(text, error = false) {
-  const el = document.getElementById("notice");
-  el.textContent = text;
-  el.className = "notice " + (error ? "error" : "success");
-  el.classList.remove("hidden");
+  $("notice").textContent = text;
+  $("notice").className = "notice " + (error ? "error" : "success");
 }
-
 function clearMessage() {
-  document.getElementById("notice").classList.add("hidden");
+  $("notice").classList.add("hidden");
 }
-
 function money(value) {
-  return "UGX " + Number(value || 0).toLocaleString("en-UG");
-}
-
-function safe(value) {
-  return String(value ?? "").replace(/[&<>"']/g, character => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  })[character]);
-}
-
-function showPage(id) {
-  const page = document.getElementById(id);
-  if (!page || !page.classList.contains("page")) return;
-
-  document.querySelectorAll(".page").forEach(element => {
-    element.classList.add("hidden");
+  return "UGX " + Number(value || 0).toLocaleString("en-UG", {
+    maximumFractionDigits: 0
   });
-
-  page.classList.remove("hidden");
+}
+function safe(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[ch]);
+}
+function validAmount(value, allowZero = false) {
+  const n = Number(value);
+  return Number.isSafeInteger(n) && (allowZero ? n >= 0 : n > 0);
+}
+function setBusy(value) {
+  busy = value;
+  document.querySelectorAll("button").forEach(button => {
+    if (!button.hasAttribute("data-page")) button.disabled = value;
+  });
+  if ($("recordFeeButton")) $("recordFeeButton").disabled = value;
+}
+function showPage(id) {
+  if (!$("".concat(id)) || !$("".concat(id)).classList.contains("page")) return;
+  document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
+  $(id).classList.remove("hidden");
+  document.querySelectorAll("nav [data-page]").forEach(button => {
+    button.classList.toggle("active", button.dataset.page === id);
+  });
   clearMessage();
 }
-
-function setLoggedIn(loggedIn) {
-  document.getElementById("authPage").classList.toggle("hidden", loggedIn);
-  document.getElementById("navigation").classList.toggle("hidden", !loggedIn);
-
-  if (!loggedIn) {
-    document.getElementById("schoolPage").classList.add("hidden");
-    document.getElementById("appPages").classList.add("hidden");
+function setLoggedIn(value) {
+  $("authPage").classList.toggle("hidden", value);
+  $("navigation").classList.toggle("hidden", !value);
+  if (!value) {
+    $("schoolPage").classList.add("hidden");
+    $("appPages").classList.add("hidden");
   }
 }
-
-function validPositiveAmount(value, allowZero = false) {
-  const amount = Number(value);
-  return Number.isFinite(amount) && (allowZero ? amount >= 0 : amount > 0);
+function setConnectionStatus() {
+  $("connectionStatus").textContent = navigator.onLine
+    ? "Online · Connected status will be confirmed by Supabase"
+    : "Offline · Records cannot currently be synchronised";
 }
+window.addEventListener("online", setConnectionStatus);
+window.addEventListener("offline", setConnectionStatus);
 
 async function signUp() {
   clearMessage();
-
-  if (!db) return message("The app is still connecting to Supabase. Refresh and try again.", true);
-
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
+  if (!db) return message("Supabase is not ready. Check your connection and refresh.", true);
+  const email = $("email").value.trim();
+  const password = $("password").value;
   if (!email || password.length < 6) {
     return message("Enter a valid email and a password of at least 6 characters.", true);
   }
-
-  const { data, error } = await db.auth.signUp({ email, password });
-
-  if (error) {
-    return message("Account creation failed: " + error.message, true);
-  }
-
-  if (!data.session) {
-    message("Account created. Check your email to confirm your account, then log in. If email sending is rate-limited, configure SMTP in Supabase or wait for the limit to reset.");
-  } else {
-    message("Account created successfully.");
-    await checkSession();
+  setBusy(true);
+  try {
+    const {data, error} = await db.auth.signUp({email, password});
+    if (error) throw error;
+    if (!data.session) {
+      message("Account created. Check your email to confirm it, then log in. If email sending is rate-limited, configure SMTP in Supabase or wait for the limit to reset.");
+    } else {
+      message("Account created successfully.");
+      await checkSession();
+    }
+  } catch (e) {
+    message("Account creation failed: " + e.message, true);
+  } finally {
+    setBusy(false);
   }
 }
-
 async function signIn() {
   clearMessage();
-
-  if (!db) return message("The app is still connecting to Supabase. Refresh and try again.", true);
-
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  if (!email || !password) {
-    return message("Enter your email address and password.", true);
+  if (!db) return message("Supabase is not ready. Check your connection and refresh.", true);
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  if (!email || !password) return message("Enter your email and password.", true);
+  setBusy(true);
+  try {
+    const {error} = await db.auth.signInWithPassword({email, password});
+    if (error) throw error;
+    await checkSession();
+  } catch (e) {
+    message("Login failed: " + e.message, true);
+  } finally {
+    setBusy(false);
   }
-
-  const { error } = await db.auth.signInWithPassword({ email, password });
-
-  if (error) {
-    return message("Login failed: " + error.message, true);
-  }
-
-  await checkSession();
 }
-
 async function logout() {
   if (!db) return;
-
-  const { error } = await db.auth.signOut();
-
-  if (error) return message("Could not log out: " + error.message, true);
-
-  currentUser = null;
-  currentSchoolId = null;
-  schoolRows = [];
-  students = [];
-  payments = [];
-  staff = [];
-  salaryPayments = [];
-
-  setLoggedIn(false);
-  message("You have logged out.");
+  setBusy(true);
+  try {
+    const {error} = await db.auth.signOut();
+    if (error) throw error;
+    currentUser = null;
+    currentSchoolId = null;
+    schoolRows = [];
+    students = [];
+    payments = [];
+    staff = [];
+    salaryPayments = [];
+    setLoggedIn(false);
+    message("You have logged out.");
+  } catch (e) {
+    message("Could not log out: " + e.message, true);
+  } finally {
+    setBusy(false);
+  }
 }
-
 async function checkSession() {
   if (!db) return;
-
-  const { data, error } = await db.auth.getSession();
-
+  const {data, error} = await db.auth.getSession();
   if (error) return message("Session error: " + error.message, true);
-
   currentUser = data.session?.user || null;
-
   if (!currentUser) {
     currentSchoolId = null;
     setLoggedIn(false);
     return;
   }
-
   setLoggedIn(true);
   await loadSchools();
 }
-
 async function loadSchools() {
-  const { data, error } = await db
-    .from("schools")
-    .select("id,name,created_by")
-    .order("created_at", { ascending: true });
-
-  if (error) {
-    return message("Could not load schools: " + error.message, true);
-  }
-
+  const {data, error} = await db
+    .from("schools").select("id,name,created_by").order("created_at", {ascending:true});
+  if (error) return message("Could not load schools: " + error.message, true);
   schoolRows = data || [];
-
   if (!schoolRows.length) {
     currentSchoolId = null;
-    document.getElementById("schoolPage").classList.remove("hidden");
-    document.getElementById("appPages").classList.add("hidden");
-    document.getElementById("schoolList").innerHTML = "";
+    $("schoolPage").classList.remove("hidden");
+    $("appPages").classList.add("hidden");
+    $("schoolList").innerHTML = "";
     return;
   }
-
-  if (!currentSchoolId || !schoolRows.some(school => school.id === currentSchoolId)) {
+  if (!currentSchoolId || !schoolRows.some(s => s.id === currentSchoolId)) {
     currentSchoolId = schoolRows[0].id;
   }
-
-  const schoolList = document.getElementById("schoolList");
-
+  $("schoolList").innerHTML = "";
   if (schoolRows.length > 1) {
-    schoolList.innerHTML = "<p>Choose a school:</p>" +
-      schoolRows.map(school =>
-        `<button type="button" class="school-choice" onclick="selectSchool('${safe(school.id)}')">${safe(school.name)}</button>`
-      ).join("");
-  } else {
-    schoolList.innerHTML = "";
+    $("schoolList").insertAdjacentHTML("beforeend", "<p>Choose a school:</p>");
+    schoolRows.forEach(school => {
+      const button = document.createElement("button");
+      button.className = "secondary";
+      button.textContent = school.name;
+      button.onclick = () => selectSchool(school.id);
+      $("schoolList").appendChild(button);
+    });
   }
-
   await selectSchool(currentSchoolId);
 }
-
 async function createSchool() {
   clearMessage();
-
   if (!currentUser) return message("Please log in first.", true);
-
-  const name = document.getElementById("schoolName").value.trim();
-
+  const name = $("schoolName").value.trim();
   if (!name) return message("Enter your school name.", true);
+  setBusy(true);
+  try {
+    const {data, error} = await db.from("schools")
+      .insert({name, created_by:currentUser.id})
+      .select("id,name,created_by").single();
+    if (error) throw error;
 
-  const { data, error } = await db
-    .from("schools")
-    .insert({ name, created_by: currentUser.id })
-    .select("id,name,created_by")
-    .single();
-
-  if (error) {
-    return message("Could not create school: " + error.message, true);
+    const {error: memberError} = await db.from("school_members").insert({
+      school_id:data.id, user_id:currentUser.id, role:"admin"
+    });
+    if (memberError) {
+      message("School created, but membership setup failed: " + memberError.message +
+        ". Check school_members policies before retrying.", true);
+      return;
+    }
+    currentSchoolId = data.id;
+    $("schoolName").value = "";
+    message("School created successfully.");
+    await loadSchools();
+  } catch (e) {
+    message("Could not create school: " + e.message, true);
+  } finally {
+    setBusy(false);
   }
-
-  const { error: memberError } = await db.from("school_members").insert({
-    school_id: data.id,
-    user_id: currentUser.id,
-    role: "admin"
-  });
-
-  if (memberError) {
-    return message(
-      "The school was created, but membership setup failed: " +
-      memberError.message +
-      ". Check the school_members table policies before trying again.",
-      true
-    );
-  }
-
-  currentSchoolId = data.id;
-  document.getElementById("schoolName").value = "";
-  message("School created successfully.");
-  await loadSchools();
 }
-
 async function selectSchool(id) {
-  const school = schoolRows.find(item => item.id === id);
+  const school = schoolRows.find(s => s.id === id);
   if (!school) return message("That school could not be found.", true);
-
   currentSchoolId = id;
-  document.getElementById("currentSchool").textContent = school.name;
-  document.getElementById("schoolPage").classList.add("hidden");
-  document.getElementById("appPages").classList.remove("hidden");
-
+  $("currentSchool").textContent = school.name;
+  $("schoolPage").classList.add("hidden");
+  $("appPages").classList.remove("hidden");
   await loadAll();
   showPage("dashboard");
 }
-
 async function loadAll() {
-  if (!currentSchoolId) return;
-
+  if (!currentSchoolId || !db) return;
+  setConnectionStatus();
   const id = currentSchoolId;
-
   const results = await Promise.all([
-    db.from("students").select("*").eq("school_id", id).order("created_at", { ascending: false }),
-    db.from("payments").select("*").eq("school_id", id).order("paid_at", { ascending: false }),
-    db.from("staff").select("*").eq("school_id", id).order("created_at", { ascending: false }),
-    db.from("salary_payments").select("*").eq("school_id", id).order("paid_at", { ascending: false })
+    db.from("students").select("*").eq("school_id", id).order("created_at", {ascending:false}),
+    db.from("payments").select("*").eq("school_id", id).order("paid_at", {ascending:false}),
+    db.from("staff").select("*").eq("school_id", id).order("created_at", {ascending:false}),
+    db.from("salary_payments").select("*").eq("school_id", id).order("paid_at", {ascending:false})
   ]);
-
-  const names = ["students", "fee payments", "staff", "salary payments"];
-
+  const labels = ["students", "fee payments", "staff", "salary payments"];
   for (let i = 0; i < results.length; i++) {
     if (results[i].error) {
-      return message("Could not load " + names[i] + ": " + results[i].error.message, true);
+      message("Could not load " + labels[i] + ": " + results[i].error.message, true);
+      return;
     }
   }
-
   students = results[0].data || [];
   payments = results[1].data || [];
   staff = results[2].data || [];
   salaryPayments = results[3].data || [];
-
   renderAll();
 }
-
+function expectedFees(student) {
+  return Number(student.fees_expected ?? student.fee_expected ?? 0);
+}
+function totalPaid(studentId) {
+  return payments.filter(p => p.student_id === studentId)
+    .reduce((sum, p) => sum + Number(p.amount || 0), 0);
+}
+function remainingBalance(student) {
+  return Math.max(0, expectedFees(student) - totalPaid(student.id));
+}
+function paymentStatus(student) {
+  const due = expectedFees(student);
+  const paid = totalPaid(student.id);
+  if (paid >= due) return "Fully Paid";
+  if (paid > 0) return "Partially Paid";
+  return "Not Paid";
+}
+function statusBadge(status) {
+  const cls = status === "Fully Paid" ? "green" :
+    status === "Partially Paid" ? "orange" : "red";
+  return `<span class="badge ${cls}">${safe(status)}</span>`;
+}
 function renderAll() {
-  document.getElementById("studentCount").textContent = students.length;
+  const expected = students.reduce((sum, s) => sum + expectedFees(s), 0);
+  const collected = payments.reduce((sum, p) => sum + Number(p.amount || 0), 0);
+  const outstanding = students.reduce((sum, s) => sum + remainingBalance(s), 0);
+  const salaries = salaryPayments.reduce((sum, p) => sum + Number(p.amount || 0), 0);
 
-  document.getElementById("expectedTotal").textContent = money(
-    students.reduce((sum, student) =>
-      sum + Number(student.fees_expected ?? student.fee_expected ?? 0), 0)
-  );
+  $("studentCount").textContent = students.length;
+  $("expectedTotal").textContent = money(expected);
+  $("collectedTotal").textContent = money(collected);
+  $("outstandingTotal").textContent = money(outstanding);
+  $("staffCount").textContent = staff.length;
+  $("salaryTotal").textContent = money(salaries);
 
-  document.getElementById("collectedTotal").textContent = money(
-    payments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0)
-  );
+  $("feeStudent").innerHTML = '<option value="">Select student</option>' +
+    students.map(s => `<option value="${safe(s.id)}">${safe(s.admission_no)} — ${safe(s.full_name)}</option>`).join("");
 
-  document.getElementById("staffCount").textContent = staff.length;
+  $("salaryStaff").innerHTML = '<option value="">Select staff member</option>' +
+    staff.map(s => `<option value="${safe(s.id)}">${safe(s.staff_no)} — ${safe(s.full_name)}</option>`).join("");
 
-  document.getElementById("salaryTotal").textContent = money(
-    salaryPayments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0)
-  );
-
-  document.getElementById("studentRows").innerHTML = students.map(student =>
-    `<tr>
-      <td>${safe(student.admission_no)}</td>
-      <td>${safe(student.full_name)}</td>
-      <td>${safe(student.class_name)}</td>
-      <td>${money(student.fees_expected ?? student.fee_expected ?? 0)}</td>
-    </tr>`
-  ).join("");
-
-  document.getElementById("feeStudent").innerHTML =
-    '<option value="">Select student</option>' +
-    students.map(student =>
-      `<option value="${safe(student.id)}">${safe(student.admission_no)} - ${safe(student.full_name)}</option>`
-    ).join("");
-
-  document.getElementById("feeRows").innerHTML = payments.map(payment => {
-    const student = students.find(item => item.id === payment.student_id);
-
+  renderStudents();
+  renderFeeRows();
+  renderStaff();
+  renderSalaryRows();
+  renderOutstanding();
+  updateFeePreview();
+}
+function renderStudents() {
+  const query = ($("studentSearch")?.value || "").toLowerCase().trim();
+  const filter = $("studentFilter")?.value || "";
+  const rows = students.filter(s => {
+    const text = `${s.admission_no || ""} ${s.full_name || ""} ${s.class_name || ""}`.toLowerCase();
+    return text.includes(query) && (!filter || paymentStatus(s) === filter);
+  });
+  $("studentRows").innerHTML = rows.map(s => `<tr>
+    <td>${safe(s.admission_no)}</td>
+    <td>${safe(s.full_name)}</td>
+    <td>${safe(s.class_name)}</td>
+    <td>${money(expectedFees(s))}</td>
+    <td>${money(totalPaid(s.id))}</td>
+    <td><strong>${money(remainingBalance(s))}</strong></td>
+    <td>${statusBadge(paymentStatus(s))}</td>
+  </tr>`).join("") || '<tr><td colspan="7">No matching students found.</td></tr>';
+}
+function renderOutstanding() {
+  const rows = students.filter(s => remainingBalance(s) > 0)
+    .sort((a,b) => remainingBalance(b) - remainingBalance(a))
+    .slice(0, 20);
+  $("outstandingRows").innerHTML = rows.map(s => `<tr>
+    <td>${safe(s.admission_no)}</td><td>${safe(s.full_name)}</td>
+    <td>${safe(s.class_name)}</td><td>${money(expectedFees(s))}</td>
+    <td>${money(totalPaid(s.id))}</td><td><strong>${money(remainingBalance(s))}</strong></td>
+    <td>${statusBadge(paymentStatus(s))}</td>
+  </tr>`).join("") || '<tr><td colspan="7">No outstanding balances.</td></tr>';
+}
+function updateFeePreview() {
+  const student = students.find(s => s.id === $("feeStudent").value);
+  const amount = Math.max(0, Number($("feeAmount").value || 0));
+  const due = student ? expectedFees(student) : 0;
+  const paid = student ? totalPaid(student.id) : 0;
+  const balance = Math.max(0, due - paid);
+  $("previewExpected").textContent = money(due);
+  $("previewPaid").textContent = money(paid);
+  $("previewBalance").textContent = money(balance);
+  $("previewAmount").textContent = money(amount);
+  $("previewAfter").textContent = money(Math.max(0, balance - amount));
+}
+function renderFeeRows() {
+  const query = ($("feeSearch")?.value || "").toLowerCase().trim();
+  const rows = payments.filter(p => {
+    const s = students.find(st => st.id === p.student_id);
+    return `${s?.full_name || ""} ${s?.admission_no || ""} ${p.receipt_no || ""}`.toLowerCase().includes(query);
+  });
+  $("feeRows").innerHTML = rows.map(p => {
+    const student = students.find(s => s.id === p.student_id);
+    const date = p.paid_at ? p.paid_at.slice(0,10) : "-";
+    const balance = student ? remainingBalance(student) : 0;
     return `<tr>
-      <td>${safe(payment.paid_at ? payment.paid_at.slice(0, 10) : "-")}</td>
-      <td>${safe(student?.full_name || "Student")}</td>
-      <td>${safe(payment.receipt_no || "-")}</td>
-      <td>${money(payment.amount)}</td>
-      <td>${safe(payment.payment_method || "-")}</td>
+      <td>${safe(date)}</td><td>${safe(student?.full_name || "Student")}</td>
+      <td>${safe(p.receipt_no || "—")}</td><td>${money(p.amount)}</td>
+      <td>${safe(p.payment_method || "—")}</td><td>${money(balance)}</td>
+      <td><button class="small-btn secondary no-print" onclick="printReceipt('${safe(p.id)}')">Print</button></td>
     </tr>`;
-  }).join("");
-
-  document.getElementById("staffRows").innerHTML = staff.map(person =>
-    `<tr>
-      <td>${safe(person.staff_no)}</td>
-      <td>${safe(person.full_name)}</td>
-      <td>${safe(person.job_title)}</td>
-      <td>${money(person.monthly_salary)}</td>
-    </tr>`
-  ).join("");
-
-  document.getElementById("salaryStaff").innerHTML =
-    '<option value="">Select staff member</option>' +
-    staff.map(person =>
-      `<option value="${safe(person.id)}">${safe(person.staff_no)} - ${safe(person.full_name)}</option>`
-    ).join("");
-
-  document.getElementById("salaryRows").innerHTML = salaryPayments.map(payment => {
-    const person = staff.find(item => item.id === payment.staff_id);
-
-    return `<tr>
-      <td>${safe(payment.salary_month)}</td>
-      <td>${safe(person?.full_name || "Staff")}</td>
-      <td>${safe(payment.receipt_no || "-")}</td>
-      <td>${money(payment.amount)}</td>
-      <td>${safe(payment.payment_method || "-")}</td>
-    </tr>`;
-  }).join("");
+  }).join("") || '<tr><td colspan="7">No fee payments found.</td></tr>';
+}
+function renderStaff() {
+  const query = ($("staffSearch")?.value || "").toLowerCase().trim();
+  const rows = staff.filter(s => `${s.staff_no || ""} ${s.full_name || ""} ${s.job_title || ""}`.toLowerCase().includes(query));
+  $("staffRows").innerHTML = rows.map(s => `<tr>
+    <td>${safe(s.staff_no)}</td><td>${safe(s.full_name)}</td>
+    <td>${safe(s.job_title)}</td><td>${safe(s.phone || "—")}</td>
+    <td>${money(s.monthly_salary)}</td>
+  </tr>`).join("") || '<tr><td colspan="5">No matching staff found.</td></tr>';
+}
+function renderSalaryRows() {
+  const query = ($("salarySearch")?.value || "").toLowerCase().trim();
+  const rows = salaryPayments.filter(p => {
+    const s = staff.find(person => person.id === p.staff_id);
+    return `${s?.full_name || ""} ${s?.staff_no || ""} ${p.salary_month || ""}`.toLowerCase().includes(query);
+  });
+  $("salaryRows").innerHTML = rows.map(p => {
+    const person = staff.find(s => s.id === p.staff_id);
+    return `<tr><td>${safe(p.salary_month)}</td><td>${safe(person?.full_name || "Staff")}</td>
+      <td>${safe(p.receipt_no || "—")}</td><td>${money(p.amount)}</td>
+      <td>${safe(p.payment_method || "—")}</td></tr>`;
+  }).join("") || '<tr><td colspan="5">No salary payments found.</td></tr>';
 }
 
 async function addStudent() {
   clearMessage();
-
+  if (busy) return;
   if (!currentSchoolId) return message("Select a school first.", true);
-
-  const admission_no = document.getElementById("admissionNo").value.trim();
-  const full_name = document.getElementById("studentName").value.trim();
-  const class_name = document.getElementById("studentClass").value.trim();
-  const feeValue = document.getElementById("studentFees").value;
-
-  if (!admission_no || !full_name || !class_name || feeValue === "" ||
-      !validPositiveAmount(feeValue, true)) {
-    return message("Complete all student fields and enter valid expected fees.", true);
+  const admission_no = $("admissionNo").value.trim();
+  const full_name = $("studentName").value.trim();
+  const class_name = $("studentClass").value.trim();
+  const feeValue = $("studentFees").value;
+  if (!admission_no || !full_name || !class_name || feeValue === "" || !validAmount(Number(feeValue), true)) {
+    return message("Complete all fields and enter valid expected fees.", true);
   }
-
+  if (!navigator.onLine) return message("You are offline. Student registration is not saved to the server. Reconnect before saving.", true);
   const fees = Number(feeValue);
-
-  // Both fee columns are included because this project has used both names.
-  const row = {
-    school_id: currentSchoolId,
-    admission_no,
-    full_name,
-    class_name,
-    fees_expected: fees,
-    fee_expected: fees
-  };
-
-  const { error } = await db.from("students").insert(row);
-
-  if (error) {
-    return message("Could not register student: " + error.message, true);
+  setBusy(true);
+  try {
+    // Keep both names to accommodate the column names used in earlier versions.
+    const row = {school_id:currentSchoolId, admission_no, full_name, class_name, fees_expected:fees, fee_expected:fees};
+    const {error} = await db.from("students").insert(row);
+    if (error) throw error;
+    ["admissionNo","studentName","studentClass","studentFees"].forEach(id => $(id).value = "");
+    message("Student registered successfully.");
+    await loadAll();
+  } catch (e) {
+    message("Could not register student: " + e.message, true);
+  } finally {
+    setBusy(false);
   }
-
-  ["admissionNo", "studentName", "studentClass", "studentFees"].forEach(id => {
-    document.getElementById(id).value = "";
-  });
-
-  message("Student registered successfully.");
-  await loadAll();
 }
 
 async function addFee() {
   clearMessage();
-
+  if (busy) return;
   if (!currentSchoolId) return message("Select a school first.", true);
+  if (!navigator.onLine) return message("You are offline. For payment safety, this version does not queue fee payments locally. Reconnect before recording the payment.", true);
 
-  const student_id = document.getElementById("feeStudent").value;
-  const amountValue = document.getElementById("feeAmount").value;
-  const receipt_no = document.getElementById("feeReceipt").value.trim() || null;
-  const payment_method = document.getElementById("feeMethod").value;
+  const student_id = $("feeStudent").value;
+  const amountValue = $("feeAmount").value;
+  const receiptInput = $("feeReceipt").value.trim();
+  const payment_method = $("feeMethod").value;
   const amount = Number(amountValue);
 
-  if (!student_id || amountValue === "" || !validPositiveAmount(amount)) {
-    return message("Select a student and enter a payment amount greater than zero.", true);
+  if (!student_id || amountValue === "" || !validAmount(amount)) {
+    return message("Select a student and enter a payment greater than zero.", true);
   }
+  const student = students.find(s => s.id === student_id);
+  if (!student) return message("Student not found. Refresh and try again.", true);
 
-  const { error } = await db.from("payments").insert({
-    school_id: currentSchoolId,
-    student_id,
-    amount,
-    receipt_no,
-    payment_method
-  });
-
-  if (error) {
-    return message("Could not record fee payment: " + error.message, true);
+  const balanceBefore = remainingBalance(student);
+  if (amount > balanceBefore) {
+    return message("Payment exceeds the current balance of " + money(balanceBefore) + ". Check the amount before continuing.", true);
   }
+  if (balanceBefore === 0) return message("This student has no remaining balance.", true);
 
-  ["feeAmount", "feeReceipt"].forEach(id => {
-    document.getElementById(id).value = "";
-  });
+  const row = {school_id:currentSchoolId, student_id, amount, payment_method};
+  // Omitting receipt_no allows the database default to generate a receipt number.
+  if (receiptInput) row.receipt_no = receiptInput;
 
-  message("Fee payment recorded successfully.");
-  await loadAll();
+  setBusy(true);
+  try {
+    const {data, error} = await db.from("payments")
+      .insert(row).select("id,receipt_no,amount,student_id,paid_at").single();
+    if (error) throw error;
+
+    $("feeAmount").value = "";
+    $("feeReceipt").value = "";
+    await loadAll();
+
+    const updatedStudent = students.find(s => s.id === student_id);
+    message("Payment recorded successfully.\nReceipt: " + (data.receipt_no || "Generated by database") +
+      "\nAmount paid: " + money(amount) +
+      "\nRemaining balance: " + money(updatedStudent ? remainingBalance(updatedStudent) : balanceBefore - amount) +
+      "\nStatus: " + (updatedStudent ? paymentStatus(updatedStudent) : "Recorded"));
+  } catch (e) {
+    message("Could not record fee payment: " + e.message +
+      "\nDo not repeatedly retry until you check the payment records, in case the server saved it.", true);
+  } finally {
+    setBusy(false);
+  }
 }
 
 async function addStaff() {
   clearMessage();
-
+  if (busy) return;
   if (!currentSchoolId) return message("Select a school first.", true);
-
-  const staff_no = document.getElementById("staffNo").value.trim();
-  const full_name = document.getElementById("staffName").value.trim();
-  const job_title = document.getElementById("staffJob").value.trim();
-  const phone = document.getElementById("staffPhone").value.trim() || null;
-  const salaryValue = document.getElementById("staffSalary").value;
-  const monthly_salary = Number(salaryValue);
-
-  if (!staff_no || !full_name || !job_title || salaryValue === "" ||
-      !validPositiveAmount(monthly_salary, true)) {
+  if (!navigator.onLine) return message("Reconnect to the internet before registering staff.", true);
+  const staff_no = $("staffNo").value.trim();
+  const full_name = $("staffName").value.trim();
+  const job_title = $("staffJob").value.trim();
+  const phone = $("staffPhone").value.trim() || null;
+  const salaryValue = $("staffSalary").value;
+  if (!staff_no || !full_name || !job_title || salaryValue === "" || !validAmount(Number(salaryValue), true)) {
     return message("Complete the staff fields and enter a valid monthly salary.", true);
   }
-
-  const { error } = await db.from("staff").insert({
-    school_id: currentSchoolId,
-    staff_no,
-    full_name,
-    job_title,
-    phone,
-    monthly_salary
-  });
-
-  if (error) {
-    return message("Could not register staff member: " + error.message, true);
+  setBusy(true);
+  try {
+    const {error} = await db.from("staff").insert({
+      school_id:currentSchoolId, staff_no, full_name, job_title, phone,
+      monthly_salary:Number(salaryValue)
+    });
+    if (error) throw error;
+    ["staffNo","staffName","staffJob","staffPhone","staffSalary"].forEach(id => $(id).value = "");
+    message("Staff member registered successfully.");
+    await loadAll();
+  } catch (e) {
+    message("Could not register staff member: " + e.message, true);
+  } finally {
+    setBusy(false);
   }
-
-  ["staffNo", "staffName", "staffJob", "staffPhone", "staffSalary"].forEach(id => {
-    document.getElementById(id).value = "";
-  });
-
-  message("Staff member registered successfully.");
-  await loadAll();
 }
 
 async function addSalary() {
   clearMessage();
-
+  if (busy) return;
   if (!currentSchoolId) return message("Select a school first.", true);
-
-  const staff_id = document.getElementById("salaryStaff").value;
-  const salaryMonth = document.getElementById("salaryMonth").value;
-  const amountValue = document.getElementById("salaryAmount").value;
-  const receipt_no = document.getElementById("salaryReceipt").value.trim() || null;
-  const payment_method = document.getElementById("salaryMethod").value;
+  if (!navigator.onLine) return message("Reconnect to the internet before recording salary payments.", true);
+  const staff_id = $("salaryStaff").value;
+  const salary_month = $("salaryMonth").value;
+  const amountValue = $("salaryAmount").value;
+  const receiptInput = $("salaryReceipt").value.trim();
+  const payment_method = $("salaryMethod").value;
   const amount = Number(amountValue);
 
-  if (!staff_id) {
-    return message("Please select a staff member.", true);
+  if (!staff_id) return message("Select a staff member.", true);
+  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(salary_month)) return message("Select a valid salary month.", true);
+  if (amountValue === "" || !validAmount(amount)) return message("Enter a salary amount greater than zero.", true);
+
+  const row = {school_id:currentSchoolId, staff_id, salary_month, amount, payment_method};
+  if (receiptInput) row.receipt_no = receiptInput;
+
+  setBusy(true);
+  try {
+    const {error} = await db.from("salary_payments").insert(row);
+    if (error) throw error;
+    ["salaryMonth","salaryAmount","salaryReceipt"].forEach(id => $(id).value = "");
+    message("Salary payment recorded successfully.");
+    await loadAll();
+  } catch (e) {
+    message("Salary payment failed: " + e.message, true);
+  } finally {
+    setBusy(false);
   }
+}
 
-  // The database check constraint requires exactly YYYY-MM, not YYYY-MM-DD.
-  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(salaryMonth)) {
-    return message("Select a valid salary month, for example October 2026.", true);
-  }
+function printReceipt(paymentId) {
+  const p = payments.find(item => item.id === paymentId);
+  if (!p) return message("Payment record not found.", true);
+  const student = students.find(s => s.id === p.student_id);
+  const balance = student ? remainingBalance(student) : 0;
+  const receipt = window.open("", "_blank");
+  if (!receipt) return message("Allow pop-ups to print the receipt.", true);
+  receipt.document.write(`<!DOCTYPE html><html><head><title>Fee Receipt</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>body{font-family:Arial;padding:25px;color:#222;max-width:650px;margin:auto}
+    h1{text-align:center;color:#123c69}hr{border:0;border-top:1px solid #ddd}
+    .line{display:flex;justify-content:space-between;gap:20px;padding:10px 0}
+    .amount{font-size:20px;font-weight:bold}.foot{margin-top:35px;font-size:12px;color:#666;text-align:center}
+    </style></head><body>
+    <h1>School Fee Receipt</h1><p style="text-align:center">Payment acknowledgement</p><hr>
+    <div class="line"><span>Receipt number</span><strong>${safe(p.receipt_no || "—")}</strong></div>
+    <div class="line"><span>Date</span><strong>${safe(p.paid_at ? p.paid_at.slice(0,10) : "—")}</strong></div>
+    <div class="line"><span>Student</span><strong>${safe(student?.full_name || "Student")}</strong></div>
+    <div class="line"><span>Admission number</span><strong>${safe(student?.admission_no || "—")}</strong></div>
+    <div class="line"><span>Class</span><strong>${safe(student?.class_name || "—")}</strong></div>
+    <div class="line"><span>Payment method</span><strong>${safe(p.payment_method || "—")}</strong></div><hr>
+    <div class="line"><span>Amount received</span><strong class="amount">${money(p.amount)}</strong></div>
+    <div class="line"><span>Total expected fees</span><strong>${money(student ? expectedFees(student) : 0)}</strong></div>
+    <div class="line"><span>Total paid to date</span><strong>${money(student ? totalPaid(student.id) : Number(p.amount))}</strong></div>
+    <div class="line"><span>Remaining balance</span><strong>${money(balance)}</strong></div>
+    <div class="foot">Please keep this receipt for your records.</div>
+    <script>window.onload=()=>window.print();<\/script></body></html>`);
+  receipt.document.close();
+}
 
-  if (amountValue === "" || !validPositiveAmount(amount)) {
-    return message("Enter a salary amount greater than zero.", true);
-  }
-
-  const { error } = await db.from("salary_payments").insert({
-    school_id: currentSchoolId,
-    staff_id,
-    salary_month: salaryMonth,
-    amount,
-    receipt_no,
-    payment_method
-  });
-
-  if (error) {
-    return message("Salary payment failed: " + error.message, true);
-  }
-
-  ["salaryMonth", "salaryAmount", "salaryReceipt"].forEach(id => {
-    document.getElementById(id).value = "";
-  });
-
-  message("Salary payment recorded successfully.");
-  await loadAll();
+function csvCell(value) {
+  return '"' + String(value ?? "").replace(/"/g, '""') + '"';
+}
+function downloadCSV(filename, rows) {
+  const csv = "\uFEFF" + rows.map(row => row.map(csvCell).join(",")).join("\r\n");
+  const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+function exportStudents() {
+  downloadCSV("students.csv", [
+    ["Admission No","Name","Class","Expected Fees","Amount Paid","Remaining Balance","Status"],
+    ...students.map(s => [s.admission_no,s.full_name,s.class_name,expectedFees(s),totalPaid(s.id),remainingBalance(s),paymentStatus(s)])
+  ]);
+}
+function exportFees() {
+  downloadCSV("fee-payments.csv", [
+    ["Date","Student","Admission No","Receipt","Amount","Method"],
+    ...payments.map(p => {
+      const s = students.find(st => st.id === p.student_id);
+      return [p.paid_at || "",s?.full_name || "",s?.admission_no || "",p.receipt_no || "",p.amount,p.payment_method || ""];
+    })
+  ]);
+}
+function exportStaff() {
+  downloadCSV("staff.csv", [
+    ["Staff No","Name","Job Title","Phone","Monthly Salary"],
+    ...staff.map(s => [s.staff_no,s.full_name,s.job_title,s.phone || "",s.monthly_salary])
+  ]);
+}
+function exportSalaries() {
+  downloadCSV("salary-payments.csv", [
+    ["Month","Staff","Staff No","Receipt","Amount","Method"],
+    ...salaryPayments.map(p => {
+      const s = staff.find(st => st.id === p.staff_id);
+      return [p.salary_month,s?.full_name || "",s?.staff_no || "",p.receipt_no || "",p.amount,p.payment_method || ""];
+    })
+  ]);
 }
 
 async function startApp() {
+  setConnectionStatus();
   if (!window.supabase) {
-    message("Supabase failed to load. Check your internet connection and refresh the page.", true);
+    message("Supabase library did not load. Connect to the internet and refresh this page.", true);
     return;
   }
-
   db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-  const { error } = await db.auth.getSession();
-
-  if (error) {
-    message("Supabase connection error: " + error.message, true);
-    return;
+  try {
+    await checkSession();
+    db.auth.onAuthStateChange(() => {
+      Promise.resolve().then(() => checkSession());
+    });
+  } catch (e) {
+    message("Could not start the app: " + e.message, true);
   }
-
-  await checkSession();
-
-  db.auth.onAuthStateChange(() => {
-    // Avoid doing Supabase requests directly inside this auth callback.
-    Promise.resolve().then(() => checkSession());
-  });
 }
-
 startApp();
 </script>
 </body>
