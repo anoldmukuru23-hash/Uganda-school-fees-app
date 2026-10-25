@@ -314,7 +314,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
       <h2>🚀 End-of-Year Class Promotion & Graduation Wizard</h2>
       <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Promote all students to their next class level (e.g., S.1 to S.2) or graduate/archive S.4 & S.6 candidates automatically.</p>
       <div style="display:flex;gap:12px;flex-wrap:wrap">
-        <button onclick="promoteClasses()">Promote All Students (S.1 $\rightarrow$ S.2, etc.)</button>
+        <button onclick="promoteClasses()">Promote All Students (S.1 &rarr; S.2, etc.)</button>
         <button class="danger" onclick="graduateCandidates()">Graduate / Archive S.4 & S.6 Candidates</button>
       </div>
       <div id="promotionMessage"></div>
@@ -360,8 +360,33 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
-  <!-- PAGE: PAYMENTS -->
+  <!-- PAGE: PAYMENTS & BULK WHATSAPP BROADCAST -->
   <div id="page-payments" class="page-section hidden">
+    <div class="card" style="border-left: 4px solid var(--green)">
+      <h2>📢 Bulk WhatsApp Broadcast Center (Parent Meetings & Circulars)</h2>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Send a WhatsApp notification message to all parents simultaneously (e.g., for general meetings, visitation days, or fee deadlines).</p>
+      <div class="form-grid">
+        <div>
+          <label>Target Class Group</label>
+          <select id="bulkBroadcastClass">
+            <option value="">All Classes (Entire School S.1 - S.6)</option>
+            <option value="S.1">Senior 1 (S.1)</option>
+            <option value="S.2">Senior 2 (S.2)</option>
+            <option value="S.3">Senior 3 (S.3)</option>
+            <option value="S.4">Senior 4 (S.4)</option>
+            <option value="S.5">Senior 5 (S.5)</option>
+            <option value="S.6">Senior 6 (S.6)</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label>Broadcast Message *</label>
+        <textarea id="bulkBroadcastMessage" rows="3" placeholder="Dear Parents, you are cordially invited to our termly general meeting this Friday starting at 10:00 AM..."></textarea>
+      </div>
+      <button style="margin-top:12px;background:#25d366" onclick="sendBulkWhatsAppBroadcast()">🚀 Launch Bulk WhatsApp Broadcast</button>
+      <div id="bulkBroadcastMessageStatus"></div>
+    </div>
+
     <div class="card">
       <h2>Record School Fees Payment</h2>
       <div class="form-grid">
@@ -646,7 +671,6 @@ async function startApp(user){
   $("app").classList.remove("hidden");
   $("currentDateStr").textContent=new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
   
-  // Set Term selector dropdown to persisted value
   $("termSelect").value = currentTerm;
   $("dashTermDisplay").textContent = currentTerm;
 
@@ -959,16 +983,19 @@ function sendWhatsAppPayment(s, p){
   const phone = String(s.parent_whatsapp || "").replace(/\D/g,"");
   if(!phone){alert("Parent WhatsApp number is missing for this student.");return;}
   const sch = schools.find(x=>x.id===currentSchoolId);
+  const schoolName = sch?.name || "School";
+  
   const text = "FEES PAYMENT CONFIRMATION\n" +
-               "School: " + (sch?.name || "School") + "\n" +
+               "School: *" + schoolName + "*\n" +
                "Student: " + s.full_name + " (" + s.admission_no + ")\n" +
                "Class: " + s.class_name + "\n" +
                "Amount Paid: " + money(p.amount) + "\n" +
                "Total Paid: " + money(paid(s.id)) + "\n" +
-               "Balance Remaining: " + money(balance(s)) + "\n" +
+               "Balance Remaining: *" + money(balance(s)) + "*\n" +
                "Receipt No: " + receiptNo(p) + "\n" +
-               "Date: " + readableDate(p.paid_at) + "\n" +
-               "Thank you!";
+               "Date: " + readableDate(p.paid_at) + "\n\n" +
+               "Thank you for choosing *" + schoolName + "*";
+
   window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(text), "_blank");
 }
 
@@ -976,6 +1003,43 @@ function whatsappById(id){
   const p = payments.find(x=>String(x.id)===String(id));
   const s = p && students.find(x=>String(x.id)===String(p.student_id));
   if(p && s) sendWhatsAppPayment(s, p);
+}
+
+function sendBulkWhatsAppBroadcast(){
+  const targetClass = $("bulkBroadcastClass").value;
+  const customMsg = $("bulkBroadcastMessage").value.trim();
+  if(!customMsg){alert("Please enter a broadcast message to send.");return;}
+
+  const sch = schools.find(x=>x.id===currentSchoolId);
+  const schoolName = sch?.name || "School";
+
+  const recipients = activeStudents().filter(s => {
+    const matchesClass = !targetClass || String(s.class_name || "").trim() === targetClass;
+    const hasPhone = Boolean(s.parent_whatsapp && String(s.parent_whatsapp).replace(/\D/g,"").length >= 9);
+    return matchesClass && hasPhone;
+  });
+
+  if(!recipients.length){
+    alert("No active parents with valid WhatsApp numbers found for the selected filter.");
+    return;
+  }
+
+  if(!confirm("Ready to send bulk WhatsApp messages to " + recipients.length + " parents? Tabs will open sequentially.")) return;
+
+  recipients.forEach((s, index) => {
+    const phone = String(s.parent_whatsapp).replace(/\D/g,"");
+    const fullText = "📢 CIRCULAR FROM *" + schoolName + "*\n" +
+                     "Student: " + s.full_name + " (" + s.class_name + ")\n\n" +
+                     customMsg + "\n\n" +
+                     "Thank you for choosing *" + schoolName + "*";
+
+    // Stagger opening tabs slightly to prevent browser popup blockers
+    setTimeout(() => {
+      window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(fullText), "_blank");
+    }, index * 600);
+  });
+
+  message("bulkBroadcastMessageStatus", "Successfully triggered " + recipients.length + " WhatsApp parent messages!");
 }
 
 function renderPayments(){
