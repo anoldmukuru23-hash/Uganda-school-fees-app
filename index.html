@@ -175,7 +175,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
 
 <div id="app" class="hidden">
 
-  <!-- TOP SELECTOR BAR: CHANGE SCHOOL & ACTIVE TERM -->
+  <!-- TOP SELECTOR BAR: PERSISTENT SCHOOL & TERM SELECTORS -->
   <div class="card no-print" style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
     <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
       <div style="display:flex;align-items:center;gap:8px">
@@ -184,11 +184,16 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
       </div>
       <div style="display:flex;align-items:center;gap:8px">
         <label style="margin:0">Active Term:</label>
-        <select id="termSelect" onchange="changeTerm()" style="width:160px">
+        <select id="termSelect" onchange="changeTerm()" style="width:175px">
           <option value="Term 1, 2026">Term 1, 2026</option>
           <option value="Term 2, 2026">Term 2, 2026</option>
           <option value="Term 3, 2026">Term 3, 2026</option>
           <option value="Term 1, 2027">Term 1, 2027</option>
+          <option value="Term 2, 2027">Term 2, 2027</option>
+          <option value="Term 3, 2027">Term 3, 2027</option>
+          <option value="Term 1, 2028">Term 1, 2028</option>
+          <option value="Term 2, 2028">Term 2, 2028</option>
+          <option value="Term 3, 2028">Term 3, 2028</option>
         </select>
       </div>
     </div>
@@ -205,7 +210,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
       <div>
         <h2 style="margin:0">Welcome back, Admin!</h2>
-        <p style="margin:4px 0 0;color:var(--muted)">Here's what's happening at your school today.</p>
+        <p style="margin:4px 0 0;color:var(--muted)">Financial & enrollment overview for your active session.</p>
       </div>
       <span class="pill pill-s1" id="dashTermDisplay">Term 1, 2026</span>
     </div>
@@ -230,10 +235,10 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
         <div class="stat-icon" style="background:#fef3c7;color:#d97706">💵</div>
       </div>
       <div class="stat-card">
-        <span>Total Staff</span>
-        <strong id="statStaff">0</strong>
-        <span class="trend">Registered teachers</span>
-        <div class="stat-icon" style="background:#d1fae5;color:#059669">👩‍🏫</div>
+        <span>Net Term Cashflow</span>
+        <strong id="statCashflow">UGX 0</strong>
+        <span class="trend">Collected minus Expenses & Salaries</span>
+        <div class="stat-icon" style="background:#d1fae5;color:#059669">💰</div>
       </div>
     </div>
 
@@ -254,7 +259,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
           <button class="secondary" onclick="showPage('payments')">💵 Record Fees Payment</button>
           <button class="secondary" onclick="showPage('staff')">👩‍🏫 Add New Teacher / Staff</button>
           <button class="secondary" onclick="showPage('academics')">📝 Enter Termly Marks</button>
-          <button class="secondary" onclick="window.print()">🖨️ Print Page</button>
+          <button class="secondary" onclick="showPage('classes')">🏫 Promote / Graduate Classes</button>
         </div>
       </div>
     </div>
@@ -303,8 +308,18 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
-  <!-- PAGE: CLASSES -->
+  <!-- PAGE: CLASSES & PROMOTION WIZARD -->
   <div id="page-classes" class="page-section hidden">
+    <div class="card" style="border-left: 4px solid var(--purple)">
+      <h2>🚀 End-of-Year Class Promotion & Graduation Wizard</h2>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Promote all students to their next class level (e.g., S.1 to S.2) or graduate/archive S.4 & S.6 candidates automatically.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button onclick="promoteClasses()">Promote All Students (S.1 $\rightarrow$ S.2, etc.)</button>
+        <button class="danger" onclick="graduateCandidates()">Graduate / Archive S.4 & S.6 Candidates</button>
+      </div>
+      <div id="promotionMessage"></div>
+    </div>
+
     <div class="card">
       <h2>Class Registers (S.1 through S.6)</h2>
       <div class="form-grid">
@@ -334,8 +349,8 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
   <!-- PAGE: ARCHIVED -->
   <div id="page-archived" class="page-section hidden">
     <div class="card">
-      <h2>Archived Students</h2>
-      <p style="color:var(--muted);font-size:13px">Students who have left the school. You can restore them or delete them permanently along with their history.</p>
+      <h2>Archived & Graduated Students</h2>
+      <p style="color:var(--muted);font-size:13px">Students who have left or graduated from the school. You can restore them or delete them permanently.</p>
       <div class="table-wrap" style="margin-top:16px">
         <table>
           <thead><tr><th>Admission</th><th>Student Name</th><th>Class</th><th>Expected Fees</th><th>Actions</th></tr></thead>
@@ -483,7 +498,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
-  <!-- PAGE: ACADEMICS & SUBJECT TEACHER PORTAL -->
+  <!-- PAGE: ACADEMICS -->
   <div id="page-academics" class="page-section hidden">
     <div class="card" style="border-left: 4px solid var(--primary)">
       <h2>👩‍🏫 Subject Teacher Marks Entry Portal</h2>
@@ -571,7 +586,7 @@ const SUPABASE_PUBLISHABLE_KEY="sb_publishable_qtxVou_FOx-80AjF4flnuQ_o2Chl6Pc";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 
 let currentUser=null,currentSchoolId=null;
-let currentTerm="Term 1, 2026";
+let currentTerm = localStorage.getItem("ussm_current_term") || "Term 1, 2026";
 let schools=[],students=[],payments=[],staff=[],salaries=[],expenses=[],academics=[];
 const ALLOWED_CLASSES=["S.1","S.2","S.3","S.4","S.5","S.6"];
 
@@ -630,6 +645,11 @@ async function startApp(user){
   $("loginScreen").classList.add("hidden");
   $("app").classList.remove("hidden");
   $("currentDateStr").textContent=new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+  
+  // Set Term selector dropdown to persisted value
+  $("termSelect").value = currentTerm;
+  $("dashTermDisplay").textContent = currentTerm;
+
   await loadSchools();
 }
 
@@ -665,6 +685,7 @@ async function changeSchool(){
 
 async function changeTerm(){
   currentTerm=$("termSelect").value;
+  localStorage.setItem("ussm_current_term", currentTerm);
   $("dashTermDisplay").textContent=currentTerm;
   await refreshAll();
 }
@@ -729,11 +750,15 @@ function renderDashboard(){
   const list=activeStudents();
   const exp=list.reduce((a,s)=>a+expected(s),0);
   const col=list.reduce((a,s)=>a+paid(s.id),0);
+  const totalExp=expenses.reduce((a,e)=>a+Number(e.amount||0),0);
+  const totalSal=salaries.reduce((a,s)=>a+Number(s.amount||0),0);
+  const netCash=col - (totalExp + totalSal);
+
   $("statStudents").textContent=list.length;
   $("statExpected").textContent=money(exp);
   $("statCollected").textContent=money(col);
   $("statCollectionRate").textContent=exp>0?Math.round((col/exp)*100)+"% of target":"0% target";
-  $("statStaff").textContent=staff.length;
+  $("statCashflow").textContent=money(netCash);
 
   $("dashboardClassesBody").innerHTML=ALLOWED_CLASSES.map(c=>{
     const members=list.filter(s=>String(s.class_name||"").trim()===c);
@@ -837,9 +862,36 @@ async function deleteStudent(id){
   await refreshAll();
 }
 
+async function promoteClasses(){
+  if(!confirm("Promote all active students to their next class level (S.1->S.2, S.2->S.3, S.3->S.4, S.4->S.5, S.5->S.6)? S.6 students will need manual graduation."))return;
+  const mapClass={"S.1":"S.2","S.2":"S.3","S.3":"S.4","S.4":"S.5","S.5":"S.6"};
+  let count=0;
+  for(let s of activeStudents()){
+    if(mapClass[s.class_name]){
+      await db.from("students").update({class_name:mapClass[s.class_name]}).eq("id",s.id).eq("school_id",currentSchoolId);
+      count++;
+    }
+  }
+  await refreshAll();
+  alert("✅ Successfully promoted "+count+" students to their next classes!");
+}
+
+async function graduateCandidates(){
+  if(!confirm("Graduate and archive all S.4 and S.6 candidates?"))return;
+  let count=0;
+  for(let s of activeStudents()){
+    if(s.class_name==="S.4" || s.class_name==="S.6"){
+      await db.from("students").update({status:"Archived"}).eq("id",s.id).eq("school_id",currentSchoolId);
+      count++;
+    }
+  }
+  await refreshAll();
+  alert("✅ Successfully graduated and archived "+count+" candidates!");
+}
+
 function renderArchived(){
   const list=students.filter(s=>String(s.status||"Active").toLowerCase()==="archived");
-  $("archivedBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td>'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td><div class="actions"><button class="secondary" onclick="restoreStudent(\''+s.id+'\')">Restore</button><button class="danger" onclick="deleteStudent(\''+s.id+'\')">Delete Permanently</button></div></td></tr>').join("")||'<tr><td colspan="5">No archived students.</td></tr>';
+  $("archivedBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td>'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td><div class="actions"><button class="secondary" onclick="restoreStudent(\''+s.id+'\')">Restore</button><button class="danger" onclick="deleteStudent(\''+s.id+'\')">Delete Permanently</button></div></td></tr>').join("")||'<tr><td colspan="5">No archived or graduated students.</td></tr>';
 }
 
 function renderClasses(){
@@ -1094,7 +1146,6 @@ async function saveSubjectMark(){
 
   if(!student_id||isNaN(markVal)){message("teacherMarkMessage","Select a student and enter a valid mark.",true);return;}
 
-  // Check if academic record exists for this student & term
   let existing=academics.find(a=>String(a.student_id)===String(student_id));
   let error=null;
 
