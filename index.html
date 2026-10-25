@@ -678,16 +678,31 @@ async function startApp(user){
 }
 
 async function loadSchools(){
-  const {data,error}=await db.from("school_members").select("school_id,role,schools(id,name)").eq("user_id",currentUser.id);
-  if(error){message("schoolMessage","Could not load schools: "+error.message,true);return;}
-  schools=(data||[]).map(r=>({id:r.school_id,name:r.schools?.name||"School",role:r.role})).filter(s=>s.id);
-  $("schoolSelect").innerHTML=schools.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name)+'</option>').join("");
+  let schoolsData = [];
+  
+  // Developer master override: fetch ALL schools directly if logged in as developer
+  if(currentUser.email === "mukuruanold5@gmail.com"){
+    const {data, error} = await db.from("schools").select("id, name");
+    if(error){message("schoolMessage","Could not load schools: "+error.message,true);return;}
+    schoolsData = (data||[]).map(s => ({id: s.id, name: s.name, role: "admin"}));
+  } else {
+    // Regular school admins: fetch only their assigned schools
+    const {data, error} = await db.from("school_members").select("school_id, role, schools(id, name)").eq("user_id", currentUser.id);
+    if(error){message("schoolMessage","Could not load schools: "+error.message,true);return;}
+    schoolsData = (data||[]).map(r => ({id: r.school_id, name: r.schools?.name || "School", role: r.role})).filter(s => s.id);
+  }
+
+  schools = schoolsData;
+  $("schoolSelect").innerHTML = schools.map(s => '<option value="'+esc(s.id)+'">'+esc(s.name)+'</option>').join("");
+  
   if(!schools.length){
-    currentSchoolId=null;clearTables();
-    $("schoolMessage").innerHTML='<div class="msg error">No school linked. Create one below!</div>';
+    currentSchoolId = null; clearTables();
+    $("schoolMessage").innerHTML = '<div class="msg error">No school linked. Create one below!</div>';
     return;
   }
-  currentSchoolId=schools[0].id;$("schoolSelect").value=currentSchoolId;
+  
+  currentSchoolId = schools[0].id; 
+  $("schoolSelect").value = currentSchoolId;
   await refreshAll();
 }
 
@@ -1033,7 +1048,6 @@ function sendBulkWhatsAppBroadcast(){
                      customMsg + "\n\n" +
                      "Thank you for choosing *" + schoolName + "*";
 
-    // Stagger opening tabs slightly to prevent browser popup blockers
     setTimeout(() => {
       window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(fullText), "_blank");
     }, index * 600);
