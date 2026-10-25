@@ -201,6 +201,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
       <input id="newSchoolName" placeholder="New school name..." style="width:160px">
       <button onclick="createSchool()">Create School</button>
       <button class="secondary" onclick="refreshAll()">Refresh</button>
+      <button class="danger" onclick="deleteActiveSchool()">Delete School</button>
     </div>
   </div>
   <div id="schoolMessage"></div>
@@ -680,13 +681,11 @@ async function startApp(user){
 async function loadSchools(){
   let schoolsData = [];
   
-  // Developer master override: fetch ALL schools directly if logged in as developer
   if(currentUser.email === "mukuruanold5@gmail.com"){
     const {data, error} = await db.from("schools").select("id, name");
     if(error){message("schoolMessage","Could not load schools: "+error.message,true);return;}
     schoolsData = (data||[]).map(s => ({id: s.id, name: s.name, role: "admin"}));
   } else {
-    // Regular school admins: fetch only their assigned schools
     const {data, error} = await db.from("school_members").select("school_id, role, schools(id, name)").eq("user_id", currentUser.id);
     if(error){message("schoolMessage","Could not load schools: "+error.message,true);return;}
     schoolsData = (data||[]).map(r => ({id: r.school_id, name: r.schools?.name || "School", role: r.role})).filter(s => s.id);
@@ -715,6 +714,30 @@ async function createSchool(){
   $("newSchoolName").value="";
   await loadSchools();
   alert("School created successfully!");
+}
+
+async function deleteActiveSchool(){
+  if(!currentSchoolId) {
+    alert("No school selected!");
+    return;
+  }
+  
+  const sch = schools.find(s => s.id === currentSchoolId);
+  const schoolName = sch ? sch.name : "this school";
+
+  if(!confirm("Are you sure you want to PERMANENTLY delete " + schoolName + "? This will erase all its students, payments, staff, and records completely.")) {
+    return;
+  }
+
+  const { error } = await db.from("schools").delete().eq("id", currentSchoolId);
+
+  if(error){
+    alert("Failed to delete school: " + error.message);
+    return;
+  }
+
+  alert("✅ School deleted successfully!");
+  await loadSchools();
 }
 
 async function changeSchool(){
