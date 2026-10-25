@@ -175,26 +175,39 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
 
 <div id="app" class="hidden">
 
+  <!-- TOP SELECTOR BAR: CHANGE SCHOOL & ACTIVE TERM -->
   <div class="card no-print" style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-    <div style="display:flex;align-items:center;gap:12px">
-      <label style="margin:0">Active School:</label>
-      <select id="schoolSelect" onchange="changeSchool()" style="width:220px"></select>
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:8px">
+        <label style="margin:0">Active School:</label>
+        <select id="schoolSelect" onchange="changeSchool()" style="width:200px"></select>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <label style="margin:0">Active Term:</label>
+        <select id="termSelect" onchange="changeTerm()" style="width:160px">
+          <option value="Term 1, 2026">Term 1, 2026</option>
+          <option value="Term 2, 2026">Term 2, 2026</option>
+          <option value="Term 3, 2026">Term 3, 2026</option>
+          <option value="Term 1, 2027">Term 1, 2027</option>
+        </select>
+      </div>
     </div>
-    <div style="display:flex;align-items:center;gap:10px">
-      <input id="newSchoolName" placeholder="New school name..." style="width:180px">
+    <div style="display:flex;align-items:center;gap:8px">
+      <input id="newSchoolName" placeholder="New school name..." style="width:160px">
       <button onclick="createSchool()">Create School</button>
-      <button class="secondary" onclick="refreshAll()">Refresh Data</button>
+      <button class="secondary" onclick="refreshAll()">Refresh</button>
     </div>
   </div>
   <div id="schoolMessage"></div>
 
+  <!-- PAGE: DASHBOARD -->
   <div id="page-dashboard" class="page-section">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
       <div>
         <h2 style="margin:0">Welcome back, Admin!</h2>
         <p style="margin:4px 0 0;color:var(--muted)">Here's what's happening at your school today.</p>
       </div>
-      <span class="pill pill-s1">Term 1, 2026</span>
+      <span class="pill pill-s1" id="dashTermDisplay">Term 1, 2026</span>
     </div>
 
     <div class="stats-grid">
@@ -247,6 +260,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
+  <!-- PAGE: STUDENTS -->
   <div id="page-students" class="page-section hidden">
     <div class="card">
       <h2 id="studentFormTitle">Student Registration</h2>
@@ -289,6 +303,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
+  <!-- PAGE: CLASSES -->
   <div id="page-classes" class="page-section hidden">
     <div class="card">
       <h2>Class Registers (S.1 through S.6)</h2>
@@ -316,6 +331,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
+  <!-- PAGE: ARCHIVED -->
   <div id="page-archived" class="page-section hidden">
     <div class="card">
       <h2>Archived Students</h2>
@@ -329,6 +345,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
+  <!-- PAGE: PAYMENTS -->
   <div id="page-payments" class="page-section hidden">
     <div class="card">
       <h2>Record School Fees Payment</h2>
@@ -363,6 +380,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
+  <!-- PAGE: EXPENSES -->
   <div id="page-expenses" class="page-section hidden">
     <div class="card">
       <h2>School Expense Tracking</h2>
@@ -399,6 +417,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
+  <!-- PAGE: STAFF -->
   <div id="page-staff" class="page-section hidden">
     <div class="card">
       <h2 id="staffFormTitle">Staff / Teacher Registration</h2>
@@ -438,6 +457,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
+  <!-- PAGE: PAYROLL -->
   <div id="page-payroll" class="page-section hidden">
     <div class="card">
       <h2>Staff Payroll & Salary Disbursements</h2>
@@ -463,16 +483,38 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
+  <!-- PAGE: ACADEMICS & SUBJECT TEACHER PORTAL -->
   <div id="page-academics" class="page-section hidden">
+    <div class="card" style="border-left: 4px solid var(--primary)">
+      <h2>👩‍🏫 Subject Teacher Marks Entry Portal</h2>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Subject teachers can log marks directly for the classes and subject they teach for the active term.</p>
+      <div class="form-grid">
+        <div><label>Select Subject *</label>
+          <select id="teacherSubject">
+            <option value="math">Mathematics</option>
+            <option value="eng">English Language</option>
+            <option value="sci">Science / Physics</option>
+            <option value="sst">Social Studies / Chemistry</option>
+            <option value="opt">Optional / Literature</option>
+          </select>
+        </div>
+        <div><label>Filter Class *</label><select id="teacherClassFilter" onchange="renderTeacherStudents()"><option value="">Choose Class</option></select></div>
+        <div><label>Select Student *</label><select id="teacherStudentSelect"></select></div>
+        <div><label>Subject Mark (Out of 100) *</label><input id="teacherMarkInput" type="number" min="0" max="100" placeholder="0-100"></div>
+      </div>
+      <div><label>Subject Teacher Remarks</label><input id="teacherRemarksInput" placeholder="Good grasp of concepts..."></div>
+      <button style="margin-top:12px" onclick="saveSubjectMark()">Submit / Update Subject Mark</button>
+      <div id="teacherMarkMessage"></div>
+    </div>
+
     <div class="card">
-      <h2>Academic Marks & Report Cards (S.1 - S.6)</h2>
+      <h2>Full Term Report Card & General Academics (S.1 - S.6)</h2>
       <div class="form-grid">
         <div><label>Class Filter</label><select id="acadClassFilter" onchange="renderAcadStudents()"><option value="">Choose Class</option></select></div>
         <div><label>Student *</label><select id="acadStudentSelect"></select></div>
-        <div><label>Term / Year *</label><input id="acadTerm" placeholder="e.g. Term 1, 2026"></div>
       </div>
       <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
-      <h3>Subject Marks (Out of 100)</h3>
+      <h3>All Subject Scores (Out of 100)</h3>
       <div class="form-grid">
         <div><label>Mathematics</label><input id="markMath" type="number" min="0" max="100" placeholder="0-100"></div>
         <div><label>English Language</label><input id="markEng" type="number" min="0" max="100" placeholder="0-100"></div>
@@ -484,7 +526,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
         <div><label>Class Teacher Remarks</label><input id="acadTeacherRemarks" placeholder="Good performance..."></div>
         <div><label>Headteacher Remarks</label><input id="acadHeadRemarks" placeholder="Promoted to next class..."></div>
       </div>
-      <button onclick="saveAcademics()">Save & Print Report Card</button>
+      <button onclick="saveAcademics()">Save Full Report Card & Print</button>
       <div id="acadMessage"></div>
     </div>
 
@@ -492,13 +534,14 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
       <h3>Saved Academic Reports</h3>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Term</th><th>Student Name</th><th>Class</th><th>Math</th><th>Eng</th><th>Sub 3</th><th>Sub 4</th><th>Sub 5</th><th>Total</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Term</th><th>Student Name</th><th>Class</th><th>Math</th><th>Eng</th><th>Sci</th><th>Sst</th><th>Opt</th><th>Total</th><th>Actions</th></tr></thead>
           <tbody id="acadBody"></tbody>
         </table>
       </div>
     </div>
   </div>
 
+  <!-- PAGE: REPORTS -->
   <div id="page-reports" class="page-section hidden">
     <div class="card">
       <h2>Reports & Data Exports</h2>
@@ -528,6 +571,7 @@ const SUPABASE_PUBLISHABLE_KEY="sb_publishable_qtxVou_FOx-80AjF4flnuQ_o2Chl6Pc";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 
 let currentUser=null,currentSchoolId=null;
+let currentTerm="Term 1, 2026";
 let schools=[],students=[],payments=[],staff=[],salaries=[],expenses=[],academics=[];
 const ALLOWED_CLASSES=["S.1","S.2","S.3","S.4","S.5","S.6"];
 
@@ -546,7 +590,7 @@ function showPage(id){
   $("page-"+id).classList.remove("hidden");
   document.querySelectorAll("#mainNav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
   if(id==="classes"){renderClasses();renderClassStudents();}
-  if(id==="academics"){renderAcadClassSelect();renderAcadStudents();}
+  if(id==="academics"){renderAcadClassSelect();renderAcadStudents();renderTeacherClassSelect();}
   if(id==="payments"){renderStudentSelect();}
 }
 
@@ -619,6 +663,12 @@ async function changeSchool(){
   await refreshAll();
 }
 
+async function changeTerm(){
+  currentTerm=$("termSelect").value;
+  $("dashTermDisplay").textContent=currentTerm;
+  await refreshAll();
+}
+
 function clearTables(){
   students=[];payments=[];staff=[];salaries=[];expenses=[];academics=[];
   renderAll();
@@ -632,7 +682,7 @@ async function refreshAll(){
     db.from("staff").select("*").eq("school_id",currentSchoolId),
     db.from("salary_payments").select("*").eq("school_id",currentSchoolId).order("paid_at",{ascending:false}),
     db.from("expenses").select("*").eq("school_id",currentSchoolId).order("date",{ascending:false}),
-    db.from("academics").select("*").eq("school_id",currentSchoolId)
+    db.from("academics").select("*").eq("school_id",currentSchoolId).eq("term",currentTerm)
   ]);
   students=res[0].data||[];
   payments=res[1].data||[];
@@ -656,6 +706,7 @@ function renderAll(){
   renderPayroll();
   renderAcadClassSelect();
   renderAcadStudents();
+  renderTeacherClassSelect();
   renderAcademicsTable();
   const sch=schools.find(x=>x.id===currentSchoolId);
   if(sch){
@@ -1025,9 +1076,57 @@ function renderAcadStudents(){
   $("acadStudentSelect").innerHTML=list.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.admission_no)+" - "+esc(s.full_name)+'</option>').join("");
 }
 
+function renderTeacherClassSelect(){
+  $("teacherClassFilter").innerHTML='<option value="">Choose Class</option>'+ALLOWED_CLASSES.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
+}
+
+function renderTeacherStudents(){
+  const sel=$("teacherClassFilter")?.value||"";
+  const list=activeStudents().filter(s=>!sel||String(s.class_name||"").trim()===sel);
+  $("teacherStudentSelect").innerHTML=list.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.admission_no)+" - "+esc(s.full_name)+'</option>').join("");
+}
+
+async function saveSubjectMark(){
+  const subjectKey=$("teacherSubject").value;
+  const student_id=$("teacherStudentSelect").value;
+  const markVal=Number($("teacherMarkInput").value);
+  const remarks=$("teacherRemarksInput").value.trim();
+
+  if(!student_id||isNaN(markVal)){message("teacherMarkMessage","Select a student and enter a valid mark.",true);return;}
+
+  // Check if academic record exists for this student & term
+  let existing=academics.find(a=>String(a.student_id)===String(student_id));
+  let error=null;
+
+  if(existing){
+    let updatePayload={ [subjectKey]: markVal };
+    if(subjectKey==="math") updatePayload.math=markVal;
+    if(subjectKey==="eng") updatePayload.eng=markVal;
+    if(subjectKey==="sci") updatePayload.sci=markVal;
+    if(subjectKey==="sst") updatePayload.sst=markVal;
+    if(subjectKey==="opt") updatePayload.opt=markVal;
+    if(remarks) updatePayload.teacher_remarks=remarks;
+
+    const res=await db.from("academics").update(updatePayload).eq("id", existing.id).eq("school_id", currentSchoolId);
+    error=res.error;
+  }else{
+    let newPayload={ school_id: currentSchoolId, student_id, term: currentTerm, math:0, eng:0, sci:0, sst:0, opt:0 };
+    newPayload[subjectKey]=markVal;
+    if(remarks) newPayload.teacher_remarks=remarks;
+
+    const res=await db.from("academics").insert(newPayload);
+    error=res.error;
+  }
+
+  if(error){message("teacherMarkMessage", error.message, true);return;}
+  $("teacherMarkInput").value="";$("teacherRemarksInput").value="";
+  await refreshAll();
+  message("teacherMarkMessage","Subject mark saved successfully!");
+  alert("✅ Subject mark saved successfully!");
+}
+
 async function saveAcademics(){
   const student_id=$("acadStudentSelect").value;
-  const term=$("acadTerm").value.trim();
   const math=Number($("markMath").value||0);
   const eng=Number($("markEng").value||0);
   const sci=Number($("markSci").value||0);
@@ -1036,15 +1135,26 @@ async function saveAcademics(){
   const teacher_remarks=$("acadTeacherRemarks").value.trim();
   const head_remarks=$("acadHeadRemarks").value.trim();
 
-  if(!student_id||!term){message("acadMessage","Select a student and term.",true);return;}
-  const payload={school_id:currentSchoolId,student_id,term,math,eng,sci,sst,opt,teacher_remarks,head_remarks};
-  const {data,error}=await db.from("academics").insert(payload).select().single();
+  if(!student_id){message("acadMessage","Select a student.",true);return;}
+
+  let existing=academics.find(a=>String(a.student_id)===String(student_id));
+  let payload={school_id:currentSchoolId,student_id,term:currentTerm,math,eng,sci,sst,opt,teacher_remarks,head_remarks};
+  let error=null, savedData=null;
+
+  if(existing){
+    const res=await db.from("academics").update(payload).eq("id",existing.id).eq("school_id",currentSchoolId).select().single();
+    error=res.error; savedData=res.data;
+  }else{
+    const res=await db.from("academics").insert(payload).select().single();
+    error=res.error; savedData=res.data;
+  }
+
   if(error){message("acadMessage",error.message,true);return;}
   ["markMath","markEng","markSci","markSst","markOpt","acadTeacherRemarks","acadHeadRemarks"].forEach(id=>$(id).value="");
   await refreshAll();
   message("acadMessage","Academic report saved successfully!");
   alert("✅ Academic report saved successfully!");
-  if(confirm("Print official report card?"))printReportCard(data);
+  if(confirm("Print official report card?"))printReportCard(savedData);
 }
 
 function renderAcademicsTable(){
@@ -1052,7 +1162,7 @@ function renderAcademicsTable(){
     const s=students.find(x=>String(x.id)===String(a.student_id));
     const tot=Number(a.math||0)+Number(a.eng||0)+Number(a.sci||0)+Number(a.sst||0)+Number(a.opt||0);
     return '<tr><td>'+esc(a.term)+'</td><td style="font-weight:600">'+esc(s?.full_name||"Unknown")+'</td><td>'+esc(s?.class_name||"—")+'</td><td>'+a.math+'</td><td>'+a.eng+'</td><td>'+a.sci+'</td><td>'+a.sst+'</td><td>'+a.opt+'</td><td><b>'+tot+'/500</b></td><td><div class="actions"><button class="secondary" onclick="printReportCardById(\''+a.id+'\')">Report Card</button><button class="danger" onclick="deleteAcademics(\''+a.id+'\')">Delete</button></div></td></tr>';
-  }).join("")||'<tr><td colspan="10">No academic reports recorded.</td></tr>';
+  }).join("")||'<tr><td colspan="10">No academic reports recorded for this term.</td></tr>';
 }
 
 function printReportCardById(id){const a=academics.find(x=>String(x.id)===String(id));if(a)printReportCard(a);}
