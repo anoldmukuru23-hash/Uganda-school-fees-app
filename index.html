@@ -4,52 +4,142 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#0f172a">
-<title>Uganda School Manager | Pro Suite</title>
+
+<title>Uganda School Manager | School Fees and Administration System</title>
+
+<meta name="description" content="Uganda School Manager helps secondary schools in Uganda manage student records, school fees, payments, staff, payroll, academic marks, reports and school expenses in one system.">
+
+<meta name="keywords" content="Uganda School Manager, school management system Uganda, school fees management Uganda, secondary school software Uganda, student records management, school administration software, school payment tracking">
+
+<meta name="author" content="Uganda School Manager">
+<meta name="robots" content="index, follow">
+<meta name="application-name" content="Uganda School Manager">
+
+<link rel="canonical" href="https://anoldmukuru23-hash.github.io/Uganda-school-fees-app/">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Uganda School Manager">
+<meta property="og:description" content="Manage students, school fees, payments, staff, payroll, expenses and academic reports with Uganda School Manager.">
+<meta property="og:url" content="https://anoldmukuru23-hash.github.io/Uganda-school-fees-app/">
+<meta property="og:site_name" content="Uganda School Manager">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Uganda School Manager">
+<meta name="twitter:description" content="A school administration and fees management system for schools in Uganda.">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--sidebar-bg:#0f172a;--sidebar-hover:#1e293b;--sidebar-active:#2563eb;--primary:#2563eb;--primary-hover:#1d4ed8;--bg:#f1f5f9;--card-bg:#ffffff;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--radius:10px;--green:#10b981;--red:#ef4444}
-*{box-sizing:border-box}body{margin:0;font:14px/1.5 system-ui,sans-serif;background:var(--bg);color:var(--ink);display:flex;min-height:100vh}
+:root{
+  --sidebar-bg:#0f172a;
+  --sidebar-hover:#1e293b;
+  --sidebar-active:#2563eb;
+  --primary:#2563eb;
+  --primary-hover:#1d4ed8;
+  --bg:#f1f5f9;
+  --card-bg:#ffffff;
+  --ink:#0f172a;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --radius:10px;
+  --green:#10b981;
+  --orange:#f59e0b;
+  --purple:#8b5cf6;
+  --red:#ef4444;
+}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);display:flex;min-height:100vh}
+
 #loginScreen{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172a;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px}
-#loginBox{max-width:420px;width:100%;background:white;padding:32px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+#loginBox{max-width:420px;width:100%;background:white;padding:32px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5);border:1px solid var(--line)}
 .hidden{display:none!important}
-aside{width:260px;background:var(--sidebar-bg);color:#cbd5e1;display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:100}
+
+aside{width:260px;background:var(--sidebar-bg);color:#cbd5e1;display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:100;box-shadow:2px 0 10px rgba(0,0,0,0.05)}
 .brand{padding:20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #1e293b}
-.brand-logo{background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:bold}
+.brand-logo{background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:18px;box-shadow:0 2px 5px rgba(0,0,0,0.2)}
+.brand h2{margin:0;color:white;font-size:15px;font-weight:700}
+.brand p{margin:2px 0 0;font-size:11px;color:#94a3b8}
+
 .menu{padding:16px 12px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:4px}
-.menu button{width:100%;text-align:left;background:transparent;border:0;color:#94a3b8;padding:11px 14px;border-radius:8px;cursor:pointer;font-size:14px}
-.menu button:hover,.menu button.active{background:var(--sidebar-active);color:white}
-.wrapper{margin-left:260px;flex:1;display:flex;flex-direction:column}
-topbar{background:white;padding:14px 24px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.menu button{width:100%;text-align:left;background:transparent;border:0;color:#94a3b8;padding:11px 14px;border-radius:8px;font-weight:500;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .15s}
+.menu button:hover{background:var(--sidebar-hover);color:white}
+.menu button.active{background:var(--sidebar-active);color:white;font-weight:600;box-shadow:0 4px 12px rgba(37,99,235,0.3)}
+
+.sidebar-footer{padding:16px;border-top:1px solid #1e293b;text-align:center}
+.school-badge{background:#1e293b;padding:12px;border-radius:8px;margin-bottom:12px;text-align:left}
+.school-badge b{color:white;display:block;font-size:13px}
+.school-badge span{font-size:11px;color:#94a3b8}
+
+.wrapper{margin-left:260px;flex:1;display:flex;flex-direction:column;min-width:0}
+topbar{background:white;padding:14px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90}
+.search-box{display:flex;align-items:center;background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:6px 14px;width:380px;gap:8px}
+.search-box input{border:0;background:transparent;outline:none;width:100%;font-size:14px}
+.user-menu{display:flex;align-items:center;gap:12px}
+.avatar{background:var(--primary);color:white;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px}
+
 content{padding:24px;max-width:1300px;width:100%;margin:auto}
-.card{background:var(--card-bg);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:20px}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px}
-.stat-card{background:white;border:1px solid var(--line);border-radius:var(--radius);padding:20px;position:relative}
+
+.card{background:var(--card-bg);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.02);margin-bottom:20px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:20px}
+.stat-card{background:white;border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;position:relative;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,0.02)}
+.stat-card span{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.stat-card strong{font-size:22px;color:var(--ink);margin-top:6px;font-weight:700}
+.stat-card .trend{font-size:11px;color:var(--green);font-weight:600;margin-top:4px}
+.stat-icon{position:absolute;right:16px;top:20px;width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px}
+
 .table-wrap{width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:white}
 table{width:100%;border-collapse:collapse;min-width:700px}
 th,td{padding:12px 16px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}
-th{background:#f8fafc;color:var(--muted)}
-button{border:0;border-radius:6px;padding:8px 14px;background:var(--primary);color:white;font-weight:600;cursor:pointer}
+th{background:#f8fafc;color:var(--muted);font-weight:700;text-transform:uppercase;font-size:11px;letter-spacing:.5px}
+tr:last-child td{border-bottom:0}
+tr:hover td{background:#fafafa}
+
+button{border:0;border-radius:6px;padding:8px 14px;background:var(--primary);color:white;font-weight:600;cursor:pointer;font-size:13px;transition:all .15s}
+button:hover{background:var(--primary-hover)}
 button.secondary{background:#e2e8f0;color:#334155}
+button.secondary:hover{background:#cbd5e1}
 button.danger{background:var(--red)}
+button.danger:hover{background:#dc2626}
 button.whatsapp{background:#25d366;color:white}
+button.whatsapp:hover{background:#20ba5a}
+
+.actions{display:flex;gap:8px;align-items:center}
 .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:14px}
 input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;font-size:13px;outline:none;background:#fff}
-.msg{padding:12px;border-radius:8px;margin:12px 0;font-weight:600}
-.msg.success{background:#d1fae5;color:#065f46}
-.msg.error{background:#fee2e2;color:#991b1b}
-@media(max-width:768px){aside{width:70px}aside .brand h2,aside .brand p,.menu span{display:none}.wrapper{margin-left:70px}}
+input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
+label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4px}
+
+.pill{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;display:inline-block}
+.pill-s1{background:#dbeafe;color:#1e40af}
+.pill-s2{background:#d1fae5;color:#065f46}
+.pill-s3{background:#fef3c7;color:#b45309}
+.pill-s4{background:#fee2e2;color:#991b1b}
+.pill-s5{background:#ede9fe;color:#5b21b6}
+.pill-s6{background:#fae8ff;color:#86198f}
+
+.msg{padding:12px 16px;border-radius:8px;margin:12px 0;font-size:13px;font-weight:600}
+.msg.success{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0}
+.msg.error{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
+
+@media(max-width:768px){
+  aside{width:70px}
+  aside .brand h2,aside .brand p,.menu span,.school-badge{display:none}
+  .wrapper{margin-left:70px}
+}
 </style>
 </head>
 <body>
 
 <div id="loginScreen">
   <div id="loginBox">
-    <h2>School Portal Sign In</h2>
-    <p style="color:var(--muted)">Uganda School Administration System</p>
+    <div style="text-align:center;margin-bottom:24px">
+      <div class="brand-logo" style="width:54px;height:54px;margin:auto;font-size:24px">🇺🇬</div>
+      <h2 style="margin:12px 0 4px;color:#0f172a">School Portal Sign In</h2>
+      <p style="color:var(--muted);font-size:13px">Uganda School Administration System</p>
+    </div>
     <label>Email Address</label>
-    <input id="email" type="email" placeholder="admin@school.ug" autocapitalize="none">
+    <input id="email" type="email" placeholder="admin@school.ug" autocomplete="email">
     <label style="margin-top:12px">Password</label>
-    <input id="password" type="password" placeholder="••••••••">
+    <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
     <div style="display:flex;gap:10px;margin-top:20px">
       <button style="flex:1" onclick="signIn()">Sign In</button>
       <button class="secondary" style="flex:1" onclick="signUp()">Register</button>
@@ -61,7 +151,10 @@ input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);
 <aside class="no-print">
 <div class="brand">
   <div class="brand-logo">🇺🇬</div>
-  <div><h2>School Manager</h2><p>Pro Suite</p></div>
+  <div>
+    <h2>School Manager</h2>
+    <p>Uganda Pro Suite</p>
+  </div>
 </div>
 <div class="menu" id="mainNav">
   <button data-page="dashboard" class="active" onclick="showPage('dashboard')">📊 <span>Dashboard</span></button>
@@ -72,31 +165,86 @@ input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);
   <button data-page="expenses" onclick="showPage('expenses')">📉 <span>Expenses</span></button>
   <button data-page="staff" onclick="showPage('staff')">👩‍🏫 <span>Staff / Teachers</span></button>
   <button data-page="payroll" onclick="showPage('payroll')">💰 <span>Payroll</span></button>
-  <button data-page="academics" onclick="showPage('academics')">📝 <span>Marks & Reports</span></button>
+  <button data-page="academics" onclick="showPage('academics')">📝 <span>Academics & Reports</span></button>
   <button data-page="academics-ext" onclick="showPage('academics-ext')">📋 <span>Timetables & Logbook</span></button>
   <button data-page="reports" onclick="showPage('reports')">📈 <span>Reports & Exports</span></button>
 </div>
-<div style="padding:16px;border-top:1px solid #1e293b">
-  <button class="danger" style="width:100%" onclick="signOut()">Sign Out</button>
+<div class="sidebar-footer">
+  <div class="school-badge">
+    <span id="sidebarSchoolName">Green Valley High</span>
+    <span>Kampala, Uganda</span>
+  </div>
+  <button class="danger" style="width:100%;padding:8px" onclick="signOut()">Sign Out</button>
 </div>
 </aside>
 
 <div class="wrapper">
 <topbar class="no-print">
-  <span id="schoolTitleDisplay" style="font-weight:600">School Portal</span>
-  <span id="userEmailDisplay" style="font-size:13px;color:var(--muted)"></span>
+  <div class="search-box">
+    <span>🔍</span>
+    <input type="text" id="globalSearch" placeholder="Search students, classes, or records..." oninput="handleGlobalSearch(this.value)">
+  </div>
+  <div class="user-menu">
+    <span id="currentDateStr" style="font-size:13px;color:var(--muted)"></span>
+    <div class="avatar" id="userAvatar">A</div>
+    <div>
+      <b id="userNameDisplay" style="display:block;font-size:13px">Admin</b>
+      <span style="font-size:11px;color:var(--muted)">School Administrator</span>
+    </div>
+  </div>
 </topbar>
 
 <content>
+
 <div id="app" class="hidden">
 
-  <!-- DASHBOARD -->
+  <!-- TOP SELECTOR BAR: PERSISTENT SCHOOL & TERM SELECTORS -->
+  <div class="card no-print" style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:8px">
+        <label style="margin:0">Active School:</label>
+        <select id="schoolSelect" onchange="changeSchool()" style="width:200px"></select>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <label style="margin:0">Active Term:</label>
+        <select id="termSelect" onchange="changeTerm()" style="width:175px">
+          <option value="Term 1, 2026">Term 1, 2026</option>
+          <option value="Term 2, 2026">Term 2, 2026</option>
+          <option value="Term 3, 2026">Term 3, 2026</option>
+          <option value="Term 1, 2027">Term 1, 2027</option>
+          <option value="Term 2, 2027">Term 2, 2027</option>
+          <option value="Term 3, 2027">Term 3, 2027</option>
+          <option value="Term 1, 2028">Term 1, 2028</option>
+          <option value="Term 2, 2028">Term 2, 2028</option>
+          <option value="Term 3, 2028">Term 3, 2028</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <input id="newSchoolName" placeholder="New school name..." style="width:160px">
+      <button onclick="createSchool()">Create School</button>
+      <button class="secondary" onclick="refreshAll()">Refresh</button>
+      <button class="danger" onclick="deleteActiveSchool()">Delete School</button>
+    </div>
+  </div>
+  <div id="schoolMessage"></div>
+
+  <!-- PAGE: DASHBOARD -->
   <div id="page-dashboard" class="page-section">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div>
+        <h2 style="margin:0">Welcome back, Admin!</h2>
+        <p style="margin:4px 0 0;color:var(--muted)">Financial & enrollment overview for your active session.</p>
+      </div>
+      <span class="pill pill-s1" id="dashTermDisplay">Term 1, 2026</span>
+    </div>
+
+    <!-- DASHBOARD SECURITY LOCK -->
     <div class="card" id="financeLockCard" style="background:#f8fafc;border:2px dashed var(--primary);text-align:center;padding:16px">
       <h3 style="margin:0 0 6px">🔒 Sensitive Financial Dashboard Locked[span_0](start_span)[span_0](end_span)</h3>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:10px">Enter password to unlock school savings & earnings[span_1](start_span)[span_1](end_span) (Default: admin123)</p>
-      <div style="display:flex;gap:8px;max-width:300px;margin:auto">
-        <input type="password" id="dashLockPassword" placeholder="Password...">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:10px">Enter the administrative password to access school earnings and savings[span_1](start_span)[span_1](end_span). (Default password: admin123)</p>
+      <div style="display:flex;gap:8px;max-width:320px;margin:auto">
+        <input type="password" id="dashLockPassword" placeholder="Enter password...">
         <button onclick="unlockDashboard()">Unlock</button>
       </div>
       <div id="lockMessage"></div>
@@ -104,315 +252,455 @@ input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);
 
     <div id="dashboardStatsContainer" class="hidden">
       <div class="stats-grid">
-        <div class="stat-card"><span>Total Students</span><strong id="statStudents" style="font-size:20px;display:block;margin-top:6px">0</strong></div>
-        <div class="stat-card"><span>Expected Fees</span><strong id="statExpected" style="font-size:20px;display:block;margin-top:6px">UGX 0</strong></div>
-        <div class="stat-card"><span>Collected Fees</span><strong id="statCollected" style="font-size:20px;display:block;margin-top:6px">UGX 0</strong></div>
-        <div class="stat-card"><span>Net Cashflow[span_2](start_span)[span_2](end_span)</span><strong id="statCashflow" style="font-size:20px;display:block;margin-top:6px">UGX 0</strong></div>
+        <div class="stat-card">
+          <span>Total Students</span>
+          <strong id="statStudents">0</strong>
+          <span class="trend">↑ Active Enrolled</span>
+          <div class="stat-icon" style="background:#e0f2fe;color:#0284c7">🎓</div>
+        </div>
+        <div class="stat-card">
+          <span>Expected School Fees</span>
+          <strong id="statExpected">UGX 0</strong>
+          <span class="trend">Total target for term</span>
+          <div class="stat-icon" style="background:#ede9fe;color:#7c3aed">📋</div>
+        </div>
+        <div class="stat-card">
+          <span>Fees Collected</span>
+          <strong id="statCollected">UGX 0</strong>
+          <span class="trend" id="statCollectionRate">0% of target</span>
+          <div class="stat-icon" style="background:#fef3c7;color:#d97706">💵</div>
+        </div>
+        <div class="stat-card">
+          <span>Net Term Cashflow[span_2](start_span)[span_2](end_span)</span>
+          <strong id="statCashflow">UGX 0</strong>
+          <span class="trend">Collected minus Expenses & Salaries</span>
+          <div class="stat-icon" style="background:#d1fae5;color:#059669">💰</div>
+        </div>
       </div>
     </div>
 
-    <div class="card" style="margin-top:20px">
-      <h3>Class Enrollment Overview</h3>
-      <div class="table-wrap">
-        <table>
-          <thead><tr><th>Class Level</th><th>Enrolled Students</th><th>Expected Fees</th><th>Collected</th></tr></thead>
-          <tbody id="dashboardClassesBody"></tbody>
-        </table>
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px;margin-top:20px">
+      <div class="card">
+        <h3>Class Overview & Enrollment</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Class Level</th><th>Enrolled Students</th><th>Expected Fees</th><th>Collected</th><th>Status</th></tr></thead>
+            <tbody id="dashboardClassesBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Quick Actions</h3>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <button onclick="showPage('students')">🎓 Register New Student</button>
+          <button class="secondary" onclick="showPage('payments')">💵 Record Fees Payment</button>
+          <button class="secondary" onclick="showPage('staff')">👩‍🏫 Add New Teacher / Staff</button>
+          <button class="secondary" onclick="showPage('academics')">📝 Enter Termly Marks</button>
+          <button class="secondary" onclick="showPage('classes')">🏫 Promote / Graduate Classes</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- STUDENTS -->
+  <!-- PAGE: STUDENTS -->
   <div id="page-students" class="page-section hidden">
     <div class="card">
-      <h2 id="studentFormTitle">Student Registration (Primary, O-Level & A-Level)[span_3](start_span)[span_3](end_span)</h2>
+      <h2 id="studentFormTitle">Student Registration (Primary & Secondary)[span_3](start_span)[span_3](end_span)</h2>
       <input type="hidden" id="editStudentId">
       <div class="form-grid">
-        <div><label>Admission Number *</label><input id="admission" placeholder="e.g. 001"></div>
+        <div><label>Admission Number *</label><input id="admission" placeholder="e.g. S.1/001"></div>
         <div><label>Student Full Name *</label><input id="studentName" placeholder="Full name"></div>
         <div>
-          <label>Class Level & Section[span_4](start_span)[span_4](end_span)</label>
-          <select id="studentClass" onchange="toggleStudentLevelFields()">
+          <label>Class Level *[span_4](start_span)[span_4](end_span)</label>
+          <select id="studentClass">
             <optgroup label="Primary Section[span_5](start_span)[span_5](end_span)">
-              <option value="Baby">Baby Class</option><option value="Middle">Middle Class</option><option value="Top">Top Class</option>
-              <option value="P.1">Primary 1</option><option value="P.2">Primary 2</option><option value="P.3">Primary 3</option><option value="P.4">Primary 4</option><option value="P.5">Primary 5</option><option value="P.6">Primary 6</option><option value="P.7">Primary 7</option>
+              <option value="Baby">Baby Class</option>
+              <option value="Middle">Middle Class</option>
+              <option value="Top">Top Class</option>
+              <option value="P.1">Primary 1 (P.1)</option>
+              <option value="P.2">Primary 2 (P.2)</option>
+              <option value="P.3">Primary 3 (P.3)</option>
+              <option value="P.4">Primary 4 (P.4)</option>
+              <option value="P.5">Primary 5 (P.5)</option>
+              <option value="P.6">Primary 6 (P.6)</option>
+              <option value="P.7">Primary 7 (P.7)</option>
             </optgroup>
-            <optgroup label="Secondary[span_6](start_span)[span_6](end_span)">
-              <option value="S.1">Senior 1</option><option value="S.2">Senior 2</option><option value="S.3">Senior 3</option><option value="S.4">Senior 4</option><option value="S.5">Senior 5</option><option value="S.6">Senior 6</option>
+            <optgroup label="Secondary Section[span_6](start_span)[span_6](end_span)">
+              <option value="S.1">Senior 1 (S.1)</option>
+              <option value="S.2">Senior 2 (S.2)</option>
+              <option value="S.3">Senior 3 (S.3)</option>
+              <option value="S.4">Senior 4 (S.4)</option>
+              <option value="S.5">Senior 5 (S.5)</option>
+              <option value="S.6">Senior 6 (S.6)</option>
             </optgroup>
           </select>
         </div>
-        <div><label>Stream Name[span_7](start_span)[span_7](end_span)</label><input id="studentStream" placeholder="e.g. East / West"></div>
-        <div><label>Day / Boarding[span_8](start_span)[span_8](end_span)</label><select id="studentDayBoarding"><option>Day</option><option>Boarding</option></select></div>
-        <div id="aLevelCombGroup" class="hidden" style="grid-column:span 2"><label>A-Level Combo[span_9](start_span)[span_9](end_span)</label><input id="studentALevelCombo" placeholder="e.g. MEG/ICT"></div>
-        <div><label>Age[span_10](start_span)[span_10](end_span)</label><input id="studentAge" type="number" placeholder="15"></div>
-        <div><label>Gender[span_11](start_span)[span_11](end_span)</label><select id="studentGender"><option>Male</option><option>Female</option></select></div>
-        <div><label>Expected Fees (UGX) *</label><input id="expectedFees" type="number" value="0"></div>
-        <div><label>Parent Email[span_12](start_span)[span_12](end_span)</label><input id="parentEmail" type="email" placeholder="parent@gmail.com"></div>
-        <div><label>Parent WhatsApp[span_13](start_span)[span_13](end_span)</label><input id="parentWhatsApp" placeholder="256770000000"></div>
+        <div><label>Expected Term Fees (UGX) *</label><input id="expectedFees" type="number" min="0" placeholder="e.g. 450000" value="0"></div>
+        <div><label>Parent Email Address[span_7](start_span)[span_7](end_span)</label><input id="parentEmail" type="email" placeholder="parent@gmail.com"></div>
+        <div><label>Parent WhatsApp Number[span_8](start_span)[span_8](end_span)</label><input id="parentWhatsApp" placeholder="e.g. 256770000000"></div>
       </div>
-      <button onclick="saveStudent()">Save Student Record</button>
-      <button class="secondary hidden" id="cancelStudentEdit" onclick="resetStudentForm()">Cancel</button>
+      <div class="actions">
+        <button onclick="saveStudent()">Save Student Record</button>
+        <button class="secondary hidden" id="cancelStudentEdit" onclick="resetStudentForm()">Cancel Edit</button>
+      </div>
       <div id="studentMessage"></div>
     </div>
 
     <div class="card">
-      <h3>Active Students Directory</h3>
-      <input id="studentSearch" placeholder="Search name..." style="width:240px;margin-bottom:12px" oninput="renderStudents()">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <h3>Active Students Directory</h3>
+        <input id="studentSearch" placeholder="Search admission or name..." style="width:240px" oninput="renderStudents()">
+      </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Admission</th><th>Name</th><th>Class</th><th>Expected</th><th>Paid</th><th>Balance</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Admission</th><th>Student Name</th><th>Class</th><th>Expected Fees</th><th>Paid</th><th>Balance</th><th>Actions</th></tr></thead>
           <tbody id="studentsBody"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- CLASSES & PROMOTION -->
+  <!-- PAGE: CLASSES & PROMOTION WIZARD -->
   <div id="page-classes" class="page-section hidden">
-    <div class="card" style="border-left:4px solid var(--purple)">
-      <h2>🚀 Class Promotion & Graduation Wizard[span_14](start_span)[span_14](end_span)</h2>
-      <div style="display:flex;gap:12px;margin-top:10px">
+    <div class="card" style="border-left: 4px solid var(--purple)">
+      <h2>🚀 End-of-Year Class Promotion & Graduation Wizard[span_9](start_span)[span_9](end_span)</h2>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Promote all students to their next class level (e.g., Baby to Middle, S.1 to S.2) or graduate/archive P.7, S.4 & S.6 candidates automatically.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
         <button onclick="promoteClasses()">Promote All Students</button>
-        <button class="danger" onclick="graduateCandidates()">Graduate / Archive Candidates</button>
+        <button class="danger" onclick="graduateCandidates()">Graduate / Archive Candidates (P.7, S.4, S.6)</button>
       </div>
+      <div id="promotionMessage"></div>
     </div>
+
     <div class="card">
       <h2>Class Registers</h2>
-      <select id="classFilter" onchange="renderClassStudents()" style="max-width:220px;margin-bottom:12px">
-        <option value="">All Classes</option>
-        <option value="Baby">Baby</option><option value="Middle">Middle</option><option value="Top">Top</option>
-        <option value="P.1">P.1</option><option value="P.2">P.2</option><option value="P.3">P.3</option><option value="P.4">P.4</option><option value="P.5">P.5</option><option value="P.6">P.6</option><option value="P.7">P.7</option>
-        <option value="S.1">S.1</option><option value="S.2">S.2</option><option value="S.3">S.3</option><option value="S.4">S.4</option><option value="S.5">S.5</option><option value="S.6">S.6</option>
-      </select>
-      <div class="table-wrap">
+      <div class="form-grid">
+        <div>
+          <label>Filter by Class Level</label>
+          <select id="classFilter" onchange="renderClassStudents()">
+            <option value="">All Classes</option>
+            <option value="Baby">Baby</option><option value="Middle">Middle</option><option value="Top">Top</option>
+            <option value="P.1">P.1</option><option value="P.2">P.2</option><option value="P.3">P.3</option><option value="P.4">P.4</option><option value="P.5">P.5</option><option value="P.6">P.6</option><option value="P.7">P.7</option>
+            <option value="S.1">S.1</option><option value="S.2">S.2</option><option value="S.3">S.3</option><option value="S.4">S.4</option><option value="S.5">S.5</option><option value="S.6">S.6</option>
+          </select>
+        </div>
+        <div><label>Search Register</label><input id="classStudentSearch" placeholder="Student name..." oninput="renderClassStudents()"></div>
+      </div>
+      <div class="table-wrap" style="margin-top:16px">
         <table>
-          <thead><tr><th>Admission</th><th>Name</th><th>Class</th><th>Expected</th><th>Paid</th><th>Balance</th></tr></thead>
+          <thead><tr><th>Admission No</th><th>Student Name</th><th>Class</th><th>Expected Fees</th><th>Paid</th><th>Balance</th></tr></thead>
           <tbody id="classStudentsBody"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- ARCHIVED -->
+  <!-- PAGE: ARCHIVED -->
   <div id="page-archived" class="page-section hidden">
     <div class="card">
-      <h2>Archived Students</h2>
-      <div class="table-wrap">
+      <h2>Archived & Graduated Students</h2>
+      <p style="color:var(--muted);font-size:13px">Students who have left or graduated from the school. You can restore them or delete them permanently.</p>
+      <div class="table-wrap" style="margin-top:16px">
         <table>
-          <thead><tr><th>Admission</th><th>Name</th><th>Class</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Admission</th><th>Student Name</th><th>Class</th><th>Expected Fees</th><th>Actions</th></tr></thead>
           <tbody id="archivedBody"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- PAYMENTS & MESSAGING -->
+  <!-- PAGE: PAYMENTS & BULK WHATSAPP / EMAIL BROADCAST -->
   <div id="page-payments" class="page-section hidden">
-    <div class="card" style="border-left:4px solid var(--green)">
-      <h2>📢 WhatsApp & Email Broadcast Center[span_15](start_span)[span_15](end_span)</h2>
+    <div class="card" style="border-left: 4px solid var(--green)">
+      <h2>📢 Bulk Parent WhatsApp & Email Broadcast Center[span_10](start_span)[span_10](end_span)</h2>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Send notification messages or circulars to parents via WhatsApp or Email[span_11](start_span)[span_11](end_span).</p>
       <div class="form-grid">
         <div>
-          <label>Target Group[span_16](start_span)[span_16](end_span)</label>
-          <select id="bulkBroadcastTarget" onchange="toggleBroadcastFields()">
-            <option value="school">Whole School[span_17](start_span)[span_17](end_span)</option>
-            <option value="class">Specific Class[span_18](start_span)[span_18](end_span)</option>
-            <option value="single">Single Parent[span_19](start_span)[span_19](end_span)</option>
+          <label>Target Class Group[span_12](start_span)[span_12](end_span)</label>
+          <select id="bulkBroadcastClass">
+            <option value="">All Classes (Entire School)</option>
+            <option value="Baby">Baby</option><option value="Middle">Middle</option><option value="Top">Top</option>
+            <option value="P.1">P.1</option><option value="P.2">P.2</option><option value="P.3">P.3</option><option value="P.4">P.4</option><option value="P.5">P.5</option><option value="P.6">P.6</option><option value="P.7">P.7</option>
+            <option value="S.1">S.1</option><option value="S.2">S.2</option><option value="S.3">S.3</option><option value="S.4">S.4</option><option value="S.5">S.5</option><option value="S.6">S.6</option>
           </select>
         </div>
-        <div id="bulkClassGroupContainer" class="hidden">
-          <label>Select Class</label>
-          <select id="bulkBroadcastClass"><option value="S.1">S.1</option><option value="S.2">S.2</option><option value="S.3">S.3</option><option value="S.4">S.4</option><option value="S.5">S.5</option><option value="S.6">S.6</option></select>
-        </div>
-        <div id="bulkSingleParentContainer" class="hidden">
-          <label>Select Student</label>
-          <select id="bulkBroadcastStudent"></select>
-        </div>
       </div>
-      <label>Message *</label>
-      <textarea id="bulkBroadcastMessage" rows="3" placeholder="Enter message..."></textarea>
-      <div style="display:flex;gap:10px;margin-top:10px">
-        <button style="background:#25d366" onclick="sendBulkWhatsAppBroadcast()">🚀 Send WhatsApp[span_20](start_span)[span_20](end_span)</button>
-        <button class="secondary" onclick="sendEmailBroadcast()">📧 Send Email[span_21](start_span)[span_21](end_span)</button>
+      <div>
+        <label>Broadcast Message *[span_13](start_span)[span_13](end_span)</label>
+        <textarea id="bulkBroadcastMessage" rows="3" placeholder="Dear Parents, you are cordially invited to our termly general meeting..."></textarea>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+        <button style="background:#25d366" onclick="sendBulkWhatsAppBroadcast()">🚀 Send WhatsApp Broadcast[span_14](start_span)[span_14](end_span)</button>
+        <button class="secondary" onclick="sendEmailBroadcast()">📧 Send Email Broadcast[span_15](start_span)[span_15](end_span)</button>
       </div>
       <div id="bulkBroadcastMessageStatus"></div>
     </div>
 
     <div class="card">
-      <h2>Record Fees Payment</h2>
+      <h2>Record School Fees Payment</h2>
       <div class="form-grid">
+        <div><label>Search Student (Name or Admission)</label><input id="paymentSearchInput" placeholder="Type to filter students..." oninput="renderStudentSelect()"></div>
+        <div><label>Filter by Class</label><select id="paymentClass" onchange="renderStudentSelect()"><option value="">All Classes</option></select></div>
         <div><label>Select Student *</label><select id="paymentStudent"></select></div>
-        <div><label>Amount (UGX) *</label><input id="paymentAmount" type="number" placeholder="Amount"></div>
-        <div><label>Method</label><select id="paymentMethod"><option>Cash</option><option>Mobile Money</option><option>Bank</option></select></div>
-        <div><label>Reference</label><input id="paymentReference" placeholder="Ref No"></div>
+        <div><label>Amount Paid (UGX) *</label><input id="paymentAmount" type="number" min="1" placeholder="Amount"></div>
+        <div>
+          <label>Payment Method</label>
+          <select id="paymentMethod">
+            <option>Cash</option>
+            <option>Mobile Money</option>
+            <option>Bank Deposit</option>
+            <option>Cheque</option>
+          </select>
+        </div>
+        <div><label>Transaction Reference</label><input id="paymentReference" placeholder="Receipt / Ref No"></div>
       </div>
-      <button onclick="recordPayment()">Record Payment & Receipt</button>
+      <button onclick="recordPayment()">Record Payment & Print Receipt</button>
       <div id="paymentMessage"></div>
     </div>
 
     <div class="card">
-      <h3>Payment History</h3>
+      <h3>Fees Payment History</h3>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Date</th><th>Receipt</th><th>Student</th><th>Class</th><th>Amount</th><th>Method</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Date</th><th>Receipt No</th><th>Student Name</th><th>Class</th><th>Amount</th><th>Method</th><th>Actions</th></tr></thead>
           <tbody id="paymentsBody"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- EXPENSES -->
+  <!-- PAGE: EXPENSES -->
   <div id="page-expenses" class="page-section hidden">
     <div class="card">
       <h2>School Expense Tracking</h2>
       <div class="form-grid">
-        <div><label>Title *</label><input id="expTitle" placeholder="Title"></div>
-        <div><label>Category</label><select id="expCategory"><option>Teaching Materials</option><option>Food</option><option>Utilities</option><option>Other</option></select></div>
-        <div><label>Amount *</label><input id="expAmount" type="number"></div>
+        <div><label>Description / Title *</label><input id="expTitle" placeholder="e.g. Chemistry Lab Chemicals"></div>
+        <div>
+          <label>Category</label>
+          <select id="expCategory">
+            <option>Teaching Materials & Books</option>
+            <option>Laboratory Reagents</option>
+            <option>Food & Feeding</option>
+            <option>Utilities (Power/Water)</option>
+            <option>Maintenance & Repairs</option>
+            <option>Administration</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div><label>Amount (UGX) *</label><input id="expAmount" type="number" min="1" placeholder="Amount"></div>
         <div><label>Date</label><input id="expDate" type="date"></div>
+        <div><label>Method</label><select id="expMethod"><option>Cash</option><option>Bank</option><option>Mobile Money</option></select></div>
       </div>
       <button onclick="addExpense()">Record Expense</button>
       <div id="expenseMessage"></div>
     </div>
+
     <div class="card">
-      <h3>Expenses History</h3>
+      <h3>Logged Expenses</h3>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Date</th><th>Title</th><th>Category</th><th>Amount</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Date</th><th>Title</th><th>Category</th><th>Amount</th><th>Method</th><th>Actions</th></tr></thead>
           <tbody id="expensesBody"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- STAFF -->
+  <!-- PAGE: STAFF -->
   <div id="page-staff" class="page-section hidden">
     <div class="card">
-      <h2 id="staffFormTitle">Staff Registration[span_22](start_span)[span_22](end_span)</h2>
+      <h2 id="staffFormTitle">Staff / Teacher Registration[span_16](start_span)[span_16](end_span)</h2>
       <input type="hidden" id="editStaffId">
       <div class="form-grid">
-        <div><label>Staff No *</label><input id="staffNo" placeholder="T001"></div>
-        <div><label>Full Name *</label><input id="staffName" placeholder="Name"></div>
-        <div><label>Position *</label><input id="staffPosition" placeholder="Teacher"></div>
-        <div><label>Gender[span_23](start_span)[span_23](end_span)</label><select id="staffGender"><option>Male</option><option>Female</option></select></div>
-        <div><label>Marital Status[span_24](start_span)[span_24](end_span)</label><select id="staffMarital"><option>Single</option><option>Married</option></select></div>
-        <div><label>NIN[span_25](start_span)[span_25](end_span)</label><input id="staffNin" placeholder="NIN number"></div>
-        <div><label>Monthly Salary *</label><input id="staffSalary" type="number" value="0"></div>
-        <div><label>Phone</label><input id="staffPhone" placeholder="0770000000"></div>
+        <div><label>Staff Number *</label><input id="staffNo" placeholder="e.g. T001"></div>
+        <div><label>Full Name *</label><input id="staffName" placeholder="Teacher name"></div>
+        <div><label>Position / Subject *</label><input id="staffPosition" placeholder="e.g. Mathematics Teacher"></div>
+        <div>
+          <label>Gender[span_17](start_span)[span_17](end_span)</label>
+          <select id="staffGender"><option value="Male">Male</option><option value="Female">Female</option></select>
+        </div>
+        <div>
+          <label>Marital Status[span_18](start_span)[span_18](end_span)</label>
+          <select id="staffMarital"><option value="Single">Single</option><option value="Married">Married</option><option value="Other">Other</option></select>
+        </div>
+        <div><label>NIN (National ID Number)[span_19](start_span)[span_19](end_span)</label><input id="staffNin" placeholder="CMXXXXXXXXXXXX"></div>
+        <div><label>Expected Monthly Salary (UGX) *</label><input id="staffSalary" type="number" min="0" placeholder="e.g. 1500000" value="0"></div>
+        <div><label>Phone Number</label><input id="staffPhone" placeholder="0770000000"></div>
       </div>
-      <button onclick="saveStaff()">Save Staff</button>
+      <div class="actions">
+        <button onclick="saveStaff()">Save Staff Member</button>
+        <button class="secondary hidden" id="cancelStaffEdit" onclick="resetStaffForm()">Cancel Edit</button>
+      </div>
       <div id="staffMessage"></div>
     </div>
+
     <div class="card">
-      <h3>Staff Directory</h3>
+      <h3>Registered Teachers & Staff Directory</h3>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Staff No</th><th>Name</th><th>Position</th><th>Gender/Status</th><th>NIN</th><th>Salary</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Staff No</th><th>Full Name</th><th>Position</th><th>Gender/Status[span_20](start_span)[span_20](end_span)</th><th>NIN[span_21](start_span)[span_21](end_span)</th><th>Monthly Salary</th><th>Phone</th><th>Actions</th></tr></thead>
           <tbody id="staffBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Staff Salary Status & Balance Tracker</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Staff No</th><th>Full Name</th><th>Position</th><th>Expected Monthly Salary</th><th>Total Salary Paid</th><th>Remaining Balance</th></tr></thead>
+          <tbody id="staffSalaryStatusBody"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- PAYROLL -->
+  <!-- PAGE: PAYROLL -->
   <div id="page-payroll" class="page-section hidden">
     <div class="card">
-      <h2>Staff Payroll</h2>
+      <h2>Staff Payroll & Salary Disbursements</h2>
       <div class="form-grid">
-        <div><label>Staff *</label><select id="salaryStaff"></select></div>
-        <div><label>Amount *</label><input id="salaryAmount" type="number"></div>
-        <div><label>Month *</label><input id="salaryMonth" type="month"></div>
-        <div><label>Method</label><select id="salaryMethod"><option>Bank</option><option>Cash</option><option>Mobile Money</option></select></div>
+        <div><label>Staff Member *</label><select id="salaryStaff"></select></div>
+        <div><label>Amount Paid (UGX) *</label><input id="salaryAmount" type="number" min="1" placeholder="Amount"></div>
+        <div><label>Salary Month *</label><input id="salaryMonth" type="month"></div>
+        <div><label>Method</label><select id="salaryMethod"><option>Bank Transfer</option><option>Mobile Money</option><option>Cash</option></select></div>
+        <div><label>Reference</label><input id="salaryReference" placeholder="Optional ref"></div>
       </div>
-      <button onclick="recordSalary()">Record Salary</button>
+      <button onclick="recordSalary()">Record Salary Payment</button>
       <div id="payrollMessage"></div>
     </div>
+
     <div class="card">
-      <h3>Payroll History</h3>
+      <h3>Salary Disbursement History</h3>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Date</th><th>Staff</th><th>Month</th><th>Amount</th><th>Method</th></tr></thead>
+          <thead><tr><th>Date</th><th>Staff Member</th><th>Month</th><th>Amount</th><th>Method</th><th>Reference</th></tr></thead>
           <tbody id="payrollBody"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- ACADEMICS -->
+  <!-- PAGE: ACADEMICS -->
   <div id="page-academics" class="page-section hidden">
-    <div class="card">
-      <h2>Marks Entry & Subjects[span_26](start_span)[span_26](end_span)</h2>
+    <div class="card" style="border-left: 4px solid var(--primary)">
+      <h2>👩‍🏫 Subject Teacher Marks Entry Portal & Subjects Setup[span_22](start_span)[span_22](end_span)</h2>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Subject teachers can log marks directly or add custom subjects[span_23](start_span)[span_23](end_span).</p>
       <div class="form-grid">
-        <div>
-          <label>Standard Subject[span_27](start_span)[span_27](end_span)</label>
+        <div><label>Select Subject *[span_24](start_span)[span_24](end_span)</label>
           <select id="teacherSubject">
-            <option>Mathematics</option><option>English</option><option>Physics</option><option>Chemistry</option><option>Biology</option><option>History</option><option>Literature</option><option>Geography</option><option>CRE</option><option>ICT</option>
+            <option value="math">Mathematics</option>
+            <option value="eng">English Language</option>
+            <option value="sci">Science / Physics</option>
+            <option value="sst">Social Studies / Chemistry</option>
+            <option value="opt">Optional / Literature</option>
           </select>
         </div>
-        <div><label>Custom Subject[span_28](start_span)[span_28](end_span)</label><input id="customSubjectInput" placeholder="Optional custom subject"></div>
-        <div><label>Class *</label><select id="teacherClassFilter" onchange="renderTeacherStudents()"><option value="">Choose Class</option></select></div>
-        <div><label>Student *</label><select id="teacherStudentSelect"></select></div>
-        <div><label>Mark (0-100) *</label><input id="teacherMarkInput" type="number" min="0" max="100"></div>
+        <div><label>Or Register Additional Subject[span_25](start_span)[span_25](end_span)</label><input id="customSubjectInput" placeholder="Custom subject name..."></div>
+        <div><label>Filter Class *</label><select id="teacherClassFilter" onchange="renderTeacherStudents()"><option value="">Choose Class</option></select></div>
+        <div><label>Select Student *</label><select id="teacherStudentSelect"></select></div>
+        <div><label>Subject Mark (Out of 100) *</label><input id="teacherMarkInput" type="number" min="0" max="100" placeholder="0-100"></div>
       </div>
-      <button onclick="saveSubjectMark()">Save Subject Mark</button>
+      <div><label>Subject Teacher Remarks</label><input id="teacherRemarksInput" placeholder="Good grasp of concepts..."></div>
+      <button style="margin-top:12px" onclick="saveSubjectMark()">Submit / Update Subject Mark</button>
       <div id="teacherMarkMessage"></div>
     </div>
+
+    <div class="card">
+      <h2>Full Term Report Card & General Academics</h2>
+      <div class="form-grid">
+        <div><label>Class Filter</label><select id="acadClassFilter" onchange="renderAcadStudents()"><option value="">Choose Class</option></select></div>
+        <div><label>Student *</label><select id="acadStudentSelect"></select></div>
+      </div>
+      <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+      <h3>All Subject Scores (Out of 100)</h3>
+      <div class="form-grid">
+        <div><label>Mathematics</label><input id="markMath" type="number" min="0" max="100" placeholder="0-100"></div>
+        <div><label>English Language</label><input id="markEng" type="number" min="0" max="100" placeholder="0-100"></div>
+        <div><label>Science / Physics</label><input id="markSci" type="number" min="0" max="100" placeholder="0-100"></div>
+        <div><label>Social Studies / Chemistry</label><input id="markSst" type="number" min="0" max="100" placeholder="0-100"></div>
+        <div><label>Optional / Literature</label><input id="markOpt" type="number" min="0" max="100" placeholder="0-100"></div>
+      </div>
+      <div class="form-grid">
+        <div><label>Class Teacher Remarks</label><input id="acadTeacherRemarks" placeholder="Good performance..."></div>
+        <div><label>Headteacher Remarks</label><input id="acadHeadRemarks" placeholder="Promoted to next class..."></div>
+      </div>
+      <button onclick="saveAcademics()">Save Full Report Card & Print</button>
+      <div id="acadMessage"></div>
+    </div>
+
     <div class="card">
       <h3>Saved Academic Reports</h3>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Term</th><th>Student</th><th>Class</th><th>Math</th><th>Eng</th><th>Sci</th><th>Sst</th><th>Opt</th><th>Total</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Term</th><th>Student Name</th><th>Class</th><th>Math</th><th>Eng</th><th>Sci</th><th>Sst</th><th>Opt</th><th>Total</th><th>Actions</th></tr></thead>
           <tbody id="acadBody"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- TIMETABLES & LOGBOOK -->
+  <!-- PAGE: TIMETABLES & LOGBOOK -->
   <div id="page-academics-ext" class="page-section hidden">
     <div class="card">
-      <h2>📅 Class Timetables[span_29](start_span)[span_29](end_span)</h2>
+      <h2>📅 Class Timetables Creation[span_26](start_span)[span_26](end_span)</h2>
       <div class="form-grid">
-        <div><label>Class</label><select id="ttClass"><option>S.1</option><option>S.2</option><option>S.3</option><option>S.4</option><option>S.5</option><option>S.6</option></select></div>
-        <div><label>Day</label><select id="ttDay"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option></select></div>
-        <div><label>Time Slot</label><input id="ttTime" placeholder="08:00 AM"></div>
-        <div><label>Subject</label><input id="ttSubject" placeholder="Mathematics"></div>
-        <div><label>Teacher</label><input id="ttTeacher" placeholder="Name"></div>
+        <div><label>Class Level *</label><select id="ttClass"><option value="Baby">Baby</option><option value="Middle">Middle</option><option value="Top">Top</option><option value="P.1">P.1</option><option value="P.2">P.2</option><option value="P.3">P.3</option><option value="P.4">P.4</option><option value="P.5">P.5</option><option value="P.6">P.6</option><option value="P.7">P.7</option><option value="S.1">S.1</option><option value="S.2">S.2</option><option value="S.3">S.3</option><option value="S.4">S.4</option><option value="S.5">S.5</option><option value="S.6">S.6</option></select></div>
+        <div><label>Day of Week *</label><select id="ttDay"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option></select></div>
+        <div><label>Time Slot *</label><input id="ttTime" placeholder="e.g. 08:00 AM - 09:00 AM"></div>
+        <div><label>Subject / Activity *</label><input id="ttSubject" placeholder="e.g. Mathematics"></div>
+        <div><label>Teacher in Charge</label><input id="ttTeacher" placeholder="Teacher name"></div>
       </div>
-      <button onclick="saveTimetableEntry()">Add Slot</button>
-      <div class="table-wrap" style="margin-top:12px">
-        <table><thead><tr><th>Class</th><th>Day</th><th>Time</th><th>Subject</th><th>Teacher</th><th>Action</th></tr></thead><tbody id="timetableBody"></tbody></table>
+      <button onclick="saveTimetableEntry()">Add Timetable Slot</button>
+      <div id="ttMessage"></div>
+      <div class="table-wrap" style="margin-top:16px">
+        <table>
+          <thead><tr><th>Class</th><th>Day</th><th>Time</th><th>Subject</th><th>Teacher</th><th>Actions</th></tr></thead>
+          <tbody id="timetableBody"></tbody>
+        </table>
       </div>
     </div>
 
     <div class="card">
-      <h2>📝 Staff Logbook[span_30](start_span)[span_30](end_span)</h2>
+      <h2>📝 Staff Logbook & School Daily Reports[span_27](start_span)[span_27](end_span)</h2>
+      <p style="color:var(--muted);font-size:13px">Teachers can record daily happenings or incidents in the school[span_28](start_span)[span_28](end_span).</p>
       <div class="form-grid">
-        <div><label>Title *</label><input id="logTitle" placeholder="Event title"></div>
+        <div><label>Report Title *</label><input id="logTitle" placeholder="e.g. Inspection by officials"></div>
         <div><label>Date</label><input id="logDate" type="date"></div>
       </div>
-      <label>Description *</label><textarea id="logDesc" rows="2" placeholder="Details..."></textarea>
-      <button style="margin-top:10px" onclick="saveLogbookEntry()">Submit Log</button>
-      <div class="table-wrap" style="margin-top:12px">
-        <table><thead><tr><th>Date</th><th>Title</th><th>Description</th><th>Action</th></tr></thead><tbody id="logbookBody"></tbody></table>
+      <div><label>Detailed Report Description *</label><textarea id="logDesc" rows="3" placeholder="Describe school events today..."></textarea></div>
+      <button style="margin-top:10px" onclick="saveLogbookEntry()">Submit Log Entry</button>
+      <div id="logMessage"></div>
+      <div class="table-wrap" style="margin-top:16px">
+        <table>
+          <thead><tr><th>Date</th><th>Title</th><th>Description</th><th>Actions</th></tr></thead>
+          <tbody id="logbookBody"></tbody>
+        </table>
       </div>
     </div>
   </div>
 
-  <!-- REPORTS -->
+  <!-- PAGE: REPORTS -->
   <div id="page-reports" class="page-section hidden">
     <div class="card">
       <h2>Reports & Data Exports</h2>
-      <div style="display:flex;gap:10px;flex-wrap:wrap">
-        <button onclick="exportCSV('students')">Export Students</button>
-        <button onclick="exportCSV('payments')">Export Payments</button>
-        <button onclick="exportCSV('expenses')">Export Expenses</button>
-        <button class="secondary" onclick="window.print()">Print Page</button>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:16px">Download system logs as CSV files for spreadsheet applications or print complete summaries.</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button onclick="exportCSV('students')">Export Students CSV</button>
+        <button onclick="exportCSV('payments')">Export Payments CSV</button>
+        <button onclick="exportCSV('expenses')">Export Expenses CSV</button>
+        <button onclick="exportCSV('staff')">Export Staff CSV</button>
+        <button onclick="exportCSV('academics')">Export Academics CSV</button>
+        <button class="secondary" onclick="window.print()">Print Report Page</button>
       </div>
+      <hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
+      <h3 id="schoolInfoTitle">School Details</h3>
+      <p id="schoolInfoText" class="small"></p>
     </div>
   </div>
 
 </div>
+
 </content>
 </div>
 
@@ -421,398 +709,842 @@ const SUPABASE_URL="https://tmefeqwtmtxtzrbchzuu.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_qtxVou_FOx-80AjF4flnuQ_o2Chl6Pc";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 
-let currentUser=null, currentSchoolId=null;
-let currentTerm="Term 1, 2026";
-let students=[], payments=[], staff=[], salaries=[], expenses=[], academics=[], timetables=[], logbooks=[];
+let currentUser=null,currentSchoolId=null;
+let currentTerm = localStorage.getItem("ussm_current_term") || "Term 1, 2026";
+let schools=[],students=[],payments=[],staff=[],salaries=[],expenses=[],academics=[],timetables=[],logbooks=[];
 const ALLOWED_CLASSES=["Baby","Middle","Top","P.1","P.2","P.3","P.4","P.5","P.6","P.7","S.1","S.2","S.3","S.4","S.5","S.6"];
 
 const $=id=>document.getElementById(id);
 const money=n=>"UGX "+Number(n||0).toLocaleString("en-UG");
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
+function readableDate(val){
+  if(!val)return "—";
+  const d=new Date(val);
+  return Number.isNaN(d.getTime())?String(val):d.toLocaleString("en-UG",{dateStyle:"medium",timeStyle:"short"});
+}
+
 function showPage(id){
   document.querySelectorAll(".page-section").forEach(p=>p.classList.add("hidden"));
   $("page-"+id).classList.remove("hidden");
-  document.querySelectorAll("#mainNav button").forEach(b=>b.classList.toggle("active", b.dataset.page===id));
-  if(id==="classes") renderClassStudents();
-  if(id==="academics"){ renderAcadClassSelect(); renderTeacherStudents(); }
-  if(id==="payments") renderStudentSelect();
+  document.querySelectorAll("#mainNav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
+  if(id==="classes"){renderClasses();renderClassStudents();}
+  if(id==="academics"){renderAcadClassSelect();renderAcadStudents();renderTeacherClassSelect();}
+  if(id==="payments"){renderStudentSelect();}
 }
 
-async function signIn(){
-  const email=$("email").value.trim().toLowerCase();
-  const password=$("password").value;
-  if(!email||!password){alert("Enter email and password");return;}
-  const {data,error}=await db.auth.signInWithPassword({email,password});
-  if(error){alert("Login Error: "+error.message);return;}
-  await startApp(data.user);
+function message(id,text,error=false){
+  $(id).innerHTML='<div class="msg '+(error?'error':'success')+'">✅ '+esc(text)+'</div>';
+  setTimeout(()=>$(id).innerHTML="",6000);
 }
 
 async function signUp(){
-  const email=$("email").value.trim().toLowerCase();
-  const password=$("password").value;
-  if(!email||password.length<6){alert("Enter valid email and password (min 6 chars)");return;}
+  const email=$("email").value.trim(), password=$("password").value;
+  if(!email||password.length<6){message("authMessage","Enter valid email and password (min 6 chars).",true);return;}
   const {data,error}=await db.auth.signUp({email,password});
-  if(error){alert("Sign Up Error: "+error.message);return;}
-  if(data.session) await startApp(data.session.user);
-  else alert("Account created! You can now sign in.");
+  if(error){message("authMessage",error.message,true);return;}
+  if(data.session)await startApp(data.session.user);
+  else message("authMessage","Account created successfully. You can now sign in.");
+}
+
+async function signIn(){
+  const email=$("email").value.trim(), password=$("password").value;
+  if(!email||!password){message("authMessage","Enter email and password.",true);return;}
+  const {data,error}=await db.auth.signInWithPassword({email,password});
+  if(error){message("authMessage",error.message,true);return;}
+  await startApp(data.user);
 }
 
 async function signOut(){
   await db.auth.signOut();
-  location.reload();
+  currentUser=null;currentSchoolId=null;
+  $("app").classList.add("hidden");
+  $("loginScreen").classList.remove("hidden");
 }
 
 async function startApp(user){
   currentUser=user;
-  $("userEmailDisplay").textContent=user.email;
+  $("userNameDisplay").textContent=user.email.split("@")[0];
+  $("userAvatar").textContent=user.email[0].toUpperCase();
   $("loginScreen").classList.add("hidden");
   $("app").classList.remove("hidden");
+  $("currentDateStr").textContent=new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+  
+  $("termSelect").value = currentTerm;
+  $("dashTermDisplay").textContent = currentTerm;
 
-  let {data: schs} = await db.from("schools").select("id, name").limit(1);
-  if(!schs || !schs.length){
-    let {data: newSch} = await db.from("schools").insert({name:"My School", created_by:user.id}).select().single();
-    if(newSch) currentSchoolId = newSch.id;
+  await loadSchools();
+}
+
+async function loadSchools(){
+  let schoolsData = [];
+  
+  if(currentUser.email === "mukuruanold5@gmail.com"){
+    const {data, error} = await db.from("schools").select("id, name");
+    if(error){message("schoolMessage","Could not load schools: "+error.message,true);return;}
+    schoolsData = (data||[]).map(s => ({id: s.id, name: s.name, role: "admin"}));
   } else {
-    currentSchoolId = schs[0].id;
-    $("schoolTitleDisplay").textContent = schs[0].name;
+    const {data, error} = await db.from("school_members").select("school_id, role, schools(id, name)").eq("user_id", currentUser.id);
+    if(error){message("schoolMessage","Could not load schools: "+error.message,true);return;}
+    schoolsData = (data||[]).map(r => ({id: r.school_id, name: r.schools?.name || "School", role: r.role})).filter(s => s.id);
   }
+
+  schools = schoolsData;
+  $("schoolSelect").innerHTML = schools.map(s => '<option value="'+esc(s.id)+'">'+esc(s.name)+'</option>').join("");
+  
+  if(!schools.length){
+    currentSchoolId = null; clearTables();
+    $("schoolMessage").innerHTML = '<div class="msg error">No school linked. Create one below!</div>';
+    return;
+  }
+  
+  currentSchoolId = schools[0].id; 
+  $("schoolSelect").value = currentSchoolId;
   await refreshAll();
 }
 
-function unlockDashboard(){
-  if($("dashLockPassword").value === "admin123" || $("dashLockPassword").value.length >= 4){
-    $("financeLockCard").classList.add("hidden");
-    $("dashboardStatsContainer").classList.remove("hidden");
-  } else {
-    alert("Incorrect password");
+async function createSchool(){
+  const name=$("newSchoolName").value.trim();
+  if(!name){message("schoolMessage","Enter a school name.",true);return;}
+  const {data:sch,error}=await db.from("schools").insert({name,created_by:currentUser.id}).select("id,name").single();
+  if(error){message("schoolMessage",error.message,true);return;}
+  await db.from("school_members").insert({school_id:sch.id,user_id:currentUser.id,role:"admin"});
+  $("newSchoolName").value="";
+  await loadSchools();
+  alert("School created successfully!");
+}
+
+async function deleteActiveSchool(){
+  if(!currentSchoolId) {
+    alert("No school selected!");
+    return;
   }
+  
+  const sch = schools.find(s => s.id === currentSchoolId);
+  const schoolName = sch ? sch.name : "this school";
+
+  if(!confirm("Are you sure you want to PERMANENTLY delete " + schoolName + "? This will erase all its students, payments, staff, and records completely.")) {
+    return;
+  }
+
+  const { error } = await db.from("schools").delete().eq("id", currentSchoolId);
+
+  if(error){
+    alert("Failed to delete school: " + error.message);
+    return;
+  }
+
+  alert("✅ School deleted successfully!");
+  await loadSchools();
+}
+
+async function changeSchool(){
+  currentSchoolId=$("schoolSelect").value;
+  await refreshAll();
+}
+
+async function changeTerm(){
+  currentTerm=$("termSelect").value;
+  localStorage.setItem("ussm_current_term", currentTerm);
+  $("dashTermDisplay").textContent=currentTerm;
+  await refreshAll();
+}
+
+function clearTables(){
+  students=[];payments=[];staff=[];salaries=[];expenses=[];academics=[];timetables=[];logbooks=[];
+  renderAll();
 }
 
 async function refreshAll(){
-  if(!currentSchoolId) return;
-  try {
-    const res = await Promise.all([
-      db.from("students").select("*").eq("school_id", currentSchoolId),
-      db.from("payments").select("*").eq("school_id", currentSchoolId),
-      db.from("staff").select("*").eq("school_id", currentSchoolId),
-      db.from("expenses").select("*").eq("school_id", currentSchoolId),
-      db.from("academics").select("*").eq("school_id", currentSchoolId),
-      db.from("timetables").select("*").eq("school_id", currentSchoolId),
-      db.from("logbooks").select("*").eq("school_id", currentSchoolId)
-    ]);
-    students = res[0].data || [];
-    payments = res[1].data || [];
-    staff = res[2].data || [];
-    expenses = res[3].data || [];
-    academics = res[4].data || [];
-    timetables = res[5].data || [];
-    logbooks = res[6].data || [];
-  } catch(e){ console.error(e); }
+  if(!currentSchoolId)return;
+  const res=await Promise.all([
+    db.from("students").select("*").eq("school_id",currentSchoolId),
+    db.from("payments").select("*").eq("school_id",currentSchoolId).order("paid_at",{ascending:false}),
+    db.from("staff").select("*").eq("school_id",currentSchoolId),
+    db.from("salary_payments").select("*").eq("school_id",currentSchoolId).order("paid_at",{ascending:false}),
+    db.from("expenses").select("*").eq("school_id",currentSchoolId).order("date",{ascending:false}),
+    db.from("academics").select("*").eq("school_id",currentSchoolId).eq("term",currentTerm),
+    db.from("timetables").select("*").eq("school_id",currentSchoolId),
+    db.from("logbooks").select("*").eq("school_id",currentSchoolId).order("date",{ascending:false})
+  ]);
+  students=res[0].data||[];
+  payments=res[1].data||[];
+  staff=res[2].data||[];
+  salaries=res[3].data||[];
+  expenses=res[4].data||[];
+  academics=res[5].data||[];
+  timetables=res[6].data||[];
+  logbooks=res[7].data||[];
+  renderAll();
+}
 
+function unlockDashboard(){
+  const pass = $("dashLockPassword").value;
+  if(pass === "admin123" || pass.length >= 4){
+    $("financeLockCard").classList.add("hidden");
+    $("dashboardStatsContainer").classList.remove("hidden");
+  } else {
+    message("lockMessage", "Incorrect security password.", true);
+  }
+}
+
+function renderAll(){
   renderDashboard();
   renderStudents();
-  renderClassStudents();
+  renderArchived();
+  renderClasses();
   renderStudentSelect();
   renderPayments();
   renderExpenses();
   renderStaff();
   renderStaffSelect();
+  renderPayroll();
   renderAcadClassSelect();
-  renderTeacherStudents();
+  renderAcadStudents();
+  renderTeacherClassSelect();
   renderAcademicsTable();
   renderTimetables();
   renderLogbooks();
-  renderBroadcastStudentSelect();
+  const sch=schools.find(x=>x.id===currentSchoolId);
+  if(sch){
+    $("sidebarSchoolName").textContent=sch.name;
+    $("schoolInfoTitle").textContent="School: "+sch.name;
+    $("schoolInfoText").textContent="Connected Administrator Account: "+currentUser?.email;
+  }
 }
 
-function activeStudents(){ return students.filter(s => String(s.status||"Active") !== "Archived"); }
-function expected(s){ return Number(s.fees_expected || s.fee_expected || 0); }
-function paid(sid){ return payments.filter(p => String(p.student_id) === String(sid)).reduce((a,p)=>a+Number(p.amount||0),0); }
-function balance(s){ return Math.max(0, expected(s) - paid(s.id)); }
+function activeStudents(){return students.filter(s=>String(s.status||"Active").toLowerCase()!=="archived");}
+function expected(s){return Number(s.fees_expected??s.fee_expected??0);}
+function paid(sid){return payments.filter(p=>String(p.student_id)===String(sid)).reduce((a,p)=>a+Number(p.amount||0),0);}
+function balance(s){return Math.max(0,expected(s)-paid(s.id));}
+function staffExpected(st){return Number(st.monthly_salary||0);}
+function staffPaid(stid){return salaries.filter(p=>String(p.staff_id)===String(stid)).reduce((a,p)=>a+Number(p.amount||0),0);}
+function staffBalance(st){return Math.max(0,staffExpected(st)-staffPaid(st.id));}
+function receiptNo(p){return p.receipt_no||("RCP-"+String(p.id||"").slice(-8).toUpperCase());}
 
 function renderDashboard(){
-  const list = activeStudents();
-  const exp = list.reduce((a,s)=>a+expected(s),0);
-  const col = list.reduce((a,s)=>a+paid(s.id),0);
-  const totalExp = expenses.reduce((a,e)=>a+Number(e.amount||0),0);
+  const list=activeStudents();
+  const exp=list.reduce((a,s)=>a+expected(s),0);
+  const col=list.reduce((a,s)=>a+paid(s.id),0);
+  const totalExp=expenses.reduce((a,e)=>a+Number(e.amount||0),0);
+  const totalSal=salaries.reduce((a,s)=>a+Number(s.amount||0),0);
+  const netCash=col - (totalExp + totalSal);
 
-  $("statStudents").textContent = list.length;
-  $("statExpected").textContent = money(exp);
-  $("statCollected").textContent = money(col);
-  $("statCashflow").textContent = money(col - totalExp);
+  $("statStudents").textContent=list.length;
+  $("statExpected").textContent=money(exp);
+  $("statCollected").textContent=money(col);
+  $("statCollectionRate").textContent=exp>0?Math.round((col/exp)*100)+"% of target":"0% target";
+  $("statCashflow").textContent=money(netCash);
 
-  $("dashboardClassesBody").innerHTML = ALLOWED_CLASSES.map(c=>{
-    const members = list.filter(s => String(s.class_name||"").trim() === c);
+  $("dashboardClassesBody").innerHTML=ALLOWED_CLASSES.map(c=>{
+    const members=list.filter(s=>String(s.class_name||"").trim()===c);
     if(!members.length) return '';
-    const ex = members.reduce((a,s)=>a+expected(s),0);
-    const cl = members.reduce((a,s)=>a+paid(s.id),0);
-    return '<tr><td>'+c+'</td><td>'+members.length+' Students</td><td>'+money(ex)+'</td><td>'+money(cl)+'</td></tr>';
-  }).join("") || '<tr><td colspan="4">No student records found.</td></tr>';
-}
-
-function toggleStudentLevelFields(){
-  const cls = $("studentClass").value;
-  if(cls === "S.5" || cls === "S.6") $("aLevelCombGroup").classList.remove("hidden");
-  else $("aLevelCombGroup").classList.add("hidden");
+    const ex=members.reduce((a,s)=>a+expected(s),0);
+    const cl=members.reduce((a,s)=>a+paid(s.id),0);
+    return '<tr><td>'+c+'</td><td>'+members.length+' Students</td><td>'+money(ex)+'</td><td>'+money(cl)+'</td><td><span class="pill" style="background:#d1fae5;color:#065f46">Active</span></td></tr>';
+  }).join("") || '<tr><td colspan="5">No student records found.</td></tr>';
 }
 
 function renderStudents(){
-  const q = ($("studentSearch")?.value||"").toLowerCase();
-  const list = activeStudents().filter(s => [s.admission_no, s.full_name].some(v => String(v||"").toLowerCase().includes(q)));
-  $("studentsBody").innerHTML = list.map(s => '<tr><td>'+esc(s.admission_no)+'</td><td><b>'+esc(s.full_name)+'</b></td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td><td><button class="danger" onclick="deleteStudent(\''+s.id+'\')">Delete</button></td></tr>').join("") || '<tr><td colspan="7">No students registered.</td></tr>';
+  const q=($("studentSearch")?.value||"").toLowerCase();
+  const list=activeStudents().filter(s=>[s.admission_no,s.full_name,s.class_name].some(v=>String(v||"").toLowerCase().includes(q)));
+  $("studentsBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td style="font-weight:600">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td><td><div class="actions"><button class="secondary" onclick="editStudent(\''+s.id+'\')">Edit</button><button class="secondary" onclick="archiveStudent(\''+s.id+'\')">Archive</button><button class="danger" onclick="deleteStudent(\''+s.id+'\')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="7">No students registered yet.</td></tr>';
+}
+
+function editStudent(id){
+  const s=students.find(x=>String(x.id)===String(id));
+  if(!s)return;
+  $("editStudentId").value=s.id;
+  $("admission").value=s.admission_no||"";
+  $("studentName").value=s.full_name||"";
+  $("studentClass").value=s.class_name||"S.1";
+  $("expectedFees").value=expected(s);
+  $("parentEmail").value=s.parent_email||"";
+  $("parentWhatsApp").value=s.parent_whatsapp||"";
+  $("studentFormTitle").textContent="Edit Student: "+s.full_name;
+  $("cancelStudentEdit").classList.remove("hidden");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function resetStudentForm(){
+  $("editStudentId").value="";
+  $("admission").value="";
+  $("studentName").value="";
+  $("studentClass").value="S.1";
+  $("expectedFees").value="0";
+  $("parentEmail").value="";
+  $("parentWhatsApp").value="";
+  $("studentFormTitle").textContent="Student Registration";
+  $("cancelStudentEdit").classList.add("hidden");
+  $("studentMessage").innerHTML="";
 }
 
 async function saveStudent(){
-  const admission_no = $("admission").value.trim();
-  const full_name = $("studentName").value.trim();
-  const class_name = $("studentClass").value;
-  const stream = $("studentStream").value.trim();
-  const boarding_status = $("studentDayBoarding").value;
-  const alevel_combo = $("studentALevelCombo").value.trim();
-  const age = Number($("studentAge").value||null);
-  const gender = $("studentGender").value;
-  const fees_expected = Number($("expectedFees").value||0);
-  const parent_email = $("parentEmail").value.trim();
-  const parent_whatsapp = $("parentWhatsApp").value.trim();
+  const editId=$("editStudentId").value;
+  const admission_no=$("admission").value.trim();
+  const full_name=$("studentName").value.trim();
+  const class_name=$("studentClass").value;
+  const fees=Number($("expectedFees").value||0);
+  const parent_email=$("parentEmail").value.trim();
+  const parent_whatsapp=$("parentWhatsApp").value.trim();
 
-  if(!admission_no || !full_name){ alert("Enter admission and name"); return; }
-  const {error} = await db.from("students").insert({
-    school_id: currentSchoolId, admission_no, full_name, class_name, stream,
-    boarding_status, alevel_combo, age, gender, fees_expected, parent_email, parent_whatsapp, status:"Active"
-  });
-  if(error){ alert("Error: "+error.message); return; }
-  $("admission").value=""; $("studentName").value=""; $("expectedFees").value=""; $("parentEmail").value=""; $("parentWhatsApp").value="";
+  if(!admission_no||!full_name){message("studentMessage","Enter admission number and full name.",true);return;}
+
+  const payload={school_id:currentSchoolId,admission_no,full_name,class_name,fees_expected:fees,parent_email:parent_email||null,parent_whatsapp:parent_whatsapp||null};
+  let error=null;
+  if(editId){
+    const res=await db.from("students").update(payload).eq("id",editId).eq("school_id",currentSchoolId);
+    error=res.error;
+  }else{
+    payload.status="Active";
+    let res=await db.from("students").insert(payload).select().single();
+    if(res.error&&/column/i.test(res.error.message)){
+      delete payload.fees_expected;payload.fee_expected=fees;
+      res=await db.from("students").insert(payload).select().single();
+    }
+    error=res.error;
+  }
+  if(error){message("studentMessage",error.message,true);return;}
+  resetStudentForm();
   await refreshAll();
-  alert("✅ Student saved successfully!");
+  const successText = editId ? "Student updated successfully!" : "Student registered successfully!";
+  message("studentMessage", successText);
+  alert("✅ " + successText);
+}
+
+async function archiveStudent(id){
+  if(!confirm("Archive this student?"))return;
+  const {error}=await db.from("students").update({status:"Archived"}).eq("id",id).eq("school_id",currentSchoolId);
+  if(error){alert("Error archiving student: "+error.message);return;}
+  await refreshAll();
+}
+
+async function restoreStudent(id){
+  const {error}=await db.from("students").update({status:"Active"}).eq("id",id).eq("school_id",currentSchoolId);
+  if(error){alert("Error restoring student: "+error.message);return;}
+  await refreshAll();
 }
 
 async function deleteStudent(id){
-  if(!confirm("Delete student?")) return;
-  await db.from("students").delete().eq("id", id);
-  await refreshAll();
-}
+  const s=students.find(x=>String(x.id)===String(id));
+  if(!s)return;
+  if(!confirm("Permanently delete "+s.full_name+" AND all their payment history & academic records? This cannot be undone."))return;
 
-function renderClassStudents(){
-  const sel = $("classFilter")?.value||"";
-  const list = activeStudents().filter(s => !sel || String(s.class_name||"").trim() === sel);
-  $("classStudentsBody").innerHTML = list.map(s => '<tr><td>'+esc(s.admission_no)+'</td><td><b>'+esc(s.full_name)+'</b></td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td></tr>').join("") || '<tr><td colspan="6">No students found.</td></tr>';
+  const payRes = await db.from("payments").delete().eq("student_id",id).eq("school_id",currentSchoolId);
+  if(payRes.error){alert("Failed to delete student payment history: "+payRes.error.message);return;}
+
+  const acadRes = await db.from("academics").delete().eq("student_id",id).eq("school_id",currentSchoolId);
+  if(acadRes.error){alert("Failed to delete student academic records: "+acadRes.error.message);return;}
+
+  const {error}=await db.from("students").delete().eq("id",id).eq("school_id",currentSchoolId);
+  if(error){alert("Failed to delete student record: "+error.message);return;}
+  
+  await refreshAll();
 }
 
 async function promoteClasses(){
-  if(!confirm("Promote all active students to next class?")) return;
+  if(!confirm("Promote all active students to their next class level (Baby->Middle, S.1->S.2, etc.)?"))return;
   const mapClass={"Baby":"Middle","Middle":"Top","Top":"P.1","P.1":"P.2","P.2":"P.3","P.3":"P.4","P.4":"P.5","P.5":"P.6","P.6":"P.7","S.1":"S.2","S.2":"S.3","S.3":"S.4","S.4":"S.5","S.5":"S.6"};
+  let count=0;
   for(let s of activeStudents()){
     if(mapClass[s.class_name]){
-      await db.from("students").update({class_name: mapClass[s.class_name]}).eq("id", s.id);
+      await db.from("students").update({class_name:mapClass[s.class_name]}).eq("id",s.id).eq("school_id",currentSchoolId);
+      count++;
     }
   }
   await refreshAll();
-  alert("✅ Promotion complete!");
+  alert("✅ Successfully promoted "+count+" students to their next classes!");
 }
 
 async function graduateCandidates(){
-  if(!confirm("Graduate and archive P.7, S.4 and S.6 candidates?")) return;
+  if(!confirm("Graduate and archive all P.7, S.4 and S.6 candidates?"))return;
+  let count=0;
   for(let s of activeStudents()){
     if(["P.7","S.4","S.6"].includes(s.class_name)){
-      await db.from("students").update({status:"Archived"}).eq("id", s.id);
+      await db.from("students").update({status:"Archived"}).eq("id",s.id).eq("school_id",currentSchoolId);
+      count++;
     }
   }
   await refreshAll();
-  alert("✅ Graduation complete!");
+  alert("✅ Successfully graduated and archived "+count+" candidates!");
 }
 
-function toggleBroadcastFields(){
-  const t = $("bulkBroadcastTarget").value;
-  $("bulkClassGroupContainer").classList.toggle("hidden", t !== "class");
-  $("bulkSingleParentContainer").classList.toggle("hidden", t !== "single");
+function renderArchived(){
+  const list=students.filter(s=>String(s.status||"Active").toLowerCase()==="archived");
+  $("archivedBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td>'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td><div class="actions"><button class="secondary" onclick="restoreStudent(\''+s.id+'\')">Restore</button><button class="danger" onclick="deleteStudent(\''+s.id+'\')">Delete Permanently</button></div></td></tr>').join("")||'<tr><td colspan="5">No archived or graduated students.</td></tr>';
 }
 
-function renderBroadcastStudentSelect(){
-  $("bulkBroadcastStudent").innerHTML = activeStudents().map(s=>'<option value="'+s.id+'">'+s.admission_no+" - "+s.full_name+'</option>').join("");
+function renderClasses(){
+  renderClassStudents();
+}
+
+function renderClassStudents(){
+  const sel=$("classFilter")?.value||"";
+  const q=($("classStudentSearch")?.value||"").toLowerCase();
+  const list=activeStudents().filter(s=>(!sel||String(s.class_name||"").trim()===sel)&&[s.admission_no,s.full_name].some(v=>String(v||"").toLowerCase().includes(q)));
+  $("classStudentsBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td style="font-weight:600">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td></tr>').join("")||'<tr><td colspan="6">No students found.</td></tr>';
+}
+
+function renderPaymentClass(){
+  const el=$("paymentClass");if(!el)return;
+  const old=el.value;
+  el.innerHTML='<option value="">All Classes</option>'+ALLOWED_CLASSES.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
+  if(ALLOWED_CLASSES.includes(old))el.value=old;
+}
+
+function renderStudentSelect(){
+  renderPaymentClass();
+
+  const sel = $("paymentClass")?.value || "";
+  const searchQ = ($("paymentSearchInput")?.value || "").toLowerCase();
+
+  const list = activeStudents().filter(s => {
+    const matchesClass = !sel || String(s.class_name || "").trim() === sel;
+    const matchesSearch = !searchQ || [s.admission_no, s.full_name].some(v => String(v || "").toLowerCase().includes(searchQ));
+    return matchesClass && matchesSearch;
+  });
+
+  $("paymentStudent").innerHTML=list.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.admission_no)+" - "+esc(s.full_name)+" ("+esc(s.class_name)+") - Balance: "+money(balance(s))+'</option>').join("") || '<option value="">No students found</option>';
+}
+
+async function recordPayment(){
+  const student_id=$("paymentStudent").value;
+  const amount=Number($("paymentAmount").value);
+  const method=$("paymentMethod").value;
+  const reference=$("paymentReference").value.trim();
+
+  if(!student_id||!amount||amount<=0){message("paymentMessage","Select student and enter valid amount.",true);return;}
+  const {data,error}=await db.from("payments").insert({school_id:currentSchoolId,student_id,amount,method,reference:reference||null,paid_at:new Date().toISOString()}).select().single();
+  if(error){message("paymentMessage",error.message,true);return;}
+  
+  const studentObj = students.find(x=>String(x.id)===String(student_id));
+  $("paymentAmount").value="";$("paymentReference").value="";
+  await refreshAll();
+  const successText = "Fees payment recorded successfully for " + (studentObj?.full_name || "student") + " (" + money(amount) + ")!";
+  message("paymentMessage", successText);
+  alert("✅ " + successText);
+  
+  if(confirm("Print fee payment receipt?"))printReceipt(data);
+  if(studentObj?.parent_whatsapp && confirm("Send WhatsApp notification to parent?"))sendWhatsAppPayment(studentObj, data);
+}
+
+function sendWhatsAppPayment(s, p){
+  const phone = String(s.parent_whatsapp || "").replace(/\D/g,"");
+  if(!phone){alert("Parent WhatsApp number is missing for this student.");return;}
+  const sch = schools.find(x=>x.id===currentSchoolId);
+  const schoolName = sch?.name || "School";
+  
+  const text = "FEES PAYMENT CONFIRMATION[span_29](start_span)[span_29](end_span)\n" +
+               "School: *" + schoolName + "*\n" +
+               "Student: " + s.full_name + " (" + s.admission_no + ")\n" +
+               "Class: " + s.class_name + "\n" +
+               "Amount Paid: " + money(p.amount) + "\n" +
+               "Total Paid: " + money(paid(s.id)) + "\n" +
+               "Balance Remaining: *" + money(balance(s)) + "*\n" +
+               "Receipt No: " + receiptNo(p) + "\n" +
+               "Date: " + readableDate(p.paid_at) + "\n\n" +
+               "Thank you for choosing *" + schoolName + "*";
+
+  window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(text), "_blank");
+}
+
+function whatsappById(id){
+  const p = payments.find(x=>String(x.id)===String(id));
+  const s = p && students.find(x=>String(x.id)===String(p.student_id));
+  if(p && s) sendWhatsAppPayment(s, p);
 }
 
 function sendBulkWhatsAppBroadcast(){
+  const targetClass = $("bulkBroadcastClass").value;
   const customMsg = $("bulkBroadcastMessage").value.trim();
-  if(!customMsg){ alert("Enter message"); return; }
-  const recipients = activeStudents().filter(s => s.parent_whatsapp);
-  if(!recipients.length){ alert("No parent WhatsApp numbers found."); return; }
-  
-  recipients.forEach((s, i)=>{
-    const phone = s.parent_whatsapp.replace(/\D/g,"");
-    setTimeout(()=>{
-      window.open("https://wa.me/"+phone+"?text="+encodeURIComponent(customMsg), "_blank");
-    }, i*600);
+  if(!customMsg){alert("Please enter a broadcast message to send.");return;}
+
+  const sch = schools.find(x=>x.id===currentSchoolId);
+  const schoolName = sch?.name || "School";
+
+  const recipients = activeStudents().filter(s => {
+    const matchesClass = !targetClass || String(s.class_name || "").trim() === targetClass;
+    const hasPhone = Boolean(s.parent_whatsapp && String(s.parent_whatsapp).replace(/\D/g,"").length >= 9);
+    return matchesClass && hasPhone;
   });
+
+  if(!recipients.length){
+    alert("No active parents with valid WhatsApp numbers found for the selected filter.");
+    return;
+  }
+
+  if(!confirm("Ready to send bulk WhatsApp messages to " + recipients.length + " parents? Tabs will open sequentially.")) return;
+
+  recipients.forEach((s, index) => {
+    const phone = String(s.parent_whatsapp).replace(/\D/g,"");
+    const fullText = "📢 CIRCULAR FROM *" + schoolName + "*[span_30](start_span)[span_30](end_span)\n" +
+                     "Student: " + s.full_name + " (" + s.class_name + ")\n\n" +
+                     customMsg + "\n\n" +
+                     "Thank you for choosing *" + schoolName + "*";
+
+    setTimeout(() => {
+      window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(fullText), "_blank");
+    }, index * 600);
+  });
+
+  message("bulkBroadcastMessageStatus", "Successfully triggered " + recipients.length + " WhatsApp parent messages!");
 }
 
 function sendEmailBroadcast(){
   const customMsg = $("bulkBroadcastMessage").value.trim();
+  if(!customMsg){alert("Please enter an email message.");return;}
   const recipients = activeStudents().filter(s => s.parent_email);
-  if(!recipients.length){ alert("No parent emails found."); return; }
-  window.location.href = "mailto:" + recipients.map(s=>s.parent_email).join(",") + "?subject=School Notice&body=" + encodeURIComponent(customMsg);
-}
-
-function renderStudentSelect(){
-  $("paymentStudent").innerHTML = activeStudents().map(s=>'<option value="'+s.id+'">'+s.admission_no+" - "+s.full_name+" (Bal: "+money(balance(s))+')</option>').join("");
-}
-
-async function recordPayment(){
-  const student_id = $("paymentStudent").value;
-  const amount = Number($("paymentAmount").value);
-  const method = $("paymentMethod").value;
-  const reference = $("paymentReference").value.trim();
-
-  if(!student_id || !amount){ alert("Select student and amount"); return; }
-  await db.from("payments").insert({school_id: currentSchoolId, student_id, amount, method, reference, paid_at: new Date().toISOString()});
-  $("paymentAmount").value=""; $("paymentReference").value="";
-  await refreshAll();
-  alert("✅ Payment recorded!");
+  if(!recipients.length){alert("No parent email addresses registered.");return;}
+  
+  const emails = recipients.map(s => s.parent_email).join(",");
+  window.location.href = "mailto:" + emails + "?subject=School Circular &body=" + encodeURIComponent(customMsg);
+  message("bulkBroadcastMessageStatus", "Email client opened with recipient list!");
 }
 
 function renderPayments(){
-  $("paymentsBody").innerHTML = payments.map(p=>{
-    const s = students.find(x=>String(x.id)===String(p.student_id));
-    return '<tr><td>'+new Date(p.paid_at).toLocaleDateString()+'</td><td><b>'+(p.receipt_no||"RCP")+'</b></td><td>'+esc(s?.full_name||"")+'</td><td>'+esc(s?.class_name||"")+'</td><td>'+money(p.amount)+'</td><td>'+esc(p.method)+'</td><td><button class="secondary" onclick="window.print()">Receipt</button></td></tr>';
-  }).join("") || '<tr><td colspan="7">No payments recorded.</td></tr>';
+  $("paymentsBody").innerHTML=payments.map(p=>{
+    const s=students.find(x=>String(x.id)===String(p.student_id));
+    return '<tr><td>'+readableDate(p.paid_at)+'</td><td><b>'+receiptNo(p)+'</b></td><td>'+esc(s?.full_name||"Unknown")+'</td><td>'+esc(s?.class_name||"—")+'</td><td>'+money(p.amount)+'</td><td>'+esc(p.method)+'</td><td><div class="actions"><button class="secondary" onclick="printReceiptById(\''+p.id+'\')">Receipt</button>'+(s?.parent_whatsapp?'<button class="whatsapp" onclick="whatsappById(\''+p.id+'\')">WhatsApp</button>':'')+'</div></td></tr>';
+  }).join("")||'<tr><td colspan="7">No payments recorded.</td></tr>';
+}
+
+function printReceiptById(id){const p=payments.find(x=>String(x.id)===String(id));if(p)printReceipt(p);}
+function printReceipt(p){
+  const s=students.find(x=>String(x.id)===String(p.student_id));
+  const sch=schools.find(x=>x.id===currentSchoolId);
+  const w=window.open("","_blank");
+  w.document.write('<!doctype html><html><head><title>Receipt</title><style>body{font-family:Arial;padding:24px}.box{max-width:600px;margin:auto;border:2px solid #0f172a;padding:24px;border-radius:8px}h2{text-align:center;margin:0}table{width:100%;border-collapse:collapse;margin:20px 0}td{padding:10px;border-bottom:1px solid #ddd}</style></head><body><div class="box"><h2>'+esc(sch?.name||"School")+'</h2><p style="text-align:center">OFFICIAL FEES RECEIPT</p><hr><p><b>Receipt No:</b> '+receiptNo(p)+'</p><p><b>Date:</b> '+readableDate(p.paid_at)+'</p><p><b>Student:</b> '+esc(s?.full_name)+' ('+esc(s?.admission_no)+')</p><p><b>Class:</b> '+esc(s?.class_name)+'</p><table><tr><td>Amount Paid</td><td><b>'+money(p.amount)+'</b></td></tr><tr><td>Method</td><td>'+esc(p.method)+'</td></tr><tr><td>Total Paid to Date</td><td>'+money(paid(s?.id))+'</td></tr><tr><td>Remaining Balance</td><td><b>'+money(balance(s))+'</b></td></tr></table><p style="text-align:center;margin-top:30px">Thank you for paying fees!</p></div><script>window.onload=()=>window.print()<\/script></body></html>');
+  w.document.close();
 }
 
 async function addExpense(){
-  const title = $("expTitle").value.trim();
-  const category = $("expCategory").value;
-  const amount = Number($("expAmount").value);
-  const date = $("expDate").value || new Date().toISOString().slice(0,10);
-  if(!title || !amount) return;
-  await db.from("expenses").insert({school_id: currentSchoolId, title, category, amount, date});
-  $("expTitle").value=""; $("expAmount").value="";
+  const title=$("expTitle").value.trim();
+  const category=$("expCategory").value;
+  const amount=Number($("expAmount").value);
+  const date=$("expDate").value||new Date().toISOString().slice(0,10);
+  const method=$("expMethod").value;
+  if(!title||!amount||amount<=0){message("expenseMessage","Enter title and valid amount.",true);return;}
+  const {error}=await db.from("expenses").insert({school_id:currentSchoolId,title,category,amount,date,method});
+  if(error){message("expenseMessage",error.message,true);return;}
+  $("expTitle").value="";$("expAmount").value="";
   await refreshAll();
-  alert("✅ Expense added!");
+  message("expenseMessage","Expense recorded successfully!");
+  alert("✅ Expense recorded successfully!");
 }
 
 function renderExpenses(){
-  $("expensesBody").innerHTML = expenses.map(e=>'<tr><td>'+e.date+'</td><td><b>'+esc(e.title)+'</b></td><td>'+esc(e.category)+'</td><td>'+money(e.amount)+'</td><td><button class="danger" onclick="deleteExpense(\''+e.id+'\')">Delete</button></td></tr>').join("") || '<tr><td colspan="5">No expenses.</td></tr>';
+  $("expensesBody").innerHTML=expenses.map(e=>'<tr><td>'+esc(e.date)+'</td><td style="font-weight:600">'+esc(e.title)+'</td><td>'+esc(e.category)+'</td><td>'+money(e.amount)+'</td><td>'+esc(e.method)+'</td><td><button class="danger" onclick="deleteExpense(\''+e.id+'\')">Delete</button></td></tr>').join("")||'<tr><td colspan="6">No expenses logged.</td></tr>';
 }
-async function deleteExpense(id){ await db.from("expenses").delete().eq("id", id); await refreshAll(); }
+
+async function deleteExpense(id){
+  if(!confirm("Delete this expense record?"))return;
+  const {error}=await db.from("expenses").delete().eq("id",id).eq("school_id",currentSchoolId);
+  if(error){alert("Error deleting expense: "+error.message);return;}
+  await refreshAll();
+}
+
+function editStaff(id){
+  const st=staff.find(x=>String(x.id)===String(id));
+  if(!st)return;
+  $("editStaffId").value=st.id;
+  $("staffNo").value=st.staff_no||"";
+  $("staffName").value=st.full_name||"";
+  $("staffPosition").value=st.position||"";
+  $("staffGender").value=st.gender||"Male";
+  $("staffMarital").value=st.marital_status||"Single";
+  $("staffNin").value=st.nin||"";
+  $("staffSalary").value=st.monthly_salary||0;
+  $("staffPhone").value=st.phone||"";
+  $("staffFormTitle").textContent="Edit Staff: "+st.full_name;
+  $("cancelStaffEdit").classList.remove("hidden");
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function resetStaffForm(){
+  $("editStaffId").value="";
+  $("staffNo").value="";
+  $("staffName").value="";
+  $("staffPosition").value="";
+  $("staffNin").value="";
+  $("staffSalary").value="0";
+  $("staffPhone").value="";
+  $("staffFormTitle").textContent="Staff / Teacher Registration";
+  $("cancelStaffEdit").classList.add("hidden");
+  $("staffMessage").innerHTML="";
+}
 
 async function saveStaff(){
-  const staff_no = $("staffNo").value.trim();
-  const full_name = $("staffName").value.trim();
-  const position = $("staffPosition").value.trim();
-  const gender = $("staffGender").value;
-  const marital_status = $("staffMarital").value;
-  const nin = $("staffNin").value.trim();
-  const monthly_salary = Number($("staffSalary").value||0);
-  const phone = $("staffPhone").value.trim();
+  const editId=$("editStaffId").value;
+  const staff_no=$("staffNo").value.trim();
+  const full_name=$("staffName").value.trim();
+  const position=$("staffPosition").value.trim();
+  const gender=$("staffGender").value;
+  const marital_status=$("staffMarital").value;
+  const nin=$("staffNin").value.trim();
+  const monthly_salary=Number($("staffSalary").value||0);
+  const phone=$("staffPhone").value.trim();
 
-  if(!staff_no || !full_name) return;
-  await db.from("staff").insert({school_id: currentSchoolId, staff_no, full_name, position, gender, marital_status, nin, monthly_salary, phone});
-  $("staffNo").value=""; $("staffName").value=""; $("staffPosition").value=""; $("staffNin").value=""; $("staffPhone").value="";
+  if(!staff_no||!full_name||!position){message("staffMessage","Fill in staff number, name, and position.",true);return;}
+  const payload={school_id:currentSchoolId,staff_no,full_name,position,gender,marital_status,nin,monthly_salary,phone:phone||null};
+  let error=null;
+  if(editId){
+    const res=await db.from("staff").update(payload).eq("id",editId).eq("school_id",currentSchoolId);
+    error=res.error;
+  }else{
+    const res=await db.from("staff").insert(payload);
+    error=res.error;
+  }
+  if(error){message("staffMessage",error.message,true);return;}
+  resetStaffForm();
   await refreshAll();
-  alert("✅ Staff saved!");
+  const successText = editId ? "Staff member updated successfully!" : "Staff member added successfully!";
+  message("staffMessage", successText);
+  alert("✅ " + successText);
 }
 
 function renderStaff(){
-  $("staffBody").innerHTML = staff.map(s=>'<tr><td>'+esc(s.staff_no)+'</td><td><b>'+esc(s.full_name)+'</b></td><td>'+esc(s.position)+'</td><td>'+esc(s.gender)+', '+esc(s.marital_status)+'</td><td>'+esc(s.nin||"—")+'</td><td>'+money(s.monthly_salary)+'</td><td><button class="danger" onclick="deleteStaff(\''+s.id+'\')">Delete</button></td></tr>').join("") || '<tr><td colspan="7">No staff.</td></tr>';
+  $("staffBody").innerHTML=staff.map(s=>'<tr><td>'+esc(s.staff_no)+'</td><td style="font-weight:600">'+esc(s.full_name)+'</td><td>'+esc(s.position)+'</td><td>'+esc(s.gender)+', '+esc(s.marital_status)+'</td><td>'+esc(s.nin||"—")+'</td><td>'+money(s.monthly_salary)+'</td><td>'+esc(s.phone||"—")+'</td><td><div class="actions"><button class="secondary" onclick="editStaff(\''+s.id+'\')">Edit</button><button class="danger" onclick="deleteStaff(\''+s.id+'\')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="8">No staff registered.</td></tr>';
+  
+  $("staffSalaryStatusBody").innerHTML=staff.map(s=>'<tr><td>'+esc(s.staff_no)+'</td><td style="font-weight:600">'+esc(s.full_name)+'</td><td>'+esc(s.position)+'</td><td>'+money(staffExpected(s))+'</td><td>'+money(staffPaid(s.id))+'</td><td><b>'+money(staffBalance(s))+'</b></td></tr>').join("")||'<tr><td colspan="6">No staff registered.</td></tr>';
 }
 
 function renderStaffSelect(){
-  $("salaryStaff").innerHTML = staff.map(s=>'<option value="'+s.id+'">'+s.staff_no+" - "+s.full_name+'</option>').join("");
+  $("salaryStaff").innerHTML=staff.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.staff_no+" - "+s.full_name)+' ('+esc(s.position)+')</option>').join("");
 }
-async function deleteStaff(id){ await db.from("staff").delete().eq("id", id); await refreshAll(); }
+
+async function deleteStaff(id){
+  const st=staff.find(x=>String(x.id)===String(id));
+  if(!st)return;
+  if(!confirm("Permanently delete teacher "+st.full_name+" AND all associated salary history? This cannot be undone."))return;
+
+  const salRes = await db.from("salary_payments").delete().eq("staff_id",id).eq("school_id",currentSchoolId);
+  if(salRes.error){alert("Failed to delete staff salary history: "+salRes.error.message);return;}
+
+  const {error}=await db.from("staff").delete().eq("id",id).eq("school_id",currentSchoolId);
+  if(error){alert("Error deleting staff: "+error.message);return;}
+  await refreshAll();
+}
 
 async function recordSalary(){
-  const staff_id = $("salaryStaff").value;
-  const amount = Number($("salaryAmount").value);
-  const month = $("salaryMonth").value;
-  const method = $("salaryMethod").value;
-  if(!staff_id || !amount || !month) return;
-  await db.from("salary_payments").insert({school_id: currentSchoolId, staff_id, amount, month, method, paid_at: new Date().toISOString()});
-  $("salaryAmount").value="";
+  const staff_id=$("salaryStaff").value;
+  const amount=Number($("salaryAmount").value);
+  const month=$("salaryMonth").value;
+  const method=$("salaryMethod").value;
+  const reference=$("salaryReference").value.trim();
+
+  if(!staff_id||!amount||!month){message("payrollMessage","Select staff, month and amount.",true);return;}
+  const {error}=await db.from("salary_payments").insert({school_id:currentSchoolId,staff_id,amount,month,method,reference:reference||null,paid_at:new Date().toISOString()});
+  if(error){message("payrollMessage",error.message,true);return;}
+  $("salaryAmount").value="";$("salaryReference").value="";
   await refreshAll();
-  alert("✅ Salary recorded!");
+  message("payrollMessage","Salary payment recorded successfully!");
+  alert("✅ Salary payment recorded successfully!");
+}
+
+function renderPayroll(){
+  $("payrollBody").innerHTML=salaries.map(p=>{
+    const st=staff.find(x=>String(x.id)===String(p.staff_id));
+    return '<tr><td>'+readableDate(p.paid_at)+'</td><td style="font-weight:600">'+esc(st?.full_name||"Unknown")+'</td><td>'+esc(p.month)+'</td><td>'+money(p.amount)+'</td><td>'+esc(p.method)+'</td><td>'+esc(p.reference||"—")+'</td></tr>';
+  }).join("")||'<tr><td colspan="6">No salary disbursements recorded.</td></tr>';
 }
 
 function renderAcadClassSelect(){
-  $("teacherClassFilter").innerHTML = '<option value="">Choose Class</option>' + ALLOWED_CLASSES.map(c=>'<option value="'+c+'">'+c+'</option>').join("");
+  $("acadClassFilter").innerHTML='<option value="">Choose Class</option>'+ALLOWED_CLASSES.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
 }
+
+function renderAcadStudents(){
+  const sel=$("acadClassFilter")?.value||"";
+  const list=activeStudents().filter(s=>!sel||String(s.class_name||"").trim()===sel);
+  $("acadStudentSelect").innerHTML=list.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.admission_no+" - "+s.full_name)+'</option>').join("");
+}
+
+function renderTeacherClassSelect(){
+  $("teacherClassFilter").innerHTML='<option value="">Choose Class</option>'+ALLOWED_CLASSES.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
+}
+
 function renderTeacherStudents(){
-  const sel = $("teacherClassFilter").value;
-  $("teacherStudentSelect").innerHTML = activeStudents().filter(s=>!sel || s.class_name === sel).map(s=>'<option value="'+s.id+'">'+s.admission_no+" - "+s.full_name+'</option>').join("");
+  const sel=$("teacherClassFilter")?.value||"";
+  const list=activeStudents().filter(s=>!sel||String(s.class_name||"").trim()===sel);
+  $("teacherStudentSelect").innerHTML=list.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.admission_no+" - "+s.full_name)+'</option>').join("");
 }
 
 async function saveSubjectMark(){
-  let subjectKey = $("teacherSubject").value;
-  const customSub = $("customSubjectInput").value.trim();
+  let subjectKey=$("teacherSubject").value;
+  const customSub=$("customSubjectInput").value.trim();
   if(customSub) subjectKey = customSub;
 
-  const student_id = $("teacherStudentSelect").value;
-  const markVal = Number($("teacherMarkInput").value);
-  if(!student_id || isNaN(markVal)) return;
+  const student_id=$("teacherStudentSelect").value;
+  const markVal=Number($("teacherMarkInput").value);
+  const remarks=$("teacherRemarksInput").value.trim();
 
-  let existing = academics.find(a=>String(a.student_id) === String(student_id));
-  let payload = { school_id: currentSchoolId, student_id, term: currentTerm };
-  payload[subjectKey] = markVal;
+  if(!student_id||isNaN(markVal)){message("teacherMarkMessage","Select a student and enter a valid mark.",true);return;}
 
-  if(existing) await db.from("academics").update(payload).eq("id", existing.id);
-  else await db.from("academics").insert(payload);
+  let existing=academics.find(a=>String(a.student_id)===String(student_id));
+  let error=null;
 
-  $("teacherMarkInput").value=""; $("customSubjectInput").value="";
+  if(existing){
+    let updatePayload={ [subjectKey]: markVal };
+    if(remarks) updatePayload.teacher_remarks=remarks;
+
+    const res=await db.from("academics").update(updatePayload).eq("id", existing.id).eq("school_id", currentSchoolId);
+    error=res.error;
+  }else{
+    let newPayload={ school_id: currentSchoolId, student_id, term: currentTerm, math:0, eng:0, sci:0, sst:0, opt:0 };
+    newPayload[subjectKey]=markVal;
+    if(remarks) newPayload.teacher_remarks=remarks;
+
+    const res=await db.from("academics").insert(newPayload);
+    error=res.error;
+  }
+
+  if(error){message("teacherMarkMessage", error.message, true);return;}
+  $("teacherMarkInput").value="";$("teacherRemarksInput").value="";$("customSubjectInput").value="";
   await refreshAll();
-  alert("✅ Mark saved!");
+  message("teacherMarkMessage","Subject mark saved successfully!");
+  alert("✅ Subject mark saved successfully!");
+}
+
+async function saveAcademics(){
+  const student_id=$("acadStudentSelect").value;
+  const math=Number($("markMath").value||0);
+  const eng=Number($("markEng").value||0);
+  const sci=Number($("markSci").value||0);
+  const sst=Number($("markSst").value||0);
+  const opt=Number($("markOpt").value||0);
+  const teacher_remarks=$("acadTeacherRemarks").value.trim();
+  const head_remarks=$("acadHeadRemarks").value.trim();
+
+  if(!student_id){message("acadMessage","Select a student.",true);return;}
+
+  let existing=academics.find(a=>String(a.student_id)===String(student_id));
+  let payload={school_id:currentSchoolId,student_id,term:currentTerm,math,eng,sci,sst,opt,teacher_remarks,head_remarks};
+  let error=null, savedData=null;
+
+  if(existing){
+    const res=await db.from("academics").update(payload).eq("id",existing.id).eq("school_id",currentSchoolId).select().single();
+    error=res.error; savedData=res.data;
+  }else{
+    const res=await db.from("academics").insert(payload).select().single();
+    error=res.error; savedData=res.data;
+  }
+
+  if(error){message("acadMessage",error.message,true);return;}
+  ["markMath","markEng","markSci","markSst","markOpt","acadTeacherRemarks","acadHeadRemarks"].forEach(id=>$(id).value="");
+  await refreshAll();
+  message("acadMessage","Academic report saved successfully!");
+  alert("✅ Academic report saved successfully!");
+  if(confirm("Print official report card?"))printReportCard(savedData);
 }
 
 function renderAcademicsTable(){
-  $("acadBody").innerHTML = academics.map(a=>{
-    const s = students.find(x=>String(x.id)===String(a.student_id));
-    const tot = Number(a.Mathematics||a.math||0) + Number(a.English||a.eng||0) + Number(a.Science||a.sci||0);
-    return '<tr><td>'+esc(a.term)+'</td><td><b>'+esc(s?.full_name||"")+'</b></td><td>'+esc(s?.class_name||"")+'</td><td>'+(a.Mathematics||a.math||0)+'</td><td>'+(a.English||a.eng||0)+'</td><td>'+(a.Science||a.sci||0)+'</td><td>0</td><td>0</td><td><b>'+tot+'</b></td><td><button class="danger" onclick="deleteAcademics(\''+a.id+'\')">Delete</button></td></tr>';
-  }).join("") || '<tr><td colspan="10">No marks entered.</td></tr>';
+  $("acadBody").innerHTML=academics.map(a=>{
+    const s=students.find(x=>String(x.id)===String(a.student_id));
+    const tot=Number(a.math||0)+Number(a.eng||0)+Number(a.sci||0)+Number(a.sst||0)+Number(a.opt||0);
+    return '<tr><td>'+esc(a.term)+'</td><td style="font-weight:600">'+esc(s?.full_name||"Unknown")+'</td><td>'+esc(s?.class_name||"—")+'</td><td>'+(a.math||0)+'</td><td>'+(a.eng||0)+'</td><td>'+(a.sci||0)+'</td><td>'+(a.sst||0)+'</td><td>'+(a.opt||0)+'</td><td><b>'+tot+'/500</b></td><td><div class="actions"><button class="secondary" onclick="printReportCardById(\''+a.id+'\')">Report Card</button><button class="danger" onclick="deleteAcademics(\''+a.id+'\')">Delete</button></div></td></tr>';
+  }).join("")||'<tr><td colspan="10">No academic reports recorded for this term.</td></tr>';
 }
-async function deleteAcademics(id){ await db.from("academics").delete().eq("id", id); await refreshAll(); }
 
+function printReportCardById(id){const a=academics.find(x=>String(x.id)===String(id));if(a)printReportCard(a);}
+function printReportCard(a){
+  const s=students.find(x=>String(x.id)===String(a.student_id));
+  const sch=schools.find(x=>x.id===currentSchoolId);
+  const tot=Number(a.math||0)+Number(a.eng||0)+Number(a.sci||0)+Number(a.sst||0)+Number(a.opt||0);
+  const avg=(tot/5).toFixed(1);
+  const w=window.open("","_blank");
+  w.document.write('<!doctype html><html><head><title>Report Card</title><style>body{font-family:Arial;padding:24px}.card{max-width:700px;margin:auto;border:2px solid #0f172a;padding:24px;border-radius:8px}h2{text-align:center;margin:0}table{width:100%;border-collapse:collapse;margin:16px 0}th,td{padding:10px;border:1px solid #ccc;text-align:left;font-size:13px}th{background:#f8fafc}.rem{background:#f8fafc;padding:12px;border:1px solid #cbd5e1;border-radius:6px;margin-top:12px}</style></head><body><div class="card"><h2>'+esc(sch?.name||"School")+'</h2><p style="text-align:center"><b>OFFICIAL TERMLY ACADEMIC REPORT CARD</b><br>'+esc(a.term)+'</p><hr><p><b>Admission:</b> '+esc(s?.admission_no)+' | <b>Student Name:</b> '+esc(s?.full_name)+' | <b>Class:</b> '+esc(s?.class_name)+'</p><table><thead><tr><th>Subject</th><th>Score (100)</th><th>Remark / Grade</th></tr></thead><tbody><tr><td>Mathematics</td><td>'+(a.math||0)+'</td><td>-</td></tr><tr><td>English Language</td><td>'+(a.eng||0)+'</td><td>-</td></tr><tr><td>Science / Physics</td><td>'+(a.sci||0)+'</td><td>-</td></tr><tr><td>Social Studies / Chem</td><td>'+(a.sst||0)+'</td><td>-</td></tr><tr><td>Optional / Literature</td><td>'+(a.opt||0)+'</td><td>-</td></tr><tr><td><b>Total Score / Average</b></td><td colspan="2"><b>'+tot+' / 500 (Average: '+avg+'%)</b></td></tr></tbody></table><div class="rem"><p><b>Class Teacher Remarks:</b> '+esc(a.teacher_remarks||"None")+'</p><p><b>Headteacher Remarks:</b> '+esc(a.head_remarks||"None")+'</p></div><p style="margin-top:25px">Headteacher Signature: ______________________ Stamp: ______________________</p></div><script>window.onload=()=>window.print()<\/script></body></html>');
+  w.document.close();
+}
+
+async function deleteAcademics(id){
+  if(!confirm("Delete this academic report?"))return;
+  const {error}=await db.from("academics").delete().eq("id",id).eq("school_id",currentSchoolId);
+  if(error){alert("Error deleting record: "+error.message);return;}
+  await refreshAll();
+}
+
+// TIMETABLES & LOGBOOK[span_31](start_span)[span_31](end_span)
 async function saveTimetableEntry(){
-  const class_name = $("ttClass").value, day = $("ttDay").value, time_slot = $("ttTime").value.trim(), subject = $("ttSubject").value.trim(), teacher = $("ttTeacher").value.trim();
-  if(!time_slot || !subject) return;
-  await db.from("timetables").insert({school_id: currentSchoolId, class_name, day, time_slot, subject, teacher});
+  const class_name=$("ttClass").value, day=$("ttDay").value, time_slot=$("ttTime").value.trim(), subject=$("ttSubject").value.trim(), teacher=$("ttTeacher").value.trim();
+  if(!time_slot||!subject){message("ttMessage","Fill details.",true);return;}
+  await db.from("timetables").insert({school_id:currentSchoolId,class_name,day,time_slot,subject,teacher});
   $("ttTime").value=""; $("ttSubject").value=""; $("ttTeacher").value="";
   await refreshAll();
-  alert("✅ Timetable slot added!");
+  message("ttMessage","Timetable slot added!");
 }
+
 function renderTimetables(){
-  $("timetableBody").innerHTML = timetables.map(t=>'<tr><td>'+esc(t.class_name)+'</td><td>'+esc(t.day)+'</td><td>'+esc(t.time_slot)+'</td><td>'+esc(t.subject)+'</td><td>'+esc(t.teacher||"")+'</td><td><button class="danger" onclick="deleteTimetable(\''+t.id+'\')">Delete</button></td></tr>').join("");
+  $("timetableBody").innerHTML=timetables.map(t=>'<tr><td>'+esc(t.class_name)+'</td><td>'+esc(t.day)+'</td><td>'+esc(t.time_slot)+'</td><td>'+esc(t.subject)+'</td><td>'+esc(t.teacher||"—")+'</td><td><button class="danger" onclick="deleteTimetable(\''+t.id+'\')">Delete</button></td></tr>').join("")||'<tr><td colspan="6">No timetables.</td></tr>';
 }
-async function deleteTimetable(id){ await db.from("timetables").delete().eq("id", id); await refreshAll(); }
+
+async function deleteTimetable(id){
+  await db.from("timetables").delete().eq("id",id);
+  await refreshAll();
+}
 
 async function saveLogbookEntry(){
-  const title = $("logTitle").value.trim(), date = $("logDate").value || new Date().toISOString().slice(0,10), description = $("logDesc").value.trim();
-  if(!title || !description) return;
-  await db.from("logbooks").insert({school_id: currentSchoolId, title, date, description});
+  const title=$("logTitle").value.trim(), date=$("logDate").value||new Date().toISOString().slice(0,10), description=$("logDesc").value.trim();
+  if(!title||!description){message("logMessage","Fill description.",true);return;}
+  await db.from("logbooks").insert({school_id:currentSchoolId,title,date,description});
   $("logTitle").value=""; $("logDesc").value="";
   await refreshAll();
-  alert("✅ Log entry added!");
+  message("logMessage","Log entry recorded!");
 }
+
 function renderLogbooks(){
-  $("logbookBody").innerHTML = logbooks.map(l=>'<tr><td>'+l.date+'</td><td><b>'+esc(l.title)+'</b></td><td>'+esc(l.description)+'</td><td><button class="danger" onclick="deleteLogbook(\''+l.id+'\')">Delete</button></td></tr>').join("");
+  $("logbookBody").innerHTML=logbooks.map(l=>'<tr><td>'+esc(l.date)+'</td><td style="font-weight:600">'+esc(l.title)+'</td><td>'+esc(l.description)+'</td><td><button class="danger" onclick="deleteLogbook(\''+l.id+'\')">Delete</button></td></tr>').join("")||'<tr><td colspan="4">No logbook entries.</td></tr>';
 }
-async function deleteLogbook(id){ await db.from("logbooks").delete().eq("id", id); await refreshAll(); }
+
+async function deleteLogbook(id){
+  await db.from("logbooks").delete().eq("id",id);
+  await refreshAll();
+}
 
 function exportCSV(type){
-  let rows = [["Admission","Name","Class","Expected","Paid"]];
-  students.forEach(s=>rows.push([s.admission_no, s.full_name, s.class_name, expected(s), paid(s.id)]));
-  const csv = rows.map(r=>r.join(",")).join("\r\n");
-  const blob = new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a"); a.href = url; a.download = type+"_export.csv";
-  document.body.appendChild(a); a.click(); a.remove();
+  let rows=[];
+  if(type==="students"){
+    rows=[["Admission","Name","Class","Expected Fees","Paid","Balance","Status"]];
+    students.forEach(s=>rows.push([s.admission_no,s.full_name,s.class_name,expected(s),paid(s.id),balance(s),s.status||"Active"]));
+  }else if(type==="payments"){
+    rows=[["Date","Receipt","Student","Class","Amount","Method","Reference"]];
+    payments.forEach(p=>{const s=students.find(x=>String(x.id)===String(p.student_id));rows.push([readableDate(p.paid_at),receiptNo(p),s?.full_name||"",s?.class_name||"",p.amount,p.method,p.reference||""]);});
+  }else if(type==="expenses"){
+    rows=[["Date","Title","Category","Amount","Method"]];
+    expenses.forEach(e=>rows.push([e.date,e.title,e.category,e.amount,e.method]));
+  }else if(type==="staff"){
+    rows=[["Staff No","Name","Position","Monthly Salary","Phone"]];
+    staff.forEach(s=>rows.push([s.staff_no,s.full_name,s.position,s.monthly_salary,s.phone||""]));
+  }else if(type==="academics"){
+    rows=[["Term","Student","Class","Math","English","Sub 3","Sub 4","Sub 5","Total"]];
+    academics.forEach(a=>{const s=students.find(x=>String(x.id)===String(a.student_id));const tot=Number(a.math||0)+Number(a.eng||0)+Number(a.sci||0)+Number(a.sst||0)+Number(a.opt||0);rows.push([a.term,s?.full_name||"",s?.class_name||"",a.math,a.eng,a.sci,a.sst,a.opt,tot]);});
+  }
+  const csv=rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
+  const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;a.download=type+"_export_"+new Date().toISOString().slice(0,10)+".csv";
+  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+}
+
+function handleGlobalSearch(q){
+  q=q.toLowerCase();
+  if(!q)return;
+  if(q.includes("s.")||q.includes("class")){showPage("classes");}
+  else if(q.includes("pay")||q.includes("fee")){showPage("payments");}
+  else if(q.includes("staff")||q.includes("teacher")){showPage("staff");}
+  else{showPage("students");$("studentSearch").value=q;renderStudents();}
 }
 
 db.auth.onAuthStateChange((event)=>{
-  if(event === "SIGNED_OUT") location.reload();
+  if(event==="SIGNED_OUT"){
+    currentUser=null;currentSchoolId=null;
+    $("app").classList.add("hidden");
+    $("loginScreen").classList.remove("hidden");
+  }
 });
 
 (async()=>{
-  const {data} = await db.auth.getSession();
-  if(data.session) await startApp(data.session.user);
+  const {data}=await db.auth.getSession();
+  if(data.session)await startApp(data.session.user);
+  else $("loginScreen").classList.remove("hidden");
 })();
 </script>
 </body>
