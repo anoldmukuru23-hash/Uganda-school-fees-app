@@ -3,1262 +3,618 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#0f172a">
-
-<title>Uganda School Manager | School Fees and Administration System</title>
-
-<meta name="description" content="Uganda School Manager helps secondary schools and primary schools in Uganda manage student records, school fees, payments, staff, payroll, academic marks, reports and school expenses in one system.">
-<meta name="robots" content="index, follow">
-<meta name="application-name" content="Uganda School Manager">
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<meta name="theme-color" content="#123b2a">
+<title>Uganda School Manager</title>
 <style>
-:root{
-  --sidebar-bg:#0f172a;
-  --sidebar-hover:#1e293b;
-  --sidebar-active:#2563eb;
-  --primary:#2563eb;
-  --primary-hover:#1d4ed8;
-  --bg:#f1f5f9;
-  --card-bg:#ffffff;
-  --ink:#0f172a;
-  --muted:#64748b;
-  --line:#e2e8f0;
-  --radius:10px;
-  --green:#10b981;
-  --orange:#f59e0b;
-  --purple:#8b5cf6;
-  --red:#ef4444;
-}
-*{box-sizing:border-box}
-body{margin:0;font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);display:flex;min-height:100vh}
-
-#loginScreen{position:fixed;top:0;left:0;right:0;bottom:0;background:#0f172a;z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px}
-#loginBox{max-width:420px;width:100%;background:white;padding:32px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.5);border:1px solid var(--line)}
-.hidden{display:none!important}
-
-aside{width:260px;background:var(--sidebar-bg);color:#cbd5e1;display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:100;box-shadow:2px 0 10px rgba(0,0,0,0.05)}
-.brand{padding:20px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #1e293b}
-.brand-logo{background:linear-gradient(135deg,#f59e0b,#ef4444);color:white;width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:18px;box-shadow:0 2px 5px rgba(0,0,0,0.2)}
-.brand h2{margin:0;color:white;font-size:15px;font-weight:700}
-.brand p{margin:2px 0 0;font-size:11px;color:#94a3b8}
-
-.menu{padding:16px 12px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:4px}
-.menu button{width:100%;text-align:left;background:transparent;border:0;color:#94a3b8;padding:11px 14px;border-radius:8px;font-weight:500;font-size:14px;cursor:pointer;display:flex;align-items:center;gap:12px;transition:all .15s}
-.menu button:hover{background:var(--sidebar-hover);color:white}
-.menu button.active{background:var(--sidebar-active);color:white;font-weight:600;box-shadow:0 4px 12px rgba(37,99,235,0.3)}
-
-.sidebar-footer{padding:16px;border-top:1px solid #1e293b;text-align:center}
-.school-badge{background:#1e293b;padding:12px;border-radius:8px;margin-bottom:12px;text-align:left}
-.school-badge b{color:white;display:block;font-size:13px}
-.school-badge span{font-size:11px;color:#94a3b8}
-
-.wrapper{margin-left:260px;flex:1;display:flex;flex-direction:column;min-width:0}
-topbar{background:white;padding:14px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:90}
-.search-box{display:flex;align-items:center;background:#f8fafc;border:1px solid var(--line);border-radius:8px;padding:6px 14px;width:380px;gap:8px}
-.search-box input{border:0;background:transparent;outline:none;width:100%;font-size:14px}
-.user-menu{display:flex;align-items:center;gap:12px}
-.avatar{background:var(--primary);color:white;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:14px}
-
-content{padding:24px;max-width:1300px;width:100%;margin:auto}
-
-.card{background:var(--card-bg);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:0 1px 3px rgba(0,0,0,0.02);margin-bottom:20px}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:20px}
-.stat-card{background:white;border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;position:relative;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,0.02)}
-.stat-card span{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
-.stat-card strong{font-size:22px;color:var(--ink);margin-top:6px;font-weight:700}
-.stat-card .trend{font-size:11px;color:var(--green);font-weight:600;margin-top:4px}
-.stat-icon{position:absolute;right:16px;top:20px;width:42px;height:42px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px}
-
-.table-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:8px;background:white;margin-top:10px;margin-bottom:10px}
-table{width:100%;border-collapse:collapse;min-width:800px}
-th,td{padding:12px 16px;border-bottom:1px solid var(--line);text-align:left;font-size:13px;white-space:nowrap}
-th{background:#f8fafc;color:var(--muted);font-weight:700;text-transform:uppercase;font-size:11px;letter-spacing:.5px}
-tr:last-child td{border-bottom:0}
-tr:hover td{background:#fafafa}
-
-button{border:0;border-radius:6px;padding:8px 14px;background:var(--primary);color:white;font-weight:600;cursor:pointer;font-size:13px;transition:all .15s}
-button:hover{background:var(--primary-hover)}
-button.secondary{background:#e2e8f0;color:#334155}
-button.secondary:hover{background:#cbd5e1}
-button.danger{background:var(--red)}
-button.danger:hover{background:#dc2626}
-button.whatsapp{background:#25d366;color:white}
-button.whatsapp:hover{background:#20ba5a}
-
-.actions{display:flex;gap:8px;align-items:center}
-.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:14px}
-input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;font-size:13px;outline:none;background:#fff}
-input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,0.1)}
-label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4px}
-
-.pill{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;display:inline-block}
-.msg{padding:12px 16px;border-radius:8px;margin:12px 0;font-size:13px;font-weight:600}
-.msg.success{background:#d1fae5;color:#065f46;border:1px solid #a7f3d0}
-.msg.error{background:#fee2e2;color:#991b1b;border:1px solid #fecaca}
-
-@media(max-width:768px){
-  aside{width:70px}
-  aside .brand h2,aside .brand p,.menu span,.school-badge{display:none}
-  .wrapper{margin-left:70px}
-}
+:root{--green:#123b2a;--green2:#176b45;--gold:#f4b942;--bg:#f3f6f4;--ink:#17231d;--muted:#64736a;--line:#dce5df;--white:#fff;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}button,input,select,textarea{font:inherit}button{border:0;border-radius:9px;padding:11px 14px;background:var(--green2);color:#fff;font-weight:700;cursor:pointer}button.secondary{background:#e8f0eb;color:var(--green)}button.danger{background:#b42318}button.small{padding:6px 9px;font-size:12px}.hidden{display:none!important}.login-wrap{min-height:100vh;display:grid;place-items:center;padding:18px;background:linear-gradient(135deg,#123b2a,#176b45)}.login{width:min(430px,100%);background:white;padding:28px;border-radius:18px;box-shadow:0 15px 45px #0002}.flag{font-size:32px}.login h1{margin:8px 0;color:var(--green)}.muted{color:var(--muted);font-size:13px}.app{display:grid;grid-template-columns:245px 1fr;min-height:100vh}.sidebar{background:var(--green);color:white;padding:20px 14px}.brand{font-size:20px;font-weight:800;padding:8px 10px 22px}.brand small{display:block;color:#c6d9cc;font-size:12px;margin-top:5px}.nav{display:grid;gap:5px}.nav button{background:transparent;text-align:left;color:#e5f0e8;font-weight:600}.nav button.active,.nav button:hover{background:#ffffff20;color:white}.side-note{font-size:12px;color:#c6d9cc;margin:25px 10px}.main{min-width:0}.topbar{background:white;border-bottom:1px solid var(--line);padding:14px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px}.topbar strong{display:block}.content{padding:22px;max-width:1500px;margin:auto}.page-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}.page-head h1{font-size:24px;margin:0 0 5px}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}.card,.stat{background:white;border:1px solid var(--line);border-radius:14px;padding:17px;margin-bottom:16px;min-width:0}.stat span{display:block;color:var(--muted);font-size:13px}.stat strong{display:block;font-size:24px;margin:9px 0;color:var(--green)}.two{display:grid;grid-template-columns:1.5fr 1fr;gap:16px}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.field{display:grid;gap:6px}.field label{font-size:13px;font-weight:700;color:#33443a}.field input,.field select,.field textarea,.toolbar input,.toolbar select{width:100%;padding:11px;border:1px solid #cbd8cf;border-radius:8px;background:white;min-width:0}.field textarea{min-height:95px;resize:vertical}.form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}.toolbar>*{flex:1;min-width:160px}.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;width:100%}table{border-collapse:collapse;width:100%;font-size:13px;white-space:nowrap}th,td{text-align:left;padding:11px;border-bottom:1px solid var(--line)}th{background:#f6f8f6;color:#425247}td .actions{display:flex;gap:5px}.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#e8f5ed;color:#176b45;font-size:11px;font-weight:700}.pill.warn{background:#fff3d6;color:#8a5a00}.pill.red{background:#fde8e7;color:#a32118}.notice{padding:12px;border-radius:9px;background:#fff7df;color:#745000;font-size:13px;margin-bottom:15px}.success{color:#176b45}.error{color:var(--red)}.quick{display:grid;gap:9px}.quick button{text-align:left}.empty{padding:20px;color:var(--muted);text-align:center}.footer{font-size:12px;color:var(--muted);padding:10px 0}.checkrow{display:flex;align-items:center;gap:8px}.checkrow input{width:auto}.report{line-height:1.6}.toast{position:fixed;bottom:18px;right:18px;background:#163c2b;color:white;padding:13px 16px;border-radius:10px;box-shadow:0 5px 20px #0002;z-index:20;max-width:90vw}
+@media(max-width:950px){.app{grid-template-columns:1fr}.sidebar{padding:10px}.brand{padding:8px 10px}.nav{display:flex;overflow:auto}.nav button{white-space:nowrap}.side-note{display:none}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.two{grid-template-columns:1fr}.content{padding:14px}.topbar{padding:12px 14px}}
+@media(max-width:520px){.grid{grid-template-columns:1fr 1fr;gap:8px}.stat{padding:12px}.stat strong{font-size:18px}.form-grid{grid-template-columns:1fr}.page-head h1{font-size:21px}.login{padding:22px}}
+@media print{.sidebar,.topbar,.no-print,button{display:none!important}.app{display:block}.content{padding:0}.card,.stat{border:0}.table-wrap{overflow:visible}body{background:white}}
 </style>
 </head>
 <body>
 
-<div id="loginScreen">
-  <div id="loginBox">
-    <div style="text-align:center;margin-bottom:24px">
-      <div class="brand-logo" style="width:54px;height:54px;margin:auto;font-size:24px">🇺🇬</div>
-      <h2 style="margin:12px 0 4px;color:#0f172a">School Portal Sign In</h2>
-      <p style="color:var(--muted);font-size:13px">Uganda School Administration System</p>
-    </div>
-    <label>Email Address</label>
-    <input id="email" type="email" placeholder="admin@school.ug" autocomplete="email">
-    <label style="margin-top:12px">Password</label>
-    <input id="password" type="password" placeholder="••••••••" autocomplete="current-password">
-    <div style="display:flex;gap:10px;margin-top:20px">
-      <button style="flex:1" onclick="signIn()">Sign In</button>
-      <button class="secondary" style="flex:1" onclick="signUp()">Register</button>
-    </div>
-    <div id="authMessage"></div>
-  </div>
-</div>
+<section id="loginScreen" class="login-wrap">
+<form id="loginForm" class="login">
+<div class="flag">🇺🇬</div><h1>School Portal Sign In</h1>
+<p class="muted">Uganda School Manager · Primary & Secondary School Administration</p>
+<div class="notice">Enter your credentials below to open your administrative dashboard.</div>
+<div class="field" style="margin-top:12px"><label for="loginEmail">Email address</label><input id="loginEmail" type="email" required placeholder="admin@school.ug"></div>
+<div class="field" style="margin-top:12px"><label for="loginPassword">Password</label><input id="loginPassword" type="password" required placeholder="••••••••"></div>
+<div class="form-actions"><button type="submit">Sign In to Portal</button></div>
+</form>
+</section>
 
-<aside class="no-print">
-<div class="brand">
-  <div class="brand-logo">🇺🇬</div>
-  <div>
-    <h2>School Manager</h2>
-    <p>Uganda Primary & Secondary</p>
-  </div>
-</div>
-<div class="menu" id="mainNav">
-  <button data-page="dashboard" class="active" onclick="showPage('dashboard')">📊 <span>Dashboard</span></button>
-  <button data-page="students" onclick="showPage('students')">🎓 <span>Students & Registration</span></button>
-  <button data-page="classes" onclick="showPage('classes')">🏫 <span>Classes & Streams</span></button>
-  <button data-page="payments" onclick="showPage('payments')">💵 <span>Fees & WhatsApp</span></button>
-  <button data-page="expenses" onclick="showPage('expenses')">📉 <span>Expenses</span></button>
-  <button data-page="staff" onclick="showPage('staff')">👩‍🏫 <span>Staff & Teachers</span></button>
-  <button data-page="payroll" onclick="showPage('payroll')">💰 <span>Payroll</span></button>
-  <button data-page="academics" onclick="showPage('academics')">📝 <span>Academics, Marks & Reports</span></button>
-  <button data-page="timetables" onclick="showPage('timetables')">🗓️ <span>Timetables & Schemes</span></button>
-  <button data-page="reports" onclick="showPage('reports')">📈 <span>Reports & Exports</span></button>
-</div>
-<div class="sidebar-footer">
-  <div class="school-badge">
-    <span id="sidebarSchoolName">Green Valley High</span>
-    <span id="sidebarDistrict">Kampala, Uganda</span>
-  </div>
-  <button class="danger" style="width:100%;padding:8px" onclick="signOut()">Sign Out</button>
-</div>
+<div id="appScreen" class="app hidden">
+<aside class="sidebar no-print">
+<div class="brand">🇺🇬 School Manager<small>Primary & Secondary Pro</small></div>
+<nav class="nav" id="nav">
+<button class="active" data-page="dashboard" type="button">📊 Dashboard</button>
+<button data-page="students" type="button">🎓 Students</button>
+<button data-page="classes" type="button">🏫 Classes & Promotion</button>
+<button data-page="archived" type="button">📁 Archived</button>
+<button data-page="payments" type="button">💵 Fees & Payments</button>
+<button data-page="expenses" type="button">📉 Expenses</button>
+<button data-page="staff" type="button">👩‍🏫 Staff & NIN</button>
+<button data-page="payroll" type="button">💰 Payroll</button>
+<button data-page="academics" type="button">📝 Academics & Reports</button>
+<button data-page="subjects" type="button">📚 Subjects</button>
+<button data-page="timetable" type="button">🗓️ Timetable</button>
+<button data-page="messaging" type="button">📢 Parent Messages</button>
+<button data-page="school" type="button">⚙️ School Settings</button>
+<button data-page="exports" type="button">📈 Reports & Exports</button>
+</nav>
+<div class="side-note">Uganda School Manager System · Secure local session build</div>
 </aside>
 
-<div class="wrapper">
-<topbar class="no-print">
-  <div class="search-box">
-    <span>🔍</span>
-    <input type="text" id="globalSearch" placeholder="Search students, classes, or records..." oninput="handleGlobalSearch(this.value)">
-  </div>
-  <div class="user-menu">
-    <span id="currentDateStr" style="font-size:13px;color:var(--muted)"></span>
-    <div class="avatar" id="userAvatar">A</div>
-    <div>
-      <b id="userNameDisplay" style="display:block;font-size:13px">Admin</b>
-      <span style="font-size:11px;color:var(--muted)">School Administrator</span>
-    </div>
-  </div>
-</topbar>
+<main class="main">
+<header class="topbar no-print">
+  <div><strong id="schoolTop">Green Valley High</strong><span class="muted" id="schoolLocationTop">Kampala, Uganda</span></div>
+  <div><span id="userTop">Administrator</span> <button class="secondary small" id="signOutBtn" type="button">Sign Out</button></div>
+</header>
 
-<content>
+<div class="content">
 
-<div id="app" class="hidden">
-
-  <!-- TOP SELECTOR BAR: PERSISTENT SCHOOL & TERM SELECTORS -->
-  <div class="card no-print" style="padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
-    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
-      <div style="display:flex;align-items:center;gap:8px">
-        <label style="margin:0">Active School:</label>
-        <select id="schoolSelect" onchange="changeSchool()" style="width:200px"></select>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <label style="margin:0">Active Term:</label>
-        <select id="termSelect" onchange="changeTerm()" style="width:175px">
-          <option value="Term 1, 2026">Term 1, 2026</option>
-          <option value="Term 2, 2026">Term 2, 2026</option>
-          <option value="Term 3, 2026">Term 3, 2026</option>
-          <option value="Term 1, 2027">Term 1, 2027</option>
-          <option value="Term 2, 2027">Term 2, 2027</option>
-          <option value="Term 3, 2027">Term 3, 2027</option>
-        </select>
-      </div>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <button onclick="openSchoolModal()">+ Create New School</button>
-      <button class="secondary" onclick="refreshAll()">Refresh</button>
-      <button class="danger" onclick="deleteActiveSchool()">Delete School</button>
-    </div>
-  </div>
-  <div id="schoolMessage"></div>
-
-  <!-- SCHOOL CREATION MODAL WIZARD FORM -->
-  <div id="schoolModal" class="card hidden" style="border: 2px solid var(--primary); background:#f8fafc">
-    <h3>🏫 Register New School (Primary / Secondary)</h3>
-    <div class="form-grid">
-      <div><label>School Name *</label><input id="modalSchoolName" placeholder="e.g. Kinoni High School"></div>
-      <div><label>School Type *</label>
-        <select id="modalSchoolType">
-          <option value="Secondary">Secondary (S.1 - S.6)</option>
-          <option value="Primary">Primary (Baby - P.7)</option>
-          <option value="Both">Both Primary & Secondary</option>
-        </select>
-      </div>
-      <div><label>District *</label><input id="modalDistrict" placeholder="e.g. Mbarara"></div>
-      <div><label>School Motto</label><input id="modalMotto" placeholder="e.g. Education is Wealth"></div>
-      <div><label>School Badge / Logo Image URL</label><input id="modalBadgeUrl" placeholder="https://..."></div>
-      <div><label>Sample Report / Receipt / Budget Template URL</label><input id="modalReportTemplate" placeholder="Optional URL"></div>
-    </div>
-    <div style="display:flex;gap:10px;margin-top:10px">
-      <button onclick="submitCreateSchool()">Save & Setup School</button>
-      <button class="secondary" onclick="closeSchoolModal()">Cancel</button>
-    </div>
-    <div id="modalSchoolMsg"></div>
-  </div>
-
-  <!-- PAGE: DASHBOARD -->
-  <div id="page-dashboard" class="page-section">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <div>
-        <h2 style="margin:0" id="dashWelcomeTitle">Welcome back, Authorized Staff!</h2>
-        <p style="margin:4px 0 0;color:var(--muted)">Financial & enrollment overview for your active session.</p>
-      </div>
-      <span class="pill" style="background:#dbeafe;color:#1e40af" id="dashTermDisplay">Term 3, 2026</span>
+  <!-- DASHBOARD -->
+  <section id="page-dashboard" class="page">
+    <div class="page-head">
+      <div><h1>Welcome back, Administrator</h1><div class="muted">Financial and enrollment overview</div></div>
+      <div class="field" style="margin:0"><label for="activeTerm">Active term</label><select id="activeTerm"><option>Term 3, 2026</option><option>Term 1, 2026</option><option>Term 2, 2026</option></select></div>
     </div>
 
-    <!-- SECURE FINANCIAL STATS CONTAINER -->
-    <div class="card" style="border-left:4px solid var(--orange); margin-bottom:20px">
+    <!-- SECURED FINANCIAL SAVINGS & EARNINGS PANEL -->
+    <div class="card" style="border-left:4px solid var(--gold); background:#fffdf5">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
         <div>
-          <h3 style="margin:0">🔒 Financial Savings & Earnings (Authorized Access Only)</h3>
-          <p style="margin:2px 0 0;font-size:12px;color:var(--muted)">Sensitive earnings and account data are protected by an administrative password.</p>
+          <h3 style="margin:0 0 4px">🔒 School Earnings & Savings (Authorized Access Only)</h3>
+          <p class="muted" style="margin:0">Confidential accounts restricted to Head Teacher, Bursar, and Directors.</p>
         </div>
         <div id="financeAuthControl" style="display:flex;gap:8px;align-items:center">
-          <input type="password" id="financePasswordInput" placeholder="Enter Admin/Bursar Password..." style="width:200px">
-          <button onclick="unlockFinances()">Unlock Financials</button>
+          <input type="password" id="financePasswordInput" placeholder="Enter security password..." style="width:180px">
+          <button class="small" type="button" onclick="unlockFinances()">Unlock</button>
         </div>
         <div id="financeLockBadge" class="hidden" style="display:flex;gap:8px;align-items:center">
-          <span class="pill" style="background:#d1fae5;color:#065f46">Unlocked (Authorized)</span>
-          <button class="secondary" onclick="lockFinances()">Lock</button>
+          <span class="pill">Unlocked</span>
+          <button class="secondary small" type="button" onclick="lockFinances()">Lock</button>
         </div>
       </div>
     </div>
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <span>Total Students</span>
-        <strong id="statStudents">0</strong>
-        <span class="trend">↑ Enrolled Active</span>
-        <div class="stat-icon" style="background:#e0f2fe;color:#0284c7">🎓</div>
-      </div>
-      <div class="stat-card">
-        <span>Expected School Fees</span>
-        <strong id="statExpected">UGX 0</strong>
-        <span class="trend">Total term target</span>
-        <div class="stat-icon" style="background:#ede9fe;color:#7c3aed">📋</div>
-      </div>
-      <div class="stat-card">
-        <span>Fees Collected</span>
-        <strong id="statCollected">UGX 0</strong>
-        <span class="trend" id="statCollectionRate">0% collected</span>
-        <div class="stat-icon" style="background:#fef3c7;color:#d97706">💵</div>
-      </div>
-      <div class="stat-card">
-        <span>Net Term Cashflow</span>
-        <strong id="statCashflow" style="color:var(--muted)">🔒 Locked</strong>
-        <span class="trend">Revenue minus expenses & payroll</span>
-        <div class="stat-icon" style="background:#d1fae5;color:#059669">💰</div>
-      </div>
+    <div class="grid">
+      <div class="stat"><span>Active students</span><strong id="statStudents">0</strong><span>Enrolled students</span></div>
+      <div class="stat"><span>Expected fees</span><strong id="statExpected">UGX 0</strong><span>Expected this term</span></div>
+      <div class="stat"><span>Fees collected</span><strong id="statCollected">UGX 0</strong><span id="statRate">0% of target</span></div>
+      <div class="stat"><span>Net cashflow</span><strong id="statCashflow" style="color:var(--muted)">🔒 Locked</strong><span>Revenue less expenses & payroll</span></div>
     </div>
 
-    <div style="display:grid;grid-template-columns:2fr 1fr;gap:20px">
+    <div class="two">
       <div class="card">
-        <h3>Class Overview & Summary</h3>
+        <h3>Class overview</h3>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Class Level / Stream</th><th>Enrolled Students</th><th>Expected Fees</th><th>Collected</th><th>Status</th></tr></thead>
+            <thead><tr><th>Class</th><th>Students</th><th>Expected</th><th>Collected</th><th>Balance</th></tr></thead>
             <tbody id="dashboardClassesBody"></tbody>
           </table>
         </div>
       </div>
       <div class="card">
-        <h3>Quick Actions</h3>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <button onclick="showPage('students')">🎓 Register New Student</button>
-          <button class="secondary" onclick="showPage('payments')">💵 Record Fees & WhatsApp</button>
-          <button class="secondary" onclick="showPage('staff')">👩‍🏫 Add Staff & NIN</button>
-          <button class="secondary" onclick="showPage('academics')">📝 Enter Subject Marks</button>
-          <button class="secondary" onclick="showPage('timetables')">🗓️ Create Timetables & Schemes</button>
+        <h3>Quick actions</h3>
+        <div class="quick">
+          <button type="button" data-go="students">🎓 Register a student</button>
+          <button class="secondary" type="button" data-go="payments">💵 Record fee payment</button>
+          <button class="secondary" type="button" data-go="staff">👩‍🏫 Add teacher / staff</button>
+          <button class="secondary" type="button" data-go="academics">📝 Enter marks</button>
+          <button class="secondary" type="button" data-go="messaging">📢 Prepare parent message</button>
         </div>
       </div>
     </div>
 
     <!-- ALL CLASSES DISPLAYED AT THE BOTTOM OF DASHBOARD -->
-    <div class="card" style="margin-top:20px">
-      <h3>📋 Complete Directory of All Classes & Streams</h3>
-      <p style="color:var(--muted);font-size:13px">Comprehensive summary of all classes (Primary & Secondary) configured in this school.</p>
+    <div class="card">
+      <h3>📋 All Classes & Streams Directory</h3>
+      <p class="muted">Complete listing of primary and secondary classes configured in the school.</p>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Class Level</th><th>Stream</th><th>Category</th><th>Total Students</th><th>Actions</th></tr></thead>
-          <tbody id="dashboardAllClassesBottomBody"></tbody>
+          <thead><tr><th>Class Level</th><th>Streams / Sections</th><th>Category</th><th>Enrolled</th></tr></thead>
+          <tbody id="dashboardAllClassesBody"></tbody>
         </table>
       </div>
     </div>
+  </section>
 
-  </div>
-
-  <!-- PAGE: STUDENTS -->
-  <div id="page-students" class="page-section hidden">
+  <!-- STUDENTS -->
+  <section id="page-students" class="page hidden">
+    <div class="page-head"><div><h1>Student Registration</h1><div class="muted">Register and manage student records</div></div></div>
     <div class="card">
-      <h2 id="studentFormTitle">Student Registration (O-Level, A-Level & Primary)</h2>
-      <input type="hidden" id="editStudentId">
-      <div class="form-grid">
-        <div><label>Admission Number *</label><input id="admission" placeholder="e.g. S.1/001 or P.1/021"></div>
-        <div><label>Student Full Name *</label><input id="studentName" placeholder="Full name"></div>
-        <div>
-          <label>Class Level *</label>
-          <select id="studentClass" onchange="toggleStudentLevelFields()">
-            <optgroup label="Primary Section">
-              <option value="Baby">Baby Class</option>
-              <option value="Middle">Middle Class</option>
-              <option value="Top">Top Class</option>
-              <option value="P.1">Primary 1 (P.1)</option>
-              <option value="P.2">Primary 2 (P.2)</option>
-              <option value="P.3">Primary 3 (P.3)</option>
-              <option value="P.4">Primary 4 (P.4)</option>
-              <option value="P.5">Primary 5 (P.5)</option>
-              <option value="P.6">Primary 6 (P.6)</option>
-              <option value="P.7">Primary 7 (P.7)</option>
-            </optgroup>
-            <optgroup label="Secondary O-Level">
-              <option value="S.1">Senior 1 (S.1)</option>
-              <option value="S.2">Senior 2 (S.2)</option>
-              <option value="S.3">Senior 3 (S.3)</option>
-              <option value="S.4">Senior 4 (S.4)</option>
-            </optgroup>
-            <optgroup label="Secondary A-Level">
-              <option value="S.5">Senior 5 (S.5)</option>
-              <option value="S.6">Senior 6 (S.6)</option>
-            </optgroup>
-          </select>
+      <form id="studentForm"><input type="hidden" id="studentId">
+        <div class="form-grid">
+          <div class="field"><label>Admission number *</label><input id="admission" required></div>
+          <div class="field"><label>Student full name *</label><input id="studentName" required></div>
+          <div class="field"><label>Date of birth</label><input id="dob" type="date"></div>
+          <div class="field"><label>Gender</label><select id="gender"><option value="">Select</option><option>Female</option><option>Male</option><option>Other / Prefer not to say</option></select></div>
+          <div class="field"><label>Education level *</label><select id="level"><option>O-Level</option><option>A-Level</option><option>Primary</option></select></div>
+          <div class="field"><label>Class *</label><select id="studentClass" required></select></div>
+          <div class="field"><label>Stream</label><input id="stream" placeholder="e.g. East"></div>
+          <div class="field"><label>Day / Boarding</label><select id="residence"><option>Day</option><option>Boarding</option></select></div>
+          <div class="field"><label>Expected term fees (UGX) *</label><input id="expectedFees" type="number" min="0" required></div>
+          <div class="field"><label>Parent / guardian name</label><input id="parentName"></div>
+          <div class="field"><label>Parent WhatsApp number (include country code)</label><input id="parentPhone" placeholder="+2567XXXXXXXX"></div>
+          <div class="field"><label>Parent email</label><input id="parentEmail" type="email"></div>
+          <div class="field"><label>A-Level subject combination</label><input id="combination" placeholder="e.g. PCM (only if applicable)"></div>
+          <div class="field"><label>Student status</label><select id="studentStatus"><option>Active</option><option>Transferred</option><option>Withdrawn</option></select></div>
         </div>
-        <div><label>Stream / Sub-Class</label><input id="studentStream" placeholder="e.g. East, West, North, A, B"></div>
-        <div>
-          <label>Level Category</label>
-          <select id="studentCategory">
-            <option value="O-Level">O-Level Student</option>
-            <option value="A-Level">A-Level Student</option>
-            <option value="Primary">Primary Pupil</option>
-          </select>
-        </div>
-        <div id="alevelCombGroup" class="hidden"><label>A-Level Subject Combination</label><input id="studentCombination" placeholder="e.g. BCM/ICT, MEG/Art"></div>
-        <div><label>Gender *</label><select id="studentGender"><option>Male</option><option>Female</option></select></div>
-        <div><label>Age</label><input id="studentAge" type="number" placeholder="e.g. 15"></div>
-        <div><label>Date of Birth</label><input id="studentDob" type="date"></div>
-        <div>
-          <label>Enrollment Status</label>
-          <select id="studentBoardingStatus">
-            <option value="Day">Day Student</option>
-            <option value="Boarding">Boarding Student</option>
-          </select>
-        </div>
-        <div><label>Expected Term Fees (UGX) *</label><input id="expectedFees" type="number" min="0" placeholder="e.g. 450000" value="0"></div>
-        <div><label>Parent Email Address</label><input id="parentEmail" type="email" placeholder="parent@gmail.com"></div>
-        <div><label>Parent WhatsApp Number *</label><input id="parentWhatsApp" placeholder="e.g. 256770000000"></div>
-      </div>
-      <div class="actions">
-        <button onclick="saveStudent()">Save Student Record</button>
-        <button class="secondary hidden" id="cancelStudentEdit" onclick="resetStudentForm()">Cancel Edit</button>
-      </div>
-      <div id="studentMessage"></div>
+        <div class="form-actions"><button type="submit">Save student</button><button class="secondary" type="button" id="cancelStudent">Clear form</button></div>
+      </form>
     </div>
-
     <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px">
-        <h3>Students Directory</h3>
-        <input id="studentSearch" placeholder="Search admission, name, stream..." style="width:240px" oninput="renderStudents()">
-      </div>
+      <div class="toolbar"><input id="studentSearch" placeholder="Search name or admission number"><select id="studentClassFilter"><option value="">All classes</option></select></div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Admission</th><th>Student Name</th><th>Class & Stream</th><th>Category</th><th>Gender</th><th>Boarding</th><th>Expected</th><th>Paid</th><th>Balance</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Admission</th><th>Name</th><th>Class</th><th>Age</th><th>Expected</th><th>Paid</th><th>Balance</th><th>Actions</th></tr></thead>
           <tbody id="studentsBody"></tbody>
         </table>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- PAGE: CLASSES & STREAMS -->
-  <div id="page-classes" class="page-section hidden">
-    <div class="card" style="border-left: 4px solid var(--purple)">
-      <h2>🏫 Classes & Stream Management (Primary & Secondary)</h2>
-      <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Create and organize different streams (e.g., North, South, East, West) under any class level from Baby Class up to S.6.</p>
-      <div class="form-grid">
-        <div><label>Select Class Level *</label>
-          <select id="streamClassLevel">
-            <option value="Baby">Baby Class</option>
-            <option value="Middle">Middle Class</option>
-            <option value="Top">Top Class</option>
-            <option value="P.1">Primary 1 (P.1)</option>
-            <option value="P.2">Primary 2 (P.2)</option>
-            <option value="P.3">Primary 3 (P.3)</option>
-            <option value="P.4">Primary 4 (P.4)</option>
-            <option value="P.5">Primary 5 (P.5)</option>
-            <option value="P.6">Primary 6 (P.6)</option>
-            <option value="P.7">Primary 7 (P.7)</option>
-            <option value="S.1">Senior 1 (S.1)</option>
-            <option value="S.2">Senior 2 (S.2)</option>
-            <option value="S.3">Senior 3 (S.3)</option>
-            <option value="S.4">Senior 4 (S.4)</option>
-            <option value="S.5">Senior 5 (S.5)</option>
-            <option value="S.6">Senior 6 (S.6)</option>
-          </select>
-        </div>
-        <div><label>New Stream Name *</label><input id="newStreamName" placeholder="e.g. East, West, Blue, Red"></div>
-      </div>
-      <button onclick="createStream()">Create Stream Under Class</button>
-      <div id="streamMessage"></div>
-    </div>
-
+  <!-- CLASSES & PROMOTION -->
+  <section id="page-classes" class="page hidden">
+    <div class="page-head"><div><h1>Classes & Promotion</h1><div class="muted">Review class registers and promote students carefully at year end</div></div></div>
+    <div class="notice">Promotion changes each selected student's class. Export a backup first and verify the academic year before proceeding.</div>
     <div class="card">
-      <h2>Class & Stream Registers</h2>
-      <div class="form-grid">
-        <div><label>Filter by Class</label><select id="classFilter" onchange="renderClassStudents()"><option value="">All Classes</option></select></div>
-        <div><label>Search Register</label><input id="classStudentSearch" placeholder="Student name..." oninput="renderClassStudents()"></div>
-      </div>
-      <div class="table-wrap" style="margin-top:16px">
+      <div class="toolbar"><select id="classFilter"><option value="">All classes</option></select><input id="classSearch" placeholder="Search student"></div>
+      <div class="table-wrap">
         <table>
-          <thead><tr><th>Admission No</th><th>Student Name</th><th>Class & Stream</th><th>Category</th><th>Expected Fees</th><th>Paid</th><th>Balance</th></tr></thead>
+          <thead><tr><th>Admission</th><th>Name</th><th>Class</th><th>Stream</th><th>Expected fees</th><th>Paid</th><th>Balance</th></tr></thead>
           <tbody id="classStudentsBody"></tbody>
         </table>
       </div>
     </div>
-  </div>
-
-  <!-- PAGE: PAYMENTS & WHATSAPP BROADCAST -->
-  <div id="page-payments" class="page-section hidden">
-    <div class="card" style="border-left: 4px solid var(--green)">
-      <h2>📢 Automated WhatsApp & Email Parent Notification Center</h2>
-      <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Send WhatsApp messages or automated emails to a single parent, a whole class stream, or the entire school.</p>
-      <div class="form-grid">
-        <div>
-          <label>Target Audience Scope</label>
-          <select id="broadcastTargetType">
-            <option value="all">Entire School (All Parents)</option>
-            <option value="class">Specific Class / Stream</option>
-            <option value="single">Single Student Parent</option>
-          </select>
-        </div>
-        <div id="broadcastClassDiv" class="hidden">
-          <label>Select Class / Stream</label>
-          <select id="broadcastClassSelect"></select>
-        </div>
-        <div id="broadcastStudentDiv" class="hidden">
-          <label>Select Student</label>
-          <select id="broadcastStudentSelect"></select>
-        </div>
-        <div>
-          <label>Communication Channel</label>
-          <select id="broadcastChannel">
-            <option value="whatsapp">WhatsApp Message</option>
-            <option value="email">Automated Email</option>
-          </select>
-        </div>
-      </div>
-      <div>
-        <label>Message Subject / Title</label>
-        <input id="broadcastSubject" placeholder="e.g. Termly General Meeting & Fees Reminder">
-      </div>
-      <div style="margin-top:10px">
-        <label>Message Content *</label>
-        <textarea id="broadcastMessageBody" rows="3" placeholder="Dear Parent, you are cordially invited to our school general meeting this Friday at 10:00 AM..."></textarea>
-      </div>
-      <button style="margin-top:12px;background:#25d366" onclick="sendBroadcastMessage()">🚀 Send Message / Broadcast Now</button>
-      <div id="broadcastStatusMsg"></div>
-    </div>
-
     <div class="card">
-      <h2>Record School Fees Payment</h2>
-      <div class="form-grid">
-        <div><label>Search Student</label><input id="paymentSearchInput" placeholder="Type name or admission..." oninput="renderStudentSelect()"></div>
-        <div><label>Filter Class</label><select id="paymentClass" onchange="renderStudentSelect()"><option value="">All Classes</option></select></div>
-        <div><label>Select Student *</label><select id="paymentStudent"></select></div>
-        <div><label>Amount Paid (UGX) *</label><input id="paymentAmount" type="number" min="1" placeholder="Amount"></div>
-        <div><label>Payment Method</label><select id="paymentMethod"><option>Cash</option><option>Mobile Money</option><option>Bank Deposit</option><option>Cheque</option></select></div>
-        <div><label>Receipt / Transaction Reference</label><input id="paymentReference" placeholder="Receipt No / Ref"></div>
-      </div>
-      <button onclick="recordPayment()">Record Payment & Print Receipt</button>
-      <div id="paymentMessage"></div>
+      <h3>End-of-year actions</h3>
+      <p class="muted">Promote S.1–S.5 one level; S.6 graduates are archived. S.4 progression depends on the school's decisions and should be reviewed individually.</p>
+      <button id="promoteBtn" type="button">Promote eligible students</button> <button class="secondary" id="graduateBtn" type="button">Archive S.6 students</button>
     </div>
+  </section>
 
+  <!-- ARCHIVED -->
+  <section id="page-archived" class="page hidden">
+    <div class="page-head"><div><h1>Archived Students</h1><div class="muted">Restore students who return to the school</div></div></div>
     <div class="card">
-      <h3>Fees Payment History</h3>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Date</th><th>Receipt No</th><th>Student Name</th><th>Class</th><th>Amount</th><th>Method</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Admission</th><th>Name</th><th>Last class</th><th>Actions</th></tr></thead>
+          <tbody id="archivedBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAYMENTS -->
+  <section id="page-payments" class="page hidden">
+    <div class="page-head"><div><h1>Fees & Payments</h1><div class="muted">Record payments and print receipts</div></div></div>
+    <div class="card">
+      <form id="paymentForm">
+        <div class="form-grid">
+          <div class="field"><label>Student *</label><select id="paymentStudent" required></select></div>
+          <div class="field"><label>Amount paid (UGX) *</label><input id="paymentAmount" type="number" min="1" required></div>
+          <div class="field"><label>Payment method</label><select id="paymentMethod"><option>Cash</option><option>Mobile Money</option><option>Bank Deposit</option><option>Cheque</option></select></div>
+          <div class="field"><label>Transaction reference</label><input id="paymentReference"></div>
+          <div class="field"><label>Date</label><input id="paymentDate" type="date" required></div>
+        </div>
+        <div class="form-actions"><button type="submit">Record payment</button></div>
+      </form>
+    </div>
+    <div class="card">
+      <div class="toolbar"><input id="paymentSearch" placeholder="Search receipt, student or reference"></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Receipt</th><th>Student</th><th>Class</th><th>Amount</th><th>Method</th><th>Reference</th><th>Action</th></tr></thead>
           <tbody id="paymentsBody"></tbody>
         </table>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- PAGE: EXPENSES -->
-  <div id="page-expenses" class="page-section hidden">
+  <!-- EXPENSES -->
+  <section id="page-expenses" class="page hidden">
+    <div class="page-head"><div><h1>School Expenses</h1><div class="muted">Track expenditure by category</div></div></div>
     <div class="card">
-      <h2>School Expense Tracking</h2>
-      <div class="form-grid">
-        <div><label>Description / Title *</label><input id="expTitle" placeholder="e.g. Chemistry Lab Reagents"></div>
-        <div>
-          <label>Category</label>
-          <select id="expCategory">
-            <option>Teaching Materials & Books</option>
-            <option>Laboratory Reagents</option>
-            <option>Food & Feeding</option>
-            <option>Utilities (Power/Water)</option>
-            <option>Maintenance & Repairs</option>
-            <option>Administration</option>
-            <option>Other</option>
-          </select>
+      <form id="expenseForm">
+        <div class="form-grid">
+          <div class="field"><label>Description *</label><input id="expenseTitle" required></div>
+          <div class="field"><label>Category</label><select id="expenseCategory"><option>Teaching Materials & Books</option><option>Laboratory Reagents</option><option>Food & Feeding</option><option>Utilities (Power/Water)</option><option>Maintenance & Repairs</option><option>Administration</option><option>Transport</option><option>Other</option></select></div>
+          <div class="field"><label>Amount (UGX) *</label><input id="expenseAmount" type="number" min="1" required></div>
+          <div class="field"><label>Date *</label><input id="expenseDate" type="date" required></div>
+          <div class="field"><label>Method</label><select id="expenseMethod"><option>Cash</option><option>Bank</option><option>Mobile Money</option></select></div>
         </div>
-        <div><label>Amount (UGX) *</label><input id="expAmount" type="number" min="1" placeholder="Amount"></div>
-        <div><label>Date</label><input id="expDate" type="date"></div>
-        <div><label>Method</label><select id="expMethod"><option>Cash</option><option>Bank</option><option>Mobile Money</option></select></div>
-      </div>
-      <button onclick="addExpense()">Record Expense</button>
-      <div id="expenseMessage"></div>
+        <div class="form-actions"><button type="submit">Record expense</button></div>
+      </form>
     </div>
-
     <div class="card">
-      <h3>Logged Expenses</h3>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Date</th><th>Title</th><th>Category</th><th>Amount</th><th>Method</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Method</th><th>Action</th></tr></thead>
           <tbody id="expensesBody"></tbody>
         </table>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- PAGE: STAFF -->
-  <div id="page-staff" class="page-section hidden">
+  <!-- STAFF -->
+  <section id="page-staff" class="page hidden">
+    <div class="page-head"><div><h1>Staff & Teachers</h1><div class="muted">Register staff and expected salaries</div></div></div>
     <div class="card">
-      <h2 id="staffFormTitle">Staff / Teacher Registration</h2>
-      <input type="hidden" id="editStaffId">
-      <div class="form-grid">
-        <div><label>Staff Number *</label><input id="staffNo" placeholder="e.g. T001"></div>
-        <div><label>Full Name *</label><input id="staffName" placeholder="Teacher name"></div>
-        <div><label>Position / Subject *</label><input id="staffPosition" placeholder="e.g. Mathematics Teacher"></div>
-        <div><label>Gender *</label><select id="staffGender"><option>Male</option><option>Female</option></select></div>
-        <div><label>Marital Status *</label><select id="staffMarital"><option>Single</option><option>Married</option><option>Other</option></select></div>
-        <div><label>NIN (National ID Number) *</label><input id="staffNin" placeholder="e.g. CM123456789ABC"></div>
-        <div><label>Expected Monthly Salary (UGX) *</label><input id="staffSalary" type="number" min="0" value="0"></div>
-        <div><label>Phone Number</label><input id="staffPhone" placeholder="0770000000"></div>
-      </div>
-      <div class="actions">
-        <button onclick="saveStaff()">Save Staff Member</button>
-        <button class="secondary hidden" id="cancelStaffEdit" onclick="resetStaffForm()">Cancel Edit</button>
-      </div>
-      <div id="staffMessage"></div>
+      <form id="staffForm"><input type="hidden" id="staffId">
+        <div class="form-grid">
+          <div class="field"><label>Staff number *</label><input id="staffNo" required></div>
+          <div class="field"><label>Full name *</label><input id="staffName" required></div>
+          <div class="field"><label>Position / subjects *</label><input id="staffPosition" required></div>
+          <div class="field"><label>Monthly salary (UGX) *</label><input id="staffSalary" type="number" min="0" required></div>
+          <div class="field"><label>Phone</label><input id="staffPhone"></div>
+          <div class="field"><label>Role</label><select id="staffRole"><option>Teacher</option><option>Head Teacher</option><option>Bursar</option><option>Administrator</option><option>Support Staff</option></select></div>
+        </div>
+        <div class="form-actions"><button type="submit">Save staff member</button><button class="secondary" type="button" id="clearStaff">Clear</button></div>
+      </form>
     </div>
-
     <div class="card">
-      <h3>Registered Teachers & Staff Directory</h3>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Staff No</th><th>Full Name</th><th>Position</th><th>Gender</th><th>Marital Status</th><th>NIN</th><th>Monthly Salary</th><th>Phone</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Staff No.</th><th>Name</th><th>Position</th><th>Role</th><th>Salary</th><th>Phone</th><th>Actions</th></tr></thead>
           <tbody id="staffBody"></tbody>
         </table>
       </div>
     </div>
+  </section>
 
+  <!-- PAYROLL -->
+  <section id="page-payroll" class="page hidden">
+    <div class="page-head"><div><h1>Staff Payroll</h1><div class="muted">Record monthly salary payments</div></div></div>
     <div class="card">
-      <h3>Staff Salary Status & Balance Tracker</h3>
+      <form id="payrollForm">
+        <div class="form-grid">
+          <div class="field"><label>Staff member *</label><select id="payrollStaff" required></select></div>
+          <div class="field"><label>Amount paid (UGX) *</label><input id="payrollAmount" type="number" min="1" required></div>
+          <div class="field"><label>Salary month *</label><input id="salaryMonth" type="month" required></div>
+          <div class="field"><label>Payment method</label><select id="payrollMethod"><option>Bank</option><option>Cash</option><option>Mobile Money</option></select></div>
+          <div class="field"><label>Reference</label><input id="payrollReference"></div>
+        </div>
+        <div class="form-actions"><button type="submit">Record salary payment</button></div>
+      </form>
+    </div>
+    <div class="card">
+      <h3>Salary status for selected month</h3>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Staff No</th><th>Full Name</th><th>Position</th><th>Monthly Salary</th><th>Total Paid</th><th>Balance</th></tr></thead>
-          <tbody id="staffSalaryStatusBody"></tbody>
+          <thead><tr><th>Staff</th><th>Month</th><th>Expected salary</th><th>Paid</th><th>Balance</th></tr></thead>
+          <tbody id="salaryStatusBody"></tbody>
         </table>
       </div>
     </div>
-  </div>
-
-  <!-- PAGE: PAYROLL -->
-  <div id="page-payroll" class="page-section hidden">
     <div class="card">
-      <h2>Staff Payroll & Salary Disbursements</h2>
-      <div class="form-grid">
-        <div><label>Staff Member *</label><select id="salaryStaff"></select></div>
-        <div><label>Amount Paid (UGX) *</label><input id="salaryAmount" type="number" min="1" placeholder="Amount"></div>
-        <div><label>Salary Month *</label><input id="salaryMonth" type="month"></div>
-        <div><label>Method</label><select id="salaryMethod"><option>Bank Transfer</option><option>Mobile Money</option><option>Cash</option></select></div>
-        <div><label>Reference</label><input id="salaryReference" placeholder="Optional ref"></div>
-      </div>
-      <button onclick="recordSalary()">Record Salary Payment</button>
-      <div id="payrollMessage"></div>
-    </div>
-
-    <div class="card">
-      <h3>Salary Disbursement History</h3>
+      <h3>Payment history</h3>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Date</th><th>Staff Member</th><th>Month</th><th>Amount</th><th>Method</th><th>Reference</th></tr></thead>
+          <thead><tr><th>Date</th><th>Staff</th><th>Month</th><th>Amount</th><th>Method</th><th>Reference</th></tr></thead>
           <tbody id="payrollBody"></tbody>
         </table>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- PAGE: ACADEMICS -->
-  <div id="page-academics" class="page-section hidden">
-    <div class="card" style="border-left: 4px solid var(--primary)">
-      <h2>📚 Marks Only Portal & Subject Grading</h2>
-      <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Log marks for standard subjects (Mathematics, English, Physics, Chemistry, Biology, History, Literature, Runyankore, Entrepreneurship, Agriculture, Fine Art, Geography, CRE, Kiswahili, ICT) or add a custom subject.</p>
-      <div class="form-grid">
-        <div><label>Select Subject *</label>
-          <select id="teacherSubject">
-            <option value="Mathematics">Mathematics</option>
-            <option value="English">English</option>
-            <option value="Physics">Physics</option>
-            <option value="Chemistry">Chemistry</option>
-            <option value="Biology">Biology</option>
-            <option value="History">History</option>
-            <option value="Literature">Literature</option>
-            <option value="Runyankore">Runyankore</option>
-            <option value="Entrepreneurship">Entrepreneurship</option>
-            <option value="Agriculture">Agriculture</option>
-            <option value="Fine Art">Fine Art</option>
-            <option value="Geography">Geography</option>
-            <option value="CRE">CRE</option>
-            <option value="Kiswahili">Kiswahili</option>
-            <option value="ICT">ICT (Information & Comm Tech)</option>
-            <option value="Custom">Other / Additional Subject</option>
-          </select>
+  <!-- ACADEMICS -->
+  <section id="page-academics" class="page hidden">
+    <div class="page-head"><div><h1>Academics & Reports</h1><div class="muted">Enter subject marks and view performance records</div></div></div>
+    <div class="card">
+      <form id="academicForm">
+        <div class="form-grid">
+          <div class="field"><label>Student *</label><select id="acadStudent" required></select></div>
+          <div class="field"><label>Term *</label><select id="acadTerm"><option>Term 1, 2026</option><option>Term 2, 2026</option><option>Term 3, 2026</option><option>Term 1, 2027</option><option>Term 2, 2027</option><option>Term 3, 2027</option></select></div>
+          <div class="field"><label>Subject *</label><select id="acadSubject" required></select></div>
+          <div class="field"><label>Mark out of 100 *</label><input id="acadMark" type="number" min="0" max="100" required></div>
+          <div class="field"><label>Teacher remarks</label><input id="acadRemarks"></div>
         </div>
-        <div id="customSubjectDiv" class="hidden"><label>Custom Subject Name</label><input id="customSubjectName" placeholder="Subject name"></div>
-        <div><label>Filter Class *</label><select id="teacherClassFilter" onchange="renderTeacherStudents()"><option value="">Choose Class</option></select></div>
-        <div><label>Select Student *</label><select id="teacherStudentSelect"></select></div>
-        <div><label>Mark (Out of 100) *</label><input id="teacherMarkInput" type="number" min="0" max="100" placeholder="0-100"></div>
-      </div>
-      <div><label>Teacher Remarks</label><input id="teacherRemarksInput" placeholder="Good performance..."></div>
-      <button style="margin-top:12px" onclick="saveSubjectMark()">Submit / Update Mark</button>
-      <div id="teacherMarkMessage"></div>
+        <div class="form-actions"><button type="submit">Save subject mark</button></div>
+      </form>
     </div>
-
     <div class="card">
-      <h2>Full Term Report Card Generator</h2>
-      <div class="form-grid">
-        <div><label>Class Filter</label><select id="acadClassFilter" onchange="renderAcadStudents()"><option value="">Choose Class</option></select></div>
-        <div><label>Student *</label><select id="acadStudentSelect"></select></div>
-      </div>
-      <div class="form-grid">
-        <div><label>Class Teacher Remarks</label><input id="acadTeacherRemarks" placeholder="Promoted..."></div>
-        <div><label>Headteacher Remarks</label><input id="acadHeadRemarks" placeholder="Good term..."></div>
-      </div>
-      <button onclick="saveAcademicsReport()">Generate & Print Full Report Card</button>
-      <div id="acadMessage"></div>
-    </div>
-
-    <div class="card">
-      <h3>Saved Academic Records</h3>
+      <div class="toolbar"><input id="acadSearch" placeholder="Search student or subject"></div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Term</th><th>Student Name</th><th>Class</th><th>Subject</th><th>Mark</th><th>Remarks</th><th>Actions</th></tr></thead>
-          <tbody id="acadBody"></tbody>
+          <thead><tr><th>Term</th><th>Student</th><th>Class</th><th>Subject</th><th>Mark</th><th>Grade</th><th>Remarks</th><th>Action</th></tr></thead>
+          <tbody id="academicsBody"></tbody>
+        </table>
+      </div>
+      <div class="form-actions no-print"><button id="printReport" type="button">Print visible report</button></div>
+    </div>
+  </section>
+
+  <!-- SUBJECTS -->
+  <section id="page-subjects" class="page hidden">
+    <div class="page-head"><div><h1>Subject Setup</h1><div class="muted">Add the subjects offered by your school</div></div></div>
+    <div class="card">
+      <form id="subjectForm">
+        <div class="form-grid">
+          <div class="field"><label>Subject name *</label><input id="subjectName" required placeholder="e.g. Biology"></div>
+          <div class="field"><label>Level</label><select id="subjectLevel"><option>O-Level</option><option>A-Level</option><option>Primary</option><option>All levels</option></select></div>
+        </div>
+        <div class="form-actions"><button type="submit">Add subject</button></div>
+      </form>
+    </div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Subject</th><th>Level</th><th>Action</th></tr></thead>
+          <tbody id="subjectsBody"></tbody>
         </table>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- PAGE: TIMETABLES & SCHEMES OF WORK -->
-  <div id="page-timetables" class="page-section hidden">
-    <div class="card" style="border-left: 4px solid var(--orange)">
-      <h2>🗓️ Class Timetables & Schemes of Work</h2>
-      <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Create and manage class timetables, schemes of work, quality assessments, and teacher daily school reports.</p>
-      
-      <div style="display:flex;gap:10px;margin-bottom:16px">
-        <button onclick="switchTab('tt-section1')" id="btn-tt1">Class Timetables</button>
-        <button class="secondary" onclick="switchTab('tt-section2')" id="btn-tt2">Quality Assessments & Schemes</button>
-        <button class="secondary" onclick="switchTab('tt-section3')" id="btn-tt3">Teacher Staff Reports</button>
-      </div>
-
-      <!-- TIMETABLE FORM -->
-      <div id="tt-section1" class="tt-sub">
-        <h3>Create Class Timetable</h3>
-        <div class="form-grid">
-          <div><label>Class Level *</label><select id="ttClass"><option value="S.1">S.1</option><option value="S.2">S.2</option><option value="S.3">S.3</option><option value="S.4">S.4</option><option value="S.5">S.5</option><option value="S.6">S.6</option><option value="P.7">P.7</option></select></div>
-          <div><label>Day of Week *</label><select id="ttDay"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option></select></div>
-          <div><label>Time Slot *</label><input id="ttTimeSlot" placeholder="e.g. 08:00 AM - 09:00 AM"></div>
-          <div><label>Subject / Activity *</label><input id="ttSubject" placeholder="e.g. Mathematics"></div>
-          <div><label>Teacher In Charge</label><input id="ttTeacher" placeholder="Teacher name"></div>
-        </div>
-        <button onclick="saveTimetable()">Add Timetable Slot</button>
-        <div id="ttMsg"></div>
-        <div class="table-wrap" style="margin-top:16px">
-          <table>
-            <thead><tr><th>Class</th><th>Day</th><th>Time Slot</th><th>Subject</th><th>Teacher</th><th>Actions</th></tr></thead>
-            <tbody id="timetablesBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- ASSESSMENTS & SCHEMES FORM -->
-      <div id="tt-section2" class="tt-sub hidden">
-        <h3>Quality Assessments & Schemes of Work</h3>
-        <div class="form-grid">
-          <div><label>Document Title *</label><input id="docTitle" placeholder="e.g. Term 3 Mathematics Scheme of Work"></div>
-          <div><label>Category *</label><select id="docCategory"><option>Scheme of Work</option><option>Quality Assessment</option><option>Lesson Plan</option><option>Syllabus</option></select></div>
-          <div><label>Class Level *</label><select id="docClass"><option value="S.1">S.1</option><option value="S.2">S.2</option><option value="S.3">S.3</option><option value="S.4">S.4</option><option value="S.5">S.5</option><option value="S.6">S.6</option><option value="All">All Classes</option></select></div>
-          <div><label>File / Document URL</label><input id="docUrl" placeholder="https://..."></div>
-        </div>
-        <div><label>Description & Notes</label><textarea id="docNotes" rows="2" placeholder="Details..."></textarea></div>
-        <button style="margin-top:10px" onclick="saveDocument()">Upload / Save Document</button>
-        <div id="docMsg"></div>
-        <div class="table-wrap" style="margin-top:16px">
-          <table>
-            <thead><tr><th>Title</th><th>Category</th><th>Class</th><th>Notes</th><th>Date</th><th>Actions</th></tr></thead>
-            <tbody id="documentsBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- STAFF REPORTING FORM -->
-      <div id="tt-section3" class="tt-sub hidden">
-        <h3>Staff School Activity Reports</h3>
-        <p style="font-size:12px;color:var(--muted)">Teachers can report and log what is happening in the school daily.</p>
-        <div class="form-grid">
-          <div><label>Teacher Name *</label><input id="repStaffName" placeholder="Your name"></div>
-          <div><label>Report Title *</label><input id="repTitle" placeholder="e.g. Science Lab Equipment Inspection"></div>
-        </div>
-        <div><label>Detailed Report / What is happening *</label><textarea id="repContent" rows="3" placeholder="Describe events, progress, or issues..."></textarea></div>
-        <button style="margin-top:10px" onclick="saveStaffReport()">Submit Report</button>
-        <div id="repMsg"></div>
-        <div class="table-wrap" style="margin-top:16px">
-          <table>
-            <thead><tr><th>Date</th><th>Teacher</th><th>Title</th><th>Report Details</th><th>Actions</th></tr></thead>
-            <tbody id="reportsBody"></tbody>
-          </table>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- PAGE: REPORTS -->
-  <div id="page-reports" class="page-section hidden">
+  <!-- TIMETABLE -->
+  <section id="page-timetable" class="page hidden">
+    <div class="page-head"><div><h1>Timetable</h1><div class="muted">Create a simple class timetable</div></div></div>
     <div class="card">
-      <h2>Reports & Data Exports</h2>
-      <p style="color:var(--muted);font-size:13px;margin-bottom:16px">Download system logs as CSV files or print official summaries referencing school budget and templates.</p>
-      <div style="display:flex;gap:12px;flex-wrap:wrap">
-        <button onclick="exportCSV('students')">Export Students CSV</button>
-        <button onclick="exportCSV('payments')">Export Payments CSV</button>
-        <button onclick="exportCSV('expenses')">Export Expenses CSV</button>
-        <button onclick="exportCSV('staff')">Export Staff CSV</button>
-        <button onclick="exportCSV('academics')">Export Academics CSV</button>
-        <button class="secondary" onclick="window.print()">Print Report Page</button>
-      </div>
-      <hr style="border:0;border-top:1px solid var(--line);margin:20px 0">
-      <h3 id="schoolInfoTitle">School Details</h3>
-      <p id="schoolInfoText" class="small"></p>
+      <form id="timetableForm">
+        <div class="form-grid">
+          <div class="field"><label>Class *</label><select id="ttClass"></select></div>
+          <div class="field"><label>Day *</label><select id="ttDay"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option><option>Saturday</option></select></div>
+          <div class="field"><label>Period / time *</label><input id="ttPeriod" required placeholder="e.g. 8:00–8:40"></div>
+          <div class="field"><label>Subject *</label><select id="ttSubject"></select></div>
+          <div class="field"><label>Teacher</label><select id="ttTeacher"></select></div>
+          <div class="field"><label>Room</label><input id="ttRoom"></div>
+        </div>
+        <div class="form-actions"><button type="submit">Add timetable entry</button></div>
+      </form>
     </div>
-  </div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Class</th><th>Day</th><th>Period</th><th>Subject</th><th>Teacher</th><th>Room</th><th>Action</th></tr></thead>
+          <tbody id="timetableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- PARENT MESSAGING -->
+  <section id="page-messaging" class="page hidden">
+    <div class="page-head"><div><h1>Parent Messages</h1><div class="muted">Prepare a WhatsApp message for a parent or class group</div></div></div>
+    <div class="notice"><b>Demo limitation:</b> this page opens WhatsApp with a pre-filled message for one parent at a time. Automatic bulk sending and automatic fee notifications require a secure backend and an approved WhatsApp Business messaging provider.</div>
+    <div class="card">
+      <form id="messageForm">
+        <div class="form-grid">
+          <div class="field"><label>Target group</label><select id="messageTarget"><option value="all">All active students (prepare individual messages)</option></select></div>
+          <div class="field"><label>Message type</label><select id="messageType"><option>General announcement</option><option>Fee reminder</option><option>Payment confirmation</option><option>Parent meeting</option><option>Visitation day</option></select></div>
+          <div class="field"><label>Optional specific student</label><select id="messageStudent"><option value="">Choose student (optional)</option></select></div>
+          <div class="field"><label>Message *</label><textarea id="messageText" required placeholder="Dear parent/guardian..."></textarea></div>
+        </div>
+        <div class="form-actions"><button type="submit">Prepare WhatsApp message</button><button class="secondary" type="button" id="emailMessage">Prepare email</button></div>
+      </form>
+      <div id="messageResults" class="report"></div>
+    </div>
+  </section>
+
+  <!-- SCHOOL SETTINGS -->
+  <section id="page-school" class="page hidden">
+    <div class="page-head"><div><h1>School Settings</h1><div class="muted">School profile and terms</div></div></div>
+    <div class="card">
+      <form id="schoolForm">
+        <div class="form-grid">
+          <div class="field"><label>School name *</label><input id="schoolName" required value="Green Valley High"></div>
+          <div class="field"><label>District / location</label><input id="schoolLocation" value="Kampala, Uganda"></div>
+          <div class="field"><label>School type</label><select id="schoolType"><option>Secondary</option><option>Primary</option><option>Primary and Secondary</option></select></div>
+          <div class="field"><label>Motto</label><input id="schoolMotto"></div>
+          <div class="field"><label>School phone</label><input id="schoolPhone"></div>
+          <div class="field"><label>School email</label><input id="schoolEmail" type="email"></div>
+        </div>
+        <div class="form-actions"><button type="submit">Save school profile</button></div>
+      </form>
+    </div>
+    <div class="card">
+      <h3>Security and data</h3>
+      <p class="muted">This standalone prototype uses browser local storage. Back up regularly.</p>
+      <button class="secondary" id="downloadBackup" type="button">Download local backup (JSON)</button> <button class="secondary" id="importBackupBtn" type="button">Import backup (JSON)</button><input type="file" id="importBackup" accept="application/json" class="hidden">
+    </div>
+  </section>
+
+  <!-- REPORTS & EXPORTS -->
+  <section id="page-exports" class="page hidden">
+    <div class="page-head"><div><h1>Reports & Exports</h1><div class="muted">Download CSV backups and print summaries</div></div></div>
+    <div class="card">
+      <div class="form-actions">
+        <button data-export="students" type="button">Export students CSV</button>
+        <button data-export="payments" type="button">Export payments CSV</button>
+        <button data-export="expenses" type="button">Export expenses CSV</button>
+        <button data-export="staff" type="button">Export staff CSV</button>
+        <button data-export="payroll" type="button">Export payroll CSV</button>
+        <button data-export="academics" type="button">Export academics CSV</button>
+        <button class="secondary" id="printPage" type="button">Print current page</button>
+      </div>
+    </div>
+    <div class="card"><h3>Data overview</h3><div id="exportSummary" class="report"></div></div>
+  </section>
 
 </div>
-
-</content>
+</main>
 </div>
+
+<div id="toast" class="toast hidden" role="status"></div>
 
 <script>
-const SUPABASE_URL="https://tmefeqwtmtxtzrbchzuu.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY="sb_publishable_qtxVou_FOx-80AjF4flnuQ_o2Chl6Pc";
-const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-
-let currentUser=null,currentSchoolId=null;
-let currentTerm = localStorage.getItem("ussm_current_term") || "Term 3, 2026";
-let schools=[],students=[],payments=[],staff=[],salaries=[],expenses=[],academics=[],timetables=[],documents=[],staffReports=[],streams=[];
+'use strict';
+const CLASSES=['S.1','S.2','S.3','S.4','S.5','S.6'];
+const DEFAULT_SUBJECTS=[
+['Mathematics','O-Level'],['English Language','O-Level'],['Physics','O-Level'],['Chemistry','O-Level'],['Biology','O-Level'],['History','O-Level'],['Geography','O-Level'],['Literature in English','O-Level'],['Kiswahili','O-Level'],['Christian Religious Education','O-Level'],['Islamic Religious Education','O-Level'],['ICT','O-Level'],['Agriculture','O-Level'],['Entrepreneurship','O-Level'],
+['Mathematics','A-Level'],['Physics','A-Level'],['Chemistry','A-Level'],['Biology','A-Level'],['Geography','A-Level'],['History','A-Level'],['Economics','A-Level'],['Literature in English','A-Level'],['Divinity','A-Level'],['Entrepreneurship','A-Level']
+].map((x,i)=>({id:'sub'+i,name:x[0],level:x[1]}));
+const KEY='uganda_school_manager_demo_v1';
+const blank=()=>({school:{name:'Green Valley High',location:'Kampala, Uganda',type:'Secondary',motto:'',phone:'',email:''},students:[],payments:[],expenses:[],staff:[],payroll:[],academics:[],subjects:DEFAULT_SUBJECTS,timetable:[],archived:[],streams:[]});
+let db=loadDB();
 let financesUnlocked=false;
 
-const ALLOWED_CLASSES=["Baby","Middle","Top","P.1","P.2","P.3","P.4","P.5","P.6","P.7","S.1","S.2","S.3","S.4","S.5","S.6"];
-
-const $=id=>document.getElementById(id);
-const money=n=>"UGX "+Number(n||0).toLocaleString("en-UG");
-const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-
-function readableDate(val){
-  if(!val)return "—";
-  const d=new Date(val);
-  return Number.isNaN(d.getTime())?String(val):d.toLocaleString("en-UG",{dateStyle:"medium",timeStyle:"short"});
-}
-
-function showPage(id){
-  document.querySelectorAll(".page-section").forEach(p=>p.classList.add("hidden"));
-  $("page-"+id).classList.remove("hidden");
-  document.querySelectorAll("#mainNav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
-  if(id==="classes"){renderClassesPage();}
-  if(id==="academics"){renderAcadClassSelect();renderAcadStudents();renderTeacherClassSelect();}
-  if(id==="payments"){renderStudentSelect();renderBroadcastSelects();}
-}
-
-function message(id,text,error=false){
-  $(id).innerHTML='<div class="msg '+(error?'error':'success')+'">✅ '+esc(text)+'</div>';
-  setTimeout(()=>$(id).innerHTML="",6000);
-}
-
-async function signUp(){
-  const email=$("email").value.trim(), password=$("password").value;
-  if(!email||password.length<6){message("authMessage","Enter valid email and password (min 6 chars).",true);return;}
-  const {data,error}=await db.auth.signUp({email,password});
-  if(error){message("authMessage",error.message,true);return;}
-  if(data.session)await startApp(data.session.user);
-  else message("authMessage","Account created successfully. You can now sign in.");
-}
-
-async function signIn(){
-  const email=$("email").value.trim(), password=$("password").value;
-  if(!email||!password){message("authMessage","Enter email and password.",true);return;}
-  const {data,error}=await db.auth.signInWithPassword({email,password});
-  if(error){message("authMessage",error.message,true);return;}
-  await startApp(data.user);
-}
-
-async function signOut(){
-  await db.auth.signOut();
-  currentUser=null;currentSchoolId=null;
-  $("app").classList.add("hidden");
-  $("loginScreen").classList.remove("hidden");
-}
-
-async function startApp(user){
-  currentUser=user;
-  $("userNameDisplay").textContent=user.email.split("@")[0];
-  $("userAvatar").textContent=user.email[0].toUpperCase();
-  $("loginScreen").classList.add("hidden");
-  $("app").classList.remove("hidden");
-  $("currentDateStr").textContent=new Date().toLocaleDateString("en-US",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
-  
-  $("termSelect").value = currentTerm;
-  $("dashTermDisplay").textContent = currentTerm;
-
-  await loadSchools();
-}
-
-async function loadSchools(){
-  let schoolsData = [];
-  if(currentUser.email === "mukuruanold5@gmail.com"){
-    const {data, error} = await db.from("schools").select("*");
-    if(error){message("schoolMessage","Could not load schools: "+error.message,true);return;}
-    schoolsData = (data||[]).map(s => ({id: s.id, name: s.name, district: s.district||"Kampala", motto: s.motto, badge: s.badge_url}));
-  } else {
-    const {data, error} = await db.from("school_members").select("school_id, schools(*)").eq("user_id", currentUser.id);
-    if(error){message("schoolMessage","Could not load schools: "+error.message,true);return;}
-    schoolsData = (data||[]).map(r => ({id: r.school_id, name: r.schools?.name || "School", district: r.schools?.district||"Kampala", motto: r.schools?.motto, badge: r.schools?.badge_url})).filter(s => s.id);
-  }
-
-  schools = schoolsData;
-  $("schoolSelect").innerHTML = schools.map(s => '<option value="'+esc(s.id)+'">'+esc(s.name)+'</option>').join("");
-  
-  if(!schools.length){
-    currentSchoolId = null; clearTables();
-    $("schoolMessage").innerHTML = '<div class="msg error">No school linked. Create one below!</div>';
-    openSchoolModal();
-    return;
-  }
-  
-  currentSchoolId = schools[0].id; 
-  $("schoolSelect").value = currentSchoolId;
-  await refreshAll();
-}
-
-function openSchoolModal(){
-  $("schoolModal").classList.remove("hidden");
-}
-function closeSchoolModal(){
-  $("schoolModal").classList.add("hidden");
-}
-
-async function submitCreateSchool(){
-  const name=$("modalSchoolName").value.trim();
-  const type=$("modalSchoolType").value;
-  const district=$("modalDistrict").value.trim();
-  const motto=$("modalMotto").value.trim();
-  const badge_url=$("modalBadgeUrl").value.trim();
-  const report_template=$("modalReportTemplate").value.trim();
-
-  if(!name||!district){message("modalSchoolMsg","Enter school name and district.",true);return;}
-
-  const {data:sch,error}=await db.from("schools").insert({
-    name, school_type: type, district, motto, badge_url, report_template, created_by:currentUser.id
-  }).select().single();
-
-  if(error){message("modalSchoolMsg",error.message,true);return;}
-  await db.from("school_members").insert({school_id:sch.id,user_id:currentUser.id,role:"admin"});
-  closeSchoolModal();
-  $("modalSchoolName").value="";$("modalDistrict").value="";$("modalMotto").value="";$("modalBadgeUrl").value="";$("modalReportTemplate").value="";
-  await loadSchools();
-  alert("✅ School created successfully!");
-}
-
-async function deleteActiveSchool(){
-  if(!currentSchoolId)return;
-  const sch = schools.find(s => s.id === currentSchoolId);
-  if(!confirm("Permanently delete " + (sch?.name || "this school") + " and all records?")) return;
-  const { error } = await db.from("schools").delete().eq("id", currentSchoolId);
-  if(error){alert("Error: "+error.message);return;}
-  alert("✅ School deleted successfully!");
-  await loadSchools();
-}
-
-async function changeSchool(){
-  currentSchoolId=$("schoolSelect").value;
-  await refreshAll();
-}
-
-async function changeTerm(){
-  currentTerm=$("termSelect").value;
-  localStorage.setItem("ussm_current_term", currentTerm);
-  $("dashTermDisplay").textContent=currentTerm;
-  await refreshAll();
-}
-
-function clearTables(){
-  students=[];payments=[];staff=[];salaries=[];expenses=[];academics=[];timetables=[];documents=[];staffReports=[];streams=[];
-  renderAll();
-}
-
-async function refreshAll(){
-  if(!currentSchoolId)return;
-  const res=await Promise.all([
-    db.from("students").select("*").eq("school_id",currentSchoolId),
-    db.from("payments").select("*").eq("school_id",currentSchoolId).order("paid_at",{ascending:false}),
-    db.from("staff").select("*").eq("school_id",currentSchoolId),
-    db.from("salary_payments").select("*").eq("school_id",currentSchoolId).order("paid_at",{ascending:false}),
-    db.from("expenses").select("*").eq("school_id",currentSchoolId).order("date",{ascending:false}),
-    db.from("academics").select("*").eq("school_id",currentSchoolId).eq("term",currentTerm),
-    db.from("timetables").select("*").eq("school_id",currentSchoolId),
-    db.from("documents").select("*").eq("school_id",currentSchoolId),
-    db.from("staff_reports").select("*").eq("school_id",currentSchoolId).order("created_at",{ascending:false}),
-    db.from("streams").select("*").eq("school_id",currentSchoolId)
-  ]);
-  students=res[0].data||[];
-  payments=res[1].data||[];
-  staff=res[2].data||[];
-  salaries=res[3].data||[];
-  expenses=res[4].data||[];
-  academics=res[5].data||[];
-  timetables=res[6].data||[];
-  documents=res[7].data||[];
-  staffReports=res[8].data||[];
-  streams=res[9].data||[];
-  renderAll();
-}
-
-function renderAll(){
-  renderDashboard();
-  renderStudents();
-  renderClassesPage();
-  renderStudentSelect();
-  renderPayments();
-  renderExpenses();
-  renderStaff();
-  renderStaffSelect();
-  renderPayroll();
-  renderAcadClassSelect();
-  renderAcadStudents();
-  renderTeacherClassSelect();
-  renderAcademicsTable();
-  renderTimetables();
-  renderDocuments();
-  renderStaffReports();
-  
-  const sch=schools.find(x=>x.id===currentSchoolId);
-  if(sch){
-    $("sidebarSchoolName").textContent=sch.name;
-    $("sidebarDistrict").textContent=sch.district+", Uganda";
-    $("schoolInfoTitle").textContent="School: "+sch.name+" ("+sch.district+")";
-    $("schoolInfoText").textContent="Motto: "+(sch.motto||"N/A")+" | Connected Admin: "+currentUser?.email;
-  }
-}
-
-function activeStudents(){return students.filter(s=>String(s.status||"Active").toLowerCase()!=="archived");}
-function expected(s){return Number(s.fees_expected??s.fee_expected??0);}
-function paid(sid){return payments.filter(p=>String(p.student_id)===String(sid)).reduce((a,p)=>a+Number(p.amount||0),0);}
-function balance(s){return Math.max(0,expected(s)-paid(s.id));}
-function staffExpected(st){return Number(st.monthly_salary||0);}
-function staffPaid(stid){return salaries.filter(p=>String(p.staff_id)===String(stid)).reduce((a,p)=>a+Number(p.amount||0),0);}
-function staffBalance(st){return Math.max(0,staffExpected(st)-staffPaid(st.id));}
-function receiptNo(p){return p.receipt_no||("RCP-"+String(p.id||"").slice(-8).toUpperCase());}
+function loadDB(){try{return {...blank(),...JSON.parse(localStorage.getItem(KEY)||'{}')}}catch(e){return blank()}}
+function saveDB(){localStorage.setItem(KEY,JSON.stringify(db));renderAll()}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function money(n){return 'UGX '+Number(n||0).toLocaleString('en-UG')}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function toast(msg){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.remove('hidden');setTimeout(()=>t.classList.add('hidden'),3200)}
+function val(id){const el=document.getElementById(id);return el?el.value.trim():''}
+function setVal(id,v){const el=document.getElementById(id);if(el)el.value=v??''}
+function selectOptions(id,items,placeholder){const el=document.getElementById(id);if(!el)return;const old=el.value;el.innerHTML=(placeholder?`<option value="">${esc(placeholder)}</option>`:'')+items.map(x=>`<option value="${esc(x.value)}">${esc(x.label)}</option>`).join('');if(items.some(x=>x.value===old))el.value=old}
+function studentPaid(id){return db.payments.filter(p=>p.studentId===id).reduce((s,p)=>s+Number(p.amount),0)}
+function activeStudents(){return db.students.filter(s=>s.status==='Active')}
+function age(d){if(!d)return '—';const b=new Date(d+'T00:00:00');if(Number.isNaN(b.getTime()))return '—';let a=new Date().getFullYear()-b.getFullYear();const m=new Date().getMonth()-b.getMonth();if(m<0||(m===0&&new Date().getDate()<b.getDate()))a--;return a>=0?a:'—'}
+function page(name){document.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));const target=document.getElementById('page-'+name);if(target)target.classList.remove('hidden');document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===name));if(name==='exports')renderExports();window.scrollTo(0,0)}
+function rowEmpty(cols,msg='No records yet'){return `<tr><td colspan="${cols}" class="empty">${msg}</td></tr>`}
 
 function unlockFinances(){
-  const pwd=$("financePasswordInput").value.trim();
-  if(pwd==="bursar2026"||pwd==="admin123"||pwd==="headteacher"){
+  const pwd=val('financePasswordInput');
+  if(pwd==='bursar2026'||pwd==='admin123'||pwd==='headteacher'){
     financesUnlocked=true;
-    $("financeAuthControl").classList.add("hidden");
-    $("financeLockBadge").classList.remove("hidden");
+    document.getElementById('financeAuthControl').classList.add('hidden');
+    document.getElementById('financeLockBadge').classList.remove('hidden');
     renderDashboard();
-    alert("✅ Financial data unlocked successfully!");
-  }else{
-    alert("❌ Incorrect authorized password! (Try bursar2026 or admin123)");
+    toast('Financial records unlocked successfully.');
+  } else {
+    alert('Incorrect security password. (Try bursar2026 or admin123)');
   }
 }
 function lockFinances(){
   financesUnlocked=false;
-  $("financePasswordInput").value="";
-  $("financeAuthControl").classList.remove("hidden");
-  $("financeLockBadge").classList.add("hidden");
+  setVal('financePasswordInput','');
+  document.getElementById('financeAuthControl').classList.remove('hidden');
+  document.getElementById('financeLockBadge').classList.add('hidden');
   renderDashboard();
+  toast('Financial records locked.');
+}
+
+function renderSelects(){
+ const classItems=CLASSES.map(c=>({value:c,label:c}));
+ ['studentClass','studentClassFilter','classFilter','paymentClass','acadClassFilter','ttClass'].forEach(id=>{const el=document.getElementById(id);if(el){const ph=id==='studentClass'?'Choose class':id==='studentClassFilter'||id==='classFilter'?'All classes':undefined;selectOptions(id,classItems,ph)}})
+ const students=activeStudents().map(s=>({value:s.id,label:`${s.admission} — ${s.name} (${s.className})`}));
+ ['paymentStudent','acadStudent','messageStudent'].forEach(id=>selectOptions(id,students,id==='messageStudent'?'Choose student (optional)':'Choose student'));
+ const staff=db.staff.map(s=>({value:s.id,label:`${s.staffNo} — ${s.name}`}));selectOptions('payrollStaff',staff,'Choose staff');
+ const subs=db.subjects.map(s=>({value:s.id,label:`${s.name} (${s.level})`}));['acadSubject','ttSubject'].forEach(id=>selectOptions(id,subs,'Choose subject'));
+ selectOptions('ttTeacher',db.staff.map(s=>({value:s.id,label:s.name})),'Choose teacher (optional)');
 }
 
 function renderDashboard(){
-  const list=activeStudents();
-  const exp=list.reduce((a,s)=>a+expected(s),0);
-  const col=list.reduce((a,s)=>a+paid(s.id),0);
-  const totalExp=expenses.reduce((a,e)=>a+Number(e.amount||0),0);
-  const totalSal=salaries.reduce((a,s)=>a+Number(s.amount||0),0);
-  const netCash=col - (totalExp + totalSal);
+ const students=activeStudents(),expected=students.reduce((n,s)=>n+Number(s.expectedFees||0),0),collected=db.payments.reduce((n,p)=>n+Number(p.amount||0),0),expenses=db.expenses.reduce((n,e)=>n+Number(e.amount||0),0),salaries=db.payroll.reduce((n,p)=>n+Number(p.amount||0),0);
+ document.getElementById('statStudents').textContent=students.length;
+ document.getElementById('statExpected').textContent=money(expected);
+ document.getElementById('statCollected').textContent=money(collected);
+ document.getElementById('statRate').textContent=(expected?Math.round(collected/expected*100):0)+'% of expected fees';
+ 
+ if(financesUnlocked){
+   document.getElementById('statCashflow').textContent=money(collected-expenses-salaries);
+   document.getElementById('statCashflow').style.color='var(--green)';
+ } else {
+   document.getElementById('statCashflow').textContent='🔒 Locked';
+   document.getElementById('statCashflow').style.color='var(--muted)';
+ }
 
-  $("statStudents").textContent=list.length;
-  $("statExpected").textContent=money(exp);
-  $("statCollected").textContent=money(col);
-  $("statCollectionRate").textContent=exp>0?Math.round((col/exp)*100)+"% collected":"0% collected";
-  
-  if(financesUnlocked){
-    $("statCashflow").textContent=money(netCash);
-    $("statCashflow").style.color="var(--ink)";
-  }else{
-    $("statCashflow").textContent="🔒 Locked";
-    $("statCashflow").style.color="var(--muted)";
-  }
-
-  $("dashboardClassesBody").innerHTML=ALLOWED_CLASSES.slice(0,8).map(c=>{
-    const members=list.filter(s=>String(s.class_name||"").trim()===c);
-    const ex=members.reduce((a,s)=>a+expected(s),0);
-    const cl=members.reduce((a,s)=>a+paid(s.id),0);
-    if(!members.length)return '';
-    return '<tr><td><b>'+c+'</b></td><td>'+members.length+' Students</td><td>'+money(ex)+'</td><td>'+money(cl)+'</td><td><span class="pill" style="background:#d1fae5;color:#065f46">Active</span></td></tr>';
-  }).join("") || '<tr><td colspan="5">No active classes registered yet.</td></tr>';
-
-  // Display ALL classes at the bottom of dashboard
-  $("dashboardAllClassesBottomBody").innerHTML=ALLOWED_CLASSES.map(c=>{
-    const members=list.filter(s=>String(s.class_name||"").trim()===c);
-    const classStreams=streams.filter(st=>st.class_level===c);
-    const streamNames=classStreams.length?classStreams.map(st=>st.stream_name).join(", "):"Main Stream";
-    const cat=["Baby","Middle","Top","P.1","P.2","P.3","P.4","P.5","P.6","P.7"].includes(c)?"Primary Section":"Secondary Level";
-    return '<tr><td><b>'+c+'</b></td><td>'+streamNames+'</td><td>'+cat+'</td><td>'+members.length+' Students</td><td><button class="secondary" onclick="showPage(\'classes\')">View Stream</button></td></tr>';
-  }).join("");
-}
-
-function toggleStudentLevelFields(){
-  const cls=$("studentClass").value;
-  const isA=['S.5','S.6'].includes(cls);
-  $("alevelCombGroup").classList.toggle("hidden",!isA);
-  if(['S.5','S.6'].includes(cls))$("studentCategory").value="A-Level";
-  else if(['S.1','S.2','S.3','S.4'].includes(cls))$("studentCategory").value="O-Level";
-  else $("studentCategory").value="Primary";
+ document.getElementById('dashboardClassesBody').innerHTML=CLASSES.map(c=>{const ss=students.filter(s=>s.className===c),ex=ss.reduce((n,s)=>n+Number(s.expectedFees||0),0),paid=ss.reduce((n,s)=>n+studentPaid(s.id),0);return `<tr><td>${c}</td><td>${ss.length}</td><td>${money(ex)}</td><td>${money(paid)}</td><td>${money(ex-paid)}</td></tr>`}).join('');
+ 
+ const allBody=document.getElementById('dashboardAllClassesBody');
+ if(allBody){
+   allBody.innerHTML=CLASSES.map(c=>{
+     const ss=students.filter(s=>s.className===c);
+     const cat='Secondary Level';
+     return `<tr><td><strong>${c}</strong></td><td>Main Stream</td><td><span class="pill">${cat}</span></td><td>${ss.length} Students</td></tr>`;
+   }).join('');
+ }
 }
 
 function renderStudents(){
-  const q=($("studentSearch")?.value||"").toLowerCase();
-  const list=activeStudents().filter(s=>[s.admission_no,s.full_name,s.class_name,s.stream].some(v=>String(v||"").toLowerCase().includes(q)));
-  $("studentsBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td style="font-weight:600">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+(s.stream?' ('+esc(s.stream)+')':'')+'</td><td>'+esc(s.category||"—")+'</td><td>'+esc(s.gender||"—")+'</td><td>'+esc(s.boarding_status||"Day")+'</td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td><td><div class="actions"><button class="secondary" onclick="editStudent(\''+s.id+'\')">Edit</button><button class="danger" onclick="deleteStudent(\''+s.id+'\')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="10">No students registered yet.</td></tr>';
+ const q=val('studentSearch').toLowerCase(),cl=val('studentClassFilter');const list=activeStudents().filter(s=>(!cl||s.className===cl)&&(`${s.name} ${s.admission}`.toLowerCase().includes(q)));
+ document.getElementById('studentsBody').innerHTML=list.map(s=>{const paid=studentPaid(s.id),bal=Number(s.expectedFees)-paid;return `<tr><td>${esc(s.admission)}</td><td>${esc(s.name)}</td><td>${esc(s.className)} ${s.stream?'· '+esc(s.stream):''}</td><td>${age(s.dob)}</td><td>${money(s.expectedFees)}</td><td>${money(paid)}</td><td><span class="pill ${bal>0?'warn':''}">${money(bal)}</span></td><td><div class="actions"><button class="small secondary" data-edit-student="${s.id}" type="button">Edit</button><button class="small secondary" data-archive="${s.id}" type="button">Archive</button></div></td></tr>`}).join('')||rowEmpty(8);
 }
+function renderClassStudents(){const cl=val('classFilter'),q=val('classSearch').toLowerCase(),list=activeStudents().filter(s=>(!cl||s.className===cl)&&(`${s.name} ${s.admission}`.toLowerCase().includes(q)));document.getElementById('classStudentsBody').innerHTML=list.map(s=>`<tr><td>${esc(s.admission)}</td><td>${esc(s.name)}</td><td>${esc(s.className)}</td><td>${esc(s.stream||'—')}</td><td>${money(s.expectedFees)}</td><td>${money(studentPaid(s.id))}</td><td>${money(Number(s.expectedFees)-studentPaid(s.id))}</td></tr>`).join('')||rowEmpty(7)}
+function renderArchived(){document.getElementById('archivedBody').innerHTML=db.archived.map(s=>`<tr><td>${esc(s.admission)}</td><td>${esc(s.name)}</td><td>${esc(s.className)}</td><td><button class="small" data-restore="${s.id}" type="button">Restore</button></td></tr>`).join('')||rowEmpty(4)}
+function renderPayments(){const q=val('paymentSearch').toLowerCase();document.getElementById('paymentsBody').innerHTML=db.payments.filter(p=>{const s=db.students.find(x=>x.id===p.studentId)||{};return `${p.receipt} ${s.name||''} ${s.admission||''} ${p.reference||''}`.toLowerCase().includes(q)}).slice().reverse().map(p=>{const s=db.students.find(x=>x.id===p.studentId)||{};return `<tr><td>${esc(p.date)}</td><td>${esc(p.receipt)}</td><td>${esc(s.name||'Unknown')}</td><td>${esc(s.className||'—')}</td><td>${money(p.amount)}</td><td>${esc(p.method)}</td><td>${esc(p.reference||'—')}</td><td><button class="small secondary" data-receipt="${p.id}" type="button">Print</button></td></tr>`}).join('')||rowEmpty(8)}
+function renderExpenses(){document.getElementById('expensesBody').innerHTML=db.expenses.slice().reverse().map(e=>`<tr><td>${esc(e.date)}</td><td>${esc(e.title)}</td><td>${esc(e.category)}</td><td>${money(e.amount)}</td><td>${esc(e.method)}</td><td><button class="small danger" data-delete-expense="${e.id}" type="button">Delete</button></td></tr>`).join('')||rowEmpty(6)}
+function renderStaff(){document.getElementById('staffBody').innerHTML=db.staff.map(s=>`<tr><td>${esc(s.staffNo)}</td><td>${esc(s.name)}</td><td>${esc(s.position)}</td><td>${esc(s.role)}</td><td>${money(s.salary)}</td><td>${esc(s.phone||'—')}</td><td><button class="small secondary" data-edit-staff="${s.id}" type="button">Edit</button> <button class="small danger" data-delete-staff="${s.id}" type="button">Delete</button></td></tr>`).join('')||rowEmpty(7)}
+function renderPayroll(){document.getElementById('payrollBody').innerHTML=db.payroll.slice().reverse().map(p=>{const s=db.staff.find(x=>x.id===p.staffId)||{};return `<tr><td>${esc(p.date)}</td><td>${esc(s.name||'Unknown')}</td><td>${esc(p.month)}</td><td>${money(p.amount)}</td><td>${esc(p.method)}</td><td>${esc(p.reference||'—')}</td></tr>`}).join('')||rowEmpty(6);const month=val('salaryMonth')||new Date().toISOString().slice(0,7);document.getElementById('salaryStatusBody').innerHTML=db.staff.map(s=>{const paid=db.payroll.filter(p=>p.staffId===s.id&&p.month===month).reduce((n,p)=>n+Number(p.amount),0);return `<tr><td>${esc(s.name)}</td><td>${month}</td><td>${money(s.salary)}</td><td>${money(paid)}</td><td>${money(Number(s.salary)-paid)}</td></tr>`}).join('')||rowEmpty(5)}
+function grade(m){if(m>=80)return 'A';if(m>=70)return 'B';if(m>=60)return 'C';if(m>=50)return 'D';return 'E'}
+function renderAcademics(){const q=val('acadSearch').toLowerCase();document.getElementById('academicsBody').innerHTML=db.academics.filter(a=>{const s=db.students.find(x=>x.id===a.studentId)||{};const sub=db.subjects.find(x=>x.id===a.subjectId)||{};return `${s.name||''} ${sub.name||''} ${a.term}`.toLowerCase().includes(q)}).slice().reverse().map(a=>{const s=db.students.find(x=>x.id===a.studentId)||{},sub=db.subjects.find(x=>x.id===a.subjectId)||{};return `<tr><td>${esc(a.term)}</td><td>${esc(s.name||'Unknown')}</td><td>${esc(s.className||'—')}</td><td>${esc(sub.name||'Unknown')}</td><td>${a.mark}</td><td>${grade(Number(a.mark))}</td><td>${esc(a.remarks||'—')}</td><td><button class="small danger" data-delete-mark="${a.id}" type="button">Delete</button></td></tr>`}).join('')||rowEmpty(8)}
+function renderSubjects(){document.getElementById('subjectsBody').innerHTML=db.subjects.map(s=>`<tr><td>${esc(s.name)}</td><td>${esc(s.level)}</td><td><button class="small danger" data-delete-subject="${s.id}" type="button">Delete</button></td></tr>`).join('')||rowEmpty(3)}
+function renderTimetable(){document.getElementById('timetableBody').innerHTML=db.timetable.map(t=>{const st=db.staff.find(s=>s.id===t.teacherId)||{},su=db.subjects.find(s=>s.id===t.subjectId)||{};return `<tr><td>${esc(t.className)}</td><td>${esc(t.day)}</td><td>${esc(t.period)}</td><td>${esc(su.name||'Unknown')}</td><td>${esc(st.name||'—')}</td><td>${esc(t.room||'—')}</td><td><button class="small danger" data-delete-tt="${t.id}" type="button">Delete</button></td></tr>`}).join('')||rowEmpty(7)}
+function renderExports(){document.getElementById('exportSummary').innerHTML=`<p>Active students: <b>${activeStudents().length}</b></p><p>Archived students: <b>${db.archived.length}</b></p><p>Fee payments: <b>${db.payments.length}</b> · Total: <b>${money(db.payments.reduce((n,p)=>n+Number(p.amount),0))}</b></p><p>Expenses: <b>${db.expenses.length}</b> · Total: <b>${money(db.expenses.reduce((n,e)=>n+Number(e.amount),0))}</b></p><p>Staff: <b>${db.staff.length}</b> · Salary payments: <b>${db.payroll.length}</b></p><p>Marks records: <b>${db.academics.length}</b></p>`}
+function renderAll(){renderSelects();renderDashboard();renderStudents();renderClassStudents();renderArchived();renderPayments();renderExpenses();renderStaff();renderPayroll();renderAcademics();renderSubjects();renderTimetable();renderExports();document.getElementById('schoolTop').textContent=db.school.name;document.getElementById('schoolLocationTop').textContent=db.school.location}
+function clearStudent(){document.getElementById('studentForm').reset();setVal('studentId','')}
 
-function editStudent(id){
-  const s=students.find(x=>String(x.id)===String(id));
-  if(!s)return;
-  $("editStudentId").value=s.id;
-  $("admission").value=s.admission_no||"";
-  $("studentName").value=s.full_name||"";
-  $("studentClass").value=s.class_name||"S.1";
-  $("studentStream").value=s.stream||"";
-  $("studentCategory").value=s.category||"O-Level";
-  $("studentCombination").value=s.combination||"";
-  $("studentGender").value=s.gender||"Male";
-  $("studentAge").value=s.age||"";
-  $("studentDob").value=s.dob||"";
-  $("studentBoardingStatus").value=s.boarding_status||"Day";
-  $("expectedFees").value=expected(s);
-  $("parentEmail").value=s.parent_email||"";
-  $("parentWhatsApp").value=s.parent_whatsapp||"";
-  toggleStudentLevelFields();
-  $("studentFormTitle").textContent="Edit Student: "+s.full_name;
-  $("cancelStudentEdit").classList.remove("hidden");
-  window.scrollTo({top:0,behavior:"smooth"});
-}
+document.getElementById('loginForm').addEventListener('submit',e=>{e.preventDefault();document.getElementById('loginScreen').classList.add('hidden');document.getElementById('appScreen').classList.remove('hidden');document.getElementById('userTop').textContent=val('loginEmail');renderAll();toast('Demo portal opened')});
+document.getElementById('signOutBtn').onclick=()=>{document.getElementById('appScreen').classList.add('hidden');document.getElementById('loginScreen').classList.remove('hidden')};
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('[data-page]');if(b)page(b.dataset.page)});
 
-function resetStudentForm(){
-  $("editStudentId").value="";
-  $("admission").value="";
-  $("studentName").value="";
-  $("studentClass").value="S.1";
-  $("studentStream").value="";
-  $("studentCombination").value="";
-  $("studentAge").value="";
-  $("studentDob").value="";
-  $("expectedFees").value="0";
-  $("parentEmail").value="";
-  $("parentWhatsApp").value="";
-  $("studentFormTitle").textContent="Student Registration";
-  $("cancelStudentEdit").classList.add("hidden");
-  $("studentMessage").innerHTML="";
-}
+document.addEventListener('click',e=>{
+ const go=e.target.closest('[data-go]');if(go)page(go.dataset.go);
+ let b=e.target.closest('[data-edit-student]');if(b){const s=db.students.find(x=>x.id===b.dataset.editStudent);if(s){page('students');for(const [k,v] of Object.entries({studentId:s.id,admission:s.admission,studentName:s.name,dob:s.dob,gender:s.gender,level:s.level,studentClass:s.className,stream:s.stream,residence:s.residence,expectedFees:s.expectedFees,parentName:s.parentName,parentPhone:s.parentPhone,parentEmail:s.parentEmail,combination:s.combination,studentStatus:s.status}))setVal(k,v)}}
+ b=e.target.closest('[data-archive]');if(b){const s=db.students.find(x=>x.id===b.dataset.archive);if(s&&confirm('Archive '+s.name+'?')){db.students=db.students.filter(x=>x.id!==s.id);db.archived.push({...s,status:'Archived'});saveDB();toast('Student archived')}}
+ b=e.target.closest('[data-restore]');if(b){const s=db.archived.find(x=>x.id===b.dataset.restore);if(s){db.archived=db.archived.filter(x=>x.id!==s.id);db.students.push({...s,status:'Active'});saveDB();toast('Student restored')}}
+ b=e.target.closest('[data-receipt]');if(b)printReceipt(b.dataset.receipt);
+ b=e.target.closest('[data-delete-expense]');if(b&&confirm('Delete this expense record?')){db.expenses=db.expenses.filter(x=>x.id!==b.dataset.deleteExpense);saveDB()}
+ b=e.target.closest('[data-edit-staff]');if(b){const s=db.staff.find(x=>x.id===b.dataset.editStaff);if(s){for(const [k,v] of Object.entries({staffId:s.id,staffNo:s.staffNo,staffName:s.name,staffPosition:s.position,staffSalary:s.salary,staffPhone:s.phone,staffRole:s.role}))setVal(k,v);page('staff')}}
+ b=e.target.closest('[data-delete-staff]');if(b&&confirm('Delete this staff member? Salary history will remain.')){db.staff=db.staff.filter(x=>x.id!==b.dataset.deleteStaff);saveDB()}
+ b=e.target.closest('[data-delete-mark]');if(b&&confirm('Delete this mark?')){db.academics=db.academics.filter(x=>x.id!==b.dataset.deleteMark);saveDB()}
+ b=e.target.closest('[data-delete-subject]');if(b&&confirm('Delete this subject? Existing marks will remain.')){db.subjects=db.subjects.filter(x=>x.id!==b.dataset.deleteSubject);saveDB()}
+ b=e.target.closest('[data-delete-tt]');if(b&&confirm('Delete timetable entry?')){db.timetable=db.timetable.filter(x=>x.id!==b.dataset.deleteTt);saveDB()}
+ b=e.target.closest('[data-export]');if(b)exportCSV(b.dataset.export);
+});
 
-async function saveStudent(){
-  const editId=$("editStudentId").value;
-  const admission_no=$("admission").value.trim();
-  const full_name=$("studentName").value.trim();
-  const class_name=$("studentClass").value;
-  const stream=$("studentStream").value.trim();
-  const category=$("studentCategory").value;
-  const combination=$("studentCombination").value.trim();
-  const gender=$("studentGender").value;
-  const age=Number($("studentAge").value||0);
-  const dob=$("studentDob").value||null;
-  const boarding_status=$("studentBoardingStatus").value;
-  const fees_expected=Number($("expectedFees").value||0);
-  const parent_email=$("parentEmail").value.trim();
-  const parent_whatsapp=$("parentWhatsApp").value.trim();
+document.getElementById('studentForm').addEventListener('submit',e=>{e.preventDefault();const id=val('studentId'),s={id:id||uid(),admission:val('admission'),name:val('studentName'),dob:val('dob'),gender:val('gender'),level:val('level'),className:val('studentClass'),stream:val('stream'),residence:val('residence'),expectedFees:Number(val('expectedFees')),parentName:val('parentName'),parentPhone:val('parentPhone'),parentEmail:val('parentEmail'),combination:val('combination'),status:val('studentStatus')};if(db.students.some(x=>x.admission.toLowerCase()===s.admission.toLowerCase()&&x.id!==id))return toast('Admission number already exists');const i=db.students.findIndex(x=>x.id===id);if(i>=0)db.students[i]=s;else db.students.push(s);saveDB();clearStudent();toast('Student saved successfully')});
+document.getElementById('cancelStudent').onclick=clearStudent;
+document.getElementById('studentSearch').oninput=renderStudents;
+document.getElementById('studentClassFilter').onchange=renderStudents;
+document.getElementById('classFilter').onchange=renderClassStudents;
+document.getElementById('classSearch').oninput=renderClassStudents;
 
-  if(!admission_no||!full_name){message("studentMessage","Enter admission number and full name.",true);return;}
+document.getElementById('paymentDate').value=new Date().toISOString().slice(0,10);
+document.getElementById('paymentForm').addEventListener('submit',e=>{e.preventDefault();const p={id:uid(),studentId:val('paymentStudent'),amount:Number(val('paymentAmount')),method:val('paymentMethod'),reference:val('paymentReference'),date:val('paymentDate'),receipt:'USM-'+Date.now().toString().slice(-8)};if(!p.studentId||p.amount<=0)return toast('Select a student and enter a valid amount');db.payments.push(p);saveDB();e.target.reset();setVal('paymentDate',new Date().toISOString().slice(0,10));toast('Payment recorded. Receipt: '+p.receipt)});
+document.getElementById('paymentSearch').oninput=renderPayments;
 
-  const payload={
-    school_id:currentSchoolId, admission_no, full_name, class_name, stream, category,
-    combination: combination||null, gender, age: age||null, dob, boarding_status,
-    fees_expected, parent_email: parent_email||null, parent_whatsapp: parent_whatsapp||null
-  };
+document.getElementById('expenseDate').value=new Date().toISOString().slice(0,10);
+document.getElementById('expenseForm').addEventListener('submit',e=>{e.preventDefault();db.expenses.push({id:uid(),title:val('expenseTitle'),category:val('expenseCategory'),amount:Number(val('expenseAmount')),date:val('expenseDate'),method:val('expenseMethod')});saveDB();e.target.reset();setVal('expenseDate',new Date().toISOString().slice(0,10));toast('Expense recorded')});
 
-  let error=null;
-  if(editId){
-    const res=await db.from("students").update(payload).eq("id",editId).eq("school_id",currentSchoolId);
-    error=res.error;
-  }else{
-    payload.status="Active";
-    const res=await db.from("students").insert(payload);
-    error=res.error;
-  }
+document.getElementById('staffForm').addEventListener('submit',e=>{e.preventDefault();const id=val('staffId'),s={id:id||uid(),staffNo:val('staffNo'),name:val('staffName'),position:val('staffPosition'),salary:Number(val('staffSalary')),phone:val('staffPhone'),role:val('staffRole')};if(db.staff.some(x=>x.staffNo.toLowerCase()===s.staffNo.toLowerCase()&&x.id!==id))return toast('Staff number already exists');const i=db.staff.findIndex(x=>x.id===id);if(i>=0)db.staff[i]=s;else db.staff.push(s);saveDB();e.target.reset();setVal('staffId','');toast('Staff member saved')});
+document.getElementById('clearStaff').onclick=()=>document.getElementById('staffForm').reset();
 
-  if(error){message("studentMessage",error.message,true);return;}
-  resetStudentForm();
-  await refreshAll();
-  message("studentMessage","Student saved successfully!");
-  alert("✅ Student saved successfully!");
-}
+document.getElementById('payrollForm').addEventListener('submit',e=>{e.preventDefault();const p={id:uid(),staffId:val('payrollStaff'),amount:Number(val('payrollAmount')),month:val('salaryMonth'),method:val('payrollMethod'),reference:val('payrollReference'),date:new Date().toISOString().slice(0,10)};if(!p.staffId||p.amount<=0||!/^\d{4}-(0[1-9]|1[0-2])$/.test(p.month))return toast('Check staff, amount and salary month');db.payroll.push(p);saveDB();e.target.reset();toast('Salary payment recorded')});
+document.getElementById('salaryMonth').value=new Date().toISOString().slice(0,7);
+document.getElementById('salaryMonth').onchange=renderPayroll;
 
-async function deleteStudent(id){
-  if(!confirm("Permanently delete this student and records?"))return;
-  await db.from("payments").delete().eq("student_id",id).eq("school_id",currentSchoolId);
-  await db.from("academics").delete().eq("student_id",id).eq("school_id",currentSchoolId);
-  const {error}=await db.from("students").delete().eq("id",id).eq("school_id",currentSchoolId);
-  if(error){alert("Error: "+error.message);return;}
-  await refreshAll();
-}
+document.getElementById('academicForm').addEventListener('submit',e=>{e.preventDefault();const mark=Number(val('acadMark'));if(mark<0||mark>100)return toast('Mark must be between 0 and 100');const a={id:uid(),studentId:val('acadStudent'),term:val('acadTerm'),subjectId:val('acadSubject'),mark,remarks:val('acadRemarks')};const ix=db.academics.findIndex(x=>x.studentId===a.studentId&&x.term===a.term&&x.subjectId===a.subjectId);if(ix>=0)db.academics[ix]={...a,id:db.academics[ix].id};else db.academics.push(a);saveDB();toast('Mark saved')});
+document.getElementById('acadSearch').oninput=renderAcademics;
+document.getElementById('printReport').onclick=()=>window.print();
 
-async function createStream(){
-  const class_level=$("streamClassLevel").value;
-  const stream_name=$("newStreamName").value.trim();
-  if(!stream_name){message("streamMessage","Enter stream name.",true);return;}
+document.getElementById('subjectForm').addEventListener('submit',e=>{e.preventDefault();const name=val('subjectName'),level=val('subjectLevel');if(db.subjects.some(s=>s.name.toLowerCase()===name.toLowerCase()&&s.level===level))return toast('Subject already exists for that level');db.subjects.push({id:uid(),name,level});saveDB();e.target.reset();toast('Subject added')});
 
-  const {error}=await db.from("streams").insert({school_id:currentSchoolId, class_level, stream_name});
-  if(error){message("streamMessage",error.message,true);return;}
-  $("newStreamName").value="";
-  await refreshAll();
-  message("streamMessage","Stream created successfully!");
-  alert("✅ Stream created successfully!");
-}
+document.getElementById('timetableForm').addEventListener('submit',e=>{e.preventDefault();const item={id:uid(),className:val('ttClass'),day:val('ttDay'),period:val('ttPeriod'),subjectId:val('ttSubject'),teacherId:val('ttTeacher'),room:val('ttRoom')};const clash=db.timetable.some(t=>t.day===item.day&&t.period===item.period&&(t.className===item.className||(item.teacherId&&t.teacherId===item.teacherId)));if(clash&&!confirm('Possible class or teacher timetable conflict. Add anyway?'))return;db.timetable.push(item);saveDB();e.target.reset();toast('Timetable entry added')});
 
-function renderClassesPage(){
-  $("classFilter").innerHTML='<option value="">All Classes</option>'+ALLOWED_CLASSES.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
-  renderClassStudents();
-}
+document.getElementById('messageForm').addEventListener('submit',e=>{e.preventDefault();const specific=val('messageStudent'),message=val('messageText');const targets=activeStudents().filter(s=>(!specific||s.id===specific)&&s.parentPhone);const results=document.getElementById('messageResults');if(!targets.length){results.innerHTML='<p class="error">No active student with a parent phone number matches your selection.</p>';return}results.innerHTML='<p>Choose a parent below to open WhatsApp with the message filled in. Sending is completed in WhatsApp.</p>'+targets.map(s=>`<p>${esc(s.name)} — ${esc(s.parentName||s.parentPhone)} <button class="small" data-wa="${s.id}" data-message="${encodeURIComponent(message)}" type="button">Open WhatsApp</button></p>`).join('')});
 
-function renderClassStudents(){
-  const sel=$("classFilter")?.value||"";
-  const q=($("classStudentSearch")?.value||"").toLowerCase();
-  const list=activeStudents().filter(s=>(!sel||String(s.class_name||"").trim()===sel)&&[s.admission_no,s.full_name,s.stream].some(v=>String(v||"").toLowerCase().includes(q)));
-  $("classStudentsBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td style="font-weight:600">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+(s.stream?' ('+esc(s.stream)+')':'')+'</td><td>'+esc(s.category||"—")+'</td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td></tr>').join("")||'<tr><td colspan="7">No students found.</td></tr>';
-}
+document.getElementById('messageResults').addEventListener('click',e=>{const b=e.target.closest('[data-wa]');if(!b)return;const s=db.students.find(x=>x.id===b.dataset.wa);if(!s)return;const phone=s.parentPhone.replace(/\D/g,'');if(!phone)return toast('Add parent phone with country code');window.open('https://wa.me/'+phone+'?text='+b.dataset.message,'_blank','noopener')});
+document.getElementById('emailMessage').onclick=()=>{const s=db.students.find(x=>x.id===val('messageStudent'));if(!s||!s.parentEmail)return toast('Select a student with parent email');window.location.href='mailto:'+encodeURIComponent(s.parentEmail)+'-?subject='+encodeURIComponent('School message')+'&body='+encodeURIComponent(val('messageText'))};
 
-function renderPaymentClass(){
-  const el=$("paymentClass");if(!el)return;
-  el.innerHTML='<option value="">All Classes</option>'+ALLOWED_CLASSES.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
-}
+document.getElementById('schoolForm').addEventListener('submit',e=>{e.preventDefault();db.school={name:val('schoolName'),location:val('schoolLocation'),type:val('schoolType'),motto:val('schoolMotto'),phone:val('schoolPhone'),email:val('schoolEmail')};saveDB();toast('School profile saved')});
+document.getElementById('downloadBackup').onclick=()=>download('uganda-school-manager-backup.json',JSON.stringify(db,null,2),'application/json');
+document.getElementById('importBackupBtn').onclick=()=>document.getElementById('importBackup').click();
+document.getElementById('importBackup').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const obj=JSON.parse(await f.text());if(!obj.students||!obj.payments)throw Error('Invalid backup');if(!confirm('Replace current browser demo data with this backup?'))return;db={...blank(),...obj};saveDB();toast('Backup imported')}catch(err){toast('Could not import that backup')}e.target.value=''};
 
-function renderStudentSelect(){
-  renderPaymentClass();
-  const sel=$("paymentClass")?.value||"";
-  const searchQ=($("paymentSearchInput")?.value||"").toLowerCase();
-  const list=activeStudents().filter(s=>{
-    const matchesClass=!sel||String(s.class_name||"").trim()===sel;
-    const matchesSearch=!searchQ||[s.admission_no,s.full_name].some(v=>String(v||"").toLowerCase().includes(searchQ));
-    return matchesClass&&matchesSearch;
-  });
-  $("paymentStudent").innerHTML=list.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.admission_no)+" - "+esc(s.full_name)+" ("+esc(s.class_name)+(s.stream?' '+esc(s.stream):"")+") - Balance: "+money(balance(s))+'</option>').join("")||'<option value="">No students found</option>';
-}
+document.getElementById('printPage').onclick=()=>window.print();
+document.getElementById('activeTerm').onchange=()=>toast('Selected term: '+val('activeTerm'));
 
-async function recordPayment(){
-  const student_id=$("paymentStudent").value;
-  const amount=Number($("paymentAmount").value);
-  const method=$("paymentMethod").value;
-  const reference=$("paymentReference").value.trim();
+document.getElementById('promoteBtn').onclick=()=>{if(!confirm('Promote S.1 to S.2, S.2 to S.3, S.3 to S.4, S.4 to S.5 and S.5 to S.6 for all active students? S.6 will remain unchanged. Export a backup first.'))return;db.students.forEach(s=>{if(s.status==='Active'){const i=CLASSES.indexOf(s.className);if(i>=0&&i<5)s.className=CLASSES[i+1]}});saveDB();toast('Eligible students promoted')};
+document.getElementById('graduateBtn').onclick=()=>{const grads=activeStudents().filter(s=>s.className==='S.6');if(!grads.length)return toast('No active S.6 students to archive');if(!confirm(`Archive ${grads.length} S.6 students? This action can be reversed from Archived.`))return;db.students=db.students.filter(s=>s.className!=='S.6'||s.status!=='Active');db.archived.push(...grads.map(s=>({...s,status:'Archived'})));saveDB();toast('S.6 students archived')};
 
-  if(!student_id||!amount||amount<=0){message("paymentMessage","Select student and enter valid amount.",true);return;}
-  const {data,error}=await db.from("payments").insert({school_id:currentSchoolId,student_id,amount,method,reference:reference||null,paid_at:new Date().toISOString()}).select().single();
-  if(error){message("paymentMessage",error.message,true);return;}
-  
-  const studentObj = students.find(x=>String(x.id)===String(student_id));
-  $("paymentAmount").value="";$("paymentReference").value="";
-  await refreshAll();
-  message("paymentMessage","Fees payment recorded successfully!");
-  alert("✅ Fees payment recorded successfully!");
-  
-  if(confirm("Print fee payment receipt?"))printReceipt(data);
-  if(studentObj?.parent_whatsapp && confirm("Send WhatsApp confirmation to parent?"))sendWhatsAppPayment(studentObj, data);
-}
+function printReceipt(id){const p=db.payments.find(x=>x.id===id);if(!p)return;const s=db.students.find(x=>x.id===p.studentId)||{},school=db.school;const w=window.open('','_blank','width=700,height=700');if(!w)return toast('Allow pop-ups to print receipt');w.document.write(`<!doctype html><html><head><title>Fee Receipt</title><style>body{font-family:Arial;padding:35px;color:#222}h1{color:#176b45}table{width:100%;border-collapse:collapse}td{padding:12px;border-bottom:1px solid #ddd}.total{font-size:20px;font-weight:bold}</style></head><body><h1>${esc(school.name)}</h1><p>${esc(school.location)} ${school.phone?'· '+esc(school.phone):''}</p><hr><h2>OFFICIAL FEE PAYMENT RECEIPT</h2><table><tr><td>Receipt number</td><td>${esc(p.receipt)}</td></tr><tr><td>Date</td><td>${esc(p.date)}</td></tr><tr><td>Student</td><td>${esc(s.name||'Unknown')}</td></tr><tr><td>Admission number</td><td>${esc(s.admission||'—')}</td></tr><tr><td>Class</td><td>${esc(s.className||'—')}</td></tr><tr><td>Payment method</td><td>${esc(p.method)}</td></tr><tr><td>Reference</td><td>${esc(p.reference||'—')}</td></tr><tr><td class="total">Amount received</td><td class="total">${money(p.amount)}</td></tr><tr><td>Remaining balance</td><td>${money(Number(s.expectedFees||0)-studentPaid(s.id))}</td></tr></table><p>Received by: ______________________</p><p>Thank you.</p><script>window.onload=()=>window.print()<\/script></body></html>`);w.document.close()}
+function csvCell(v){const s=String(v??'');return '"'+s.replace(/"/g,'""')+'"'}
+function download(name,content,type='text/csv;charset=utf-8'){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;a.click();URL.revokeObjectURL(url)}
+function exportCSV(type){let rows=[];if(type==='students')rows=[['Admission','Name','DOB','Gender','Level','Class','Stream','Residence','Expected Fees','Paid','Balance','Parent','Parent Phone','Parent Email','Status'],...db.students.map(s=>[s.admission,s.name,s.dob,s.gender,s.level,s.className,s.stream,s.residence,s.expectedFees,studentPaid(s.id),Number(s.expectedFees)-studentPaid(s.id),s.parentName,s.parentPhone,s.parentEmail,s.status])];if(type==='payments')rows=[['Date','Receipt','Student','Admission','Class','Amount','Method','Reference'],...db.payments.map(p=>{const s=db.students.find(x=>x.id===p.studentId)||{};return[p.date,p.receipt,s.name,s.admission,s.className,p.amount,p.method,p.reference]})];if(type==='expenses')rows=[['Date','Title','Category','Amount','Method'],...db.expenses.map(e=>[e.date,e.title,e.category,e.amount,e.method])];if(type==='staff')rows=[['Staff No','Name','Position','Role','Salary','Phone'],...db.staff.map(s=>[s.staffNo,s.name,s.position,s.role,s.salary,s.phone])];if(type==='payroll')rows=[['Date','Staff','Month','Amount','Method','Reference'],...db.payroll.map(p=>[p.date,(db.staff.find(s=>s.id===p.staffId)||{}).name,p.month,p.amount,p.method,p.reference])];if(type==='academics')rows=[['Term','Student','Class','Subject','Mark','Grade','Remarks'],...db.academics.map(a=>{const s=db.students.find(x=>x.id===a.studentId)||{},sub=db.subjects.find(x=>x.id===a.subjectId)||{};return[a.term,s.name,s.className,sub.name,a.mark,grade(Number(a.mark)),a.remarks]})];download(type+'.csv','\ufeff'+rows.map(r=>r.map(csvCell).join(',')).join('\r\n'))}
 
-function sendWhatsAppPayment(s, p){
-  const phone = String(s.parent_whatsapp || "").replace(/\D/g,"");
-  if(!phone){alert("Parent WhatsApp number is missing.");return;}
-  const sch = schools.find(x=>x.id===currentSchoolId);
-  const text = "FEES PAYMENT CONFIRMATION\nSchool: *" + (sch?.name || "School") + "*\nStudent: " + s.full_name + " (" + s.admission_no + ")\nClass: " + s.class_name + "\nAmount Paid: " + money(p.amount) + "\nBalance: *" + money(balance(s)) + "*\nDate: " + readableDate(p.paid_at);
-  window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(text), "_blank");
-}
-
-function whatsappById(id){
-  const p = payments.find(x=>String(x.id)===String(id));
-  const s = p && students.find(x=>String(x.id)===String(p.student_id));
-  if(p && s) sendWhatsAppPayment(s, p);
-}
-
-function renderBroadcastSelects(){
-  $("broadcastClassSelect").innerHTML=ALLOWED_CLASSES.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
-  $("broadcastStudentSelect").innerHTML=activeStudents().map(s=>'<option value="'+esc(s.id)+'">'+esc(s.admission_no+" - "+s.full_name)+'</option>').join("");
-  
-  $("broadcastTargetType").onchange=(e)=>{
-    const val=e.target.value;
-    $("broadcastClassDiv").classList.toggle("hidden", val!=="class");
-    $("broadcastStudentDiv").classList.toggle("hidden", val!=="single");
-  };
-}
-
-function sendBroadcastMessage(){
-  const type=$("broadcastTargetType").value;
-  const channel=$("broadcastChannel").value;
-  const subject=$("broadcastSubject").value.trim();
-  const body=$("broadcastMessageBody").value.trim();
-
-  if(!body){alert("Enter message content.");return;}
-  const sch = schools.find(x=>x.id===currentSchoolId);
-  const schoolName = sch?.name || "School";
-
-  let targets=[];
-  if(type==="all"){
-    targets=activeStudents();
-  }else if(type==="class"){
-    const cl=$("broadcastClassSelect").value;
-    targets=activeStudents().filter(s=>s.class_name
+renderSelects();
+</script>
+</body>
+</html>
