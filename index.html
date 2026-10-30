@@ -287,7 +287,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
-  <!-- PAGE: STUDENTS & BIODATA (FEATURE 3) -->
+  <!-- PAGE: STUDENTS & BIODATA -->
   <div id="page-students" class="page-section hidden">
     <div class="card">
       <h2 id="studentFormTitle">Student Registration & Extended Biodata</h2>
@@ -408,7 +408,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
-  <!-- PAGE: PAYMENTS & AUTOMATED COMMUNICATIONS (FEATURE 4) -->
+  <!-- PAGE: PAYMENTS & AUTOMATED COMMUNICATIONS -->
   <div id="page-payments" class="page-section hidden">
     <div class="card" style="border-left: 4px solid var(--green)">
       <h2>📢 Automated Parent Communications & Broadcast Center (WhatsApp & Email)</h2>
@@ -721,7 +721,8 @@ function readableDate(val){
 
 function showPage(id){
   document.querySelectorAll(".page-section").forEach(p=>p.classList.add("hidden"));
-  $("page-"+id).classList.remove("hidden");
+  const targetPage = $("page-"+id);
+  if(targetPage) targetPage.classList.remove("hidden");
   document.querySelectorAll("#mainNav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
   if(id==="classes"){renderClasses();renderClassStudents();}
   if(id==="academics"){renderSubjectDropdowns();renderDynamicSubjectInputs();renderAcadClassSelect();renderAcadStudents();renderTeacherClassSelect();}
@@ -729,8 +730,10 @@ function showPage(id){
 }
 
 function message(id,text,error=false){
-  $(id).innerHTML='<div class="msg '+(error?'error':'success')+'">✅ '+esc(text)+'</div>';
-  setTimeout(()=>$(id).innerHTML="",6000);
+  const el = $(id);
+  if(!el) return;
+  el.innerHTML='<div class="msg '+(error?'error':'success')+'">✅ '+esc(text)+'</div>';
+  setTimeout(()=>el.innerHTML="",6000);
 }
 
 // DASHBOARD PASSWORD SECURITY FUNCTIONS
@@ -755,23 +758,23 @@ function lockFinances(){
   renderDashboard();
 }
 
-// FEATURE 3: LEVEL & BIODATA TOGGLES
 function toggleLevelFields(){
-  const lvl = $("studentLevel").value;
+  const lvl = $("studentLevel")?.value;
   const combGroup = $("alevelCombGroup");
+  if(!combGroup) return;
   if(lvl === "A-Level"){
     combGroup.classList.remove("hidden");
   } else {
     combGroup.classList.add("hidden");
-    $("studentCombination").value = "";
+    if($("studentCombination")) $("studentCombination").value = "";
   }
 }
 
-// FEATURE 4: AUTOMATED COMMUNICATIONS & BROADCASTS
 function toggleCommTarget(){
-  const scope = $("commScope").value;
+  const scope = $("commScope")?.value;
   const classWrap = $("commClassGroupWrapper");
   const studentWrap = $("commStudentGroupWrapper");
+  if(!classWrap || !studentWrap) return;
   classWrap.classList.add("hidden");
   studentWrap.classList.add("hidden");
 
@@ -836,11 +839,9 @@ function dispatchParentCommunication(){
       countTriggered++;
     });
   } else {
-    // Email channel
     const validRecipients = recipients.filter(s => s.parent_email && s.parent_email.includes("@"));
     if(!validRecipients.length){alert("None of the selected recipients have a valid parent email address recorded.");return;}
     
-    // Trigger bulk mailto or window open for email
     const emails = validRecipients.map(s => s.parent_email).join(",");
     const mailtoLink = "mailto:" + emails + "?subject=" + encodeURIComponent(subject || "School Circular - " + schoolName) + "&body=" + encodeURIComponent(body);
     window.location.href = mailtoLink;
@@ -1060,7 +1061,6 @@ function renderDashboard(){
 
   $("statStudents").textContent=list.length;
 
-  // EXPECTED AND COLLECTED FEES LOCKED UNLESS UNLOCKED
   if(financesUnlocked){
     $("statExpected").textContent=money(exp);
     $("statCollected").textContent=money(col);
@@ -1093,16 +1093,16 @@ function editStudent(id){
   $("editStudentId").value=s.id;
   $("admission").value=s.admission_no||"";
   $("studentName").value=s.full_name||"";
-  $("studentLevel").value=s.education_level||"O-Level";
+  if($("studentLevel")) $("studentLevel").value=s.education_level||"O-Level";
   toggleLevelFields();
   $("studentClass").value=s.class_name||"S.1";
-  $("studentDob").value=s.dob||"";
-  $("studentGender").value=s.gender||"Female";
-  $("studentResidence").value=s.residence||"Day";
-  $("studentCombination").value=s.subject_combination||"";
+  if($("studentDob")) $("studentDob").value=s.dob||"";
+  if($("studentGender")) $("studentGender").value=s.gender||"Female";
+  if($("studentResidence")) $("studentResidence").value=s.residence||"Day";
+  if($("studentCombination")) $("studentCombination").value=s.subject_combination||"";
   $("expectedFees").value=expected(s);
   $("parentWhatsApp").value=s.parent_whatsapp||"";
-  $("parentEmail").value=s.parent_email||"";
+  if($("parentEmail")) $("parentEmail").value=s.parent_email||"";
   $("studentFormTitle").textContent="Edit Student: "+s.full_name;
   $("cancelStudentEdit").classList.remove("hidden");
   window.scrollTo({top:0,behavior:"smooth"});
@@ -1112,16 +1112,16 @@ function resetStudentForm(){
   $("editStudentId").value="";
   $("admission").value="";
   $("studentName").value="";
-  $("studentLevel").value="O-Level";
+  if($("studentLevel")) $("studentLevel").value="O-Level";
   toggleLevelFields();
   $("studentClass").value="S.1";
-  $("studentDob").value="";
-  $("studentGender").value="Female";
-  $("studentResidence").value="Day";
-  $("studentCombination").value="";
+  if($("studentDob")) $("studentDob").value="";
+  if($("studentGender")) $("studentGender").value="Female";
+  if($("studentResidence")) $("studentResidence").value="Day";
+  if($("studentCombination")) $("studentCombination").value="";
   $("expectedFees").value="0";
   $("parentWhatsApp").value="";
-  $("parentEmail").value="";
+  if($("parentEmail")) $("parentEmail").value="";
   $("studentFormTitle").textContent="Student Registration & Extended Biodata";
   $("cancelStudentEdit").classList.add("hidden");
   $("studentMessage").innerHTML="";
@@ -1131,15 +1131,15 @@ async function saveStudent(){
   const editId=$("editStudentId").value;
   const admission_no=$("admission").value.trim();
   const full_name=$("studentName").value.trim();
-  const education_level=$("studentLevel").value;
+  const education_level=$("studentLevel")?.value || "O-Level";
   const class_name=$("studentClass").value;
-  const dob=$("studentDob").value;
-  const gender=$("studentGender").value;
-  const residence=$("studentResidence").value;
-  const subject_combination=$("studentCombination").value.trim();
+  const dob=$("studentDob")?.value || null;
+  const gender=$("studentGender")?.value || "Female";
+  const residence=$("studentResidence")?.value || "Day";
+  const subject_combination=$("studentCombination")?.value.trim() || null;
   const fees=Number($("expectedFees").value||0);
   const parent_whatsapp=$("parentWhatsApp").value.trim();
-  const parent_email=$("parentEmail").value.trim();
+  const parent_email=$("parentEmail")?.value.trim() || null;
 
   if(!admission_no||!full_name){message("studentMessage","Enter admission number and full name.",true);return;}
 
@@ -1149,13 +1149,13 @@ async function saveStudent(){
     full_name,
     education_level,
     class_name,
-    dob:dob||null,
+    dob,
     gender,
     residence,
-    subject_combination:subject_combination||null,
+    subject_combination,
     fees_expected:fees,
     parent_whatsapp:parent_whatsapp||null,
-    parent_email:parent_email||null
+    parent_email
   };
 
   let error=null;
@@ -1165,11 +1165,12 @@ async function saveStudent(){
   }else{
     payload.status="Active";
     let res=await db.from("students").insert(payload).select().single();
-    if(res.error&&/column/i.test(res.error.message)){
-      delete payload.fees_expected;payload.fee_expected=fees;
-      res=await db.from("students").insert(payload).select().single();
+    if(res.error){
+      // Fallback if missing extended columns in remote schema yet
+      let basicPayload = { school_id: currentSchoolId, admission_no, full_name, class_name, fees_expected: fees, parent_whatsapp: parent_whatsapp||null, status: "Active" };
+      let res2 = await db.from("students").insert(basicPayload);
+      error = res2.error;
     }
-    error=res.error;
   }
   if(error){message("studentMessage",error.message,true);return;}
   resetStudentForm();
@@ -1197,12 +1198,8 @@ async function deleteStudent(id){
   if(!s)return;
   if(!confirm("Permanently delete "+s.full_name+" AND all their payment history & academic records? This cannot be undone."))return;
 
-  const payRes = await db.from("payments").delete().eq("student_id",id).eq("school_id",currentSchoolId);
-  if(payRes.error){alert("Failed to delete student payment history: "+payRes.error.message);return;}
-
-  const acadRes = await db.from("academics").delete().eq("student_id",id).eq("school_id",currentSchoolId);
-  if(acadRes.error){alert("Failed to delete student academic records: "+acadRes.error.message);return;}
-
+  await db.from("payments").delete().eq("student_id",id).eq("school_id",currentSchoolId);
+  await db.from("academics").delete().eq("student_id",id).eq("school_id",currentSchoolId);
   const {error}=await db.from("students").delete().eq("id",id).eq("school_id",currentSchoolId);
   if(error){alert("Failed to delete student record: "+error.message);return;}
   
@@ -1261,23 +1258,13 @@ function renderPaymentClass(){
 
 function renderStudentSelect(){
   renderPaymentClass();
-
   const sel = $("paymentClass")?.value || "";
   const searchQ = ($("paymentSearchInput")?.value || "").toLowerCase();
-
   const list = activeStudents().filter(s => {
-    const matchesClass =
-      !sel || String(s.class_name || "").trim() === sel;
-
-    const matchesSearch =
-      !searchQ ||
-      [s.admission_no, s.full_name].some(v =>
-        String(v || "").toLowerCase().includes(searchQ)
-      );
-
+    const matchesClass = !sel || String(s.class_name || "").trim() === sel;
+    const matchesSearch = !searchQ || [s.admission_no, s.full_name].some(v => String(v || "").toLowerCase().includes(searchQ));
     return matchesClass && matchesSearch;
   });
-
   $("paymentStudent").innerHTML=list.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.admission_no)+" - "+esc(s.full_name)+" ("+esc(s.class_name)+") - Balance: "+money(balance(s))+'</option>').join("") || '<option value="">No students found</option>';
 }
 
@@ -1314,244 +1301,4 @@ function sendWhatsAppPayment(s, p){
                "Class: " + s.class_name + "\n" +
                "Amount Paid: " + money(p.amount) + "\n" +
                "Total Paid: " + money(paid(s.id)) + "\n" +
-               "Balance Remaining: *" + money(balance(s)) + "*\n" +
-               "Receipt No: " + receiptNo(p) + "\n" +
-               "Date: " + readableDate(p.paid_at) + "\n\n" +
-               "Thank you for choosing *" + schoolName + "*";
-
-  window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(text), "_blank");
-}
-
-function whatsappById(id){
-  const p = payments.find(x=>String(x.id)===String(id));
-  const s = p && students.find(x=>String(x.id)===String(p.student_id));
-  if(p && s) sendWhatsAppPayment(s, p);
-}
-
-function renderPayments(){
-  $("paymentsBody").innerHTML=payments.map(p=>{
-    const s=students.find(x=>String(x.id)===String(p.student_id));
-    return '<tr><td>'+readableDate(p.paid_at)+'</td><td><b>'+receiptNo(p)+'</b></td><td>'+esc(s?.full_name||"Unknown")+'</td><td>'+esc(s?.class_name||"—")+'</td><td>'+money(p.amount)+'</td><td>'+esc(p.method)+'</td><td><div class="actions"><button class="secondary" onclick="printReceiptById(\''+p.id+'\')">Receipt</button>'+(s?.parent_whatsapp?'<button class="whatsapp" onclick="whatsappById(\''+p.id+'\')">WhatsApp</button>':'')+'</div></td></tr>';
-  }).join("")||'<tr><td colspan="7">No payments recorded.</td></tr>';
-}
-
-function printReceiptById(id){const p=payments.find(x=>String(x.id)===String(id));if(p)printReceipt(p);}
-function printReceipt(p){
-  const s=students.find(x=>String(x.id)===String(p.student_id));
-  const sch=schools.find(x=>x.id===currentSchoolId);
-  const w=window.open("","_blank");
-  w.document.write('<!doctype html><html><head><title>Receipt</title><style>body{font-family:Arial;padding:24px}.box{max-width:600px;margin:auto;border:2px solid #0f172a;padding:24px;border-radius:8px}h2{text-align:center;margin:0}table{width:100%;border-collapse:collapse;margin:20px 0}td{padding:10px;border-bottom:1px solid #ddd}</style></head><body><div class="box"><h2>'+esc(sch?.name||"School")+'</h2><p style="text-align:center">OFFICIAL FEES RECEIPT</p><hr><p><b>Receipt No:</b> '+receiptNo(p)+'</p><p><b>Date:</b> '+readableDate(p.paid_at)+'</p><p><b>Student:</b> '+esc(s?.full_name)+' ('+esc(s?.admission_no)+')</p><p><b>Class:</b> '+esc(s?.class_name)+'</p><table><tr><td>Amount Paid</td><td><b>'+money(p.amount)+'</b></td></tr><tr><td>Method</td><td>'+esc(p.method)+'</td></tr><tr><td>Total Paid to Date</td><td>'+money(paid(s?.id))+'</td></tr><tr><td>Remaining Balance</td><td><b>'+money(balance(s))+'</b></td></tr></table><p style="text-align:center;margin-top:30px">Thank you for paying fees!</p></div><script>window.onload=()=>window.print()<\/script></body></html>');
-  w.document.close();
-}
-
-async function addExpense(){
-  const title=$("expTitle").value.trim();
-  const category=$("expCategory").value;
-  const amount=Number($("expAmount").value);
-  const date=$("expDate").value||new Date().toISOString().slice(0,10);
-  const method=$("expMethod").value;
-  if(!title||!amount||amount<=0){message("expenseMessage","Enter title and valid amount.",true);return;}
-  const {error}=await db.from("expenses").insert({school_id:currentSchoolId,title,category,amount,date,method});
-  if(error){message("expenseMessage",error.message,true);return;}
-  $("expTitle").value="";$("expAmount").value="";
-  await refreshAll();
-  message("expenseMessage","Expense recorded successfully!");
-  alert("✅ Expense recorded successfully!");
-}
-
-function renderExpenses(){
-  $("expensesBody").innerHTML=expenses.map(e=>'<tr><td>'+esc(e.date)+'</td><td style="font-weight:600">'+esc(e.title)+'</td><td>'+esc(e.category)+'</td><td>'+money(e.amount)+'</td><td>'+esc(e.method)+'</td><td><button class="danger" onclick="deleteExpense(\''+e.id+'\')">Delete</button></td></tr>').join("")||'<tr><td colspan="6">No expenses logged.</td></tr>';
-}
-
-async function deleteExpense(id){
-  if(!confirm("Delete this expense record?"))return;
-  const {error}=await db.from("expenses").delete().eq("id",id).eq("school_id",currentSchoolId);
-  if(error){alert("Error deleting expense: "+error.message);return;}
-  await refreshAll();
-}
-
-function editStaff(id){
-  const st=staff.find(x=>String(x.id)===String(id));
-  if(!st)return;
-  $("editStaffId").value=st.id;
-  $("staffNo").value=st.staff_no||"";
-  $("staffName").value=st.full_name||"";
-  $("staffPosition").value=st.position||"";
-  $("staffSalary").value=st.monthly_salary||0;
-  $("staffPhone").value=st.phone||"";
-  $("staffFormTitle").textContent="Edit Staff: "+st.full_name;
-  $("cancelStaffEdit").classList.remove("hidden");
-  window.scrollTo({top:0,behavior:"smooth"});
-}
-
-function resetStaffForm(){
-  $("editStaffId").value="";
-  $("staffNo").value="";
-  $("staffName").value="";
-  $("staffPosition").value="";
-  $("staffSalary").value="0";
-  $("staffPhone").value="";
-  $("staffFormTitle").textContent="Staff / Teacher Registration";
-  $("cancelStaffEdit").classList.add("hidden");
-  $("staffMessage").innerHTML="";
-}
-
-async function saveStaff(){
-  const editId=$("editStaffId").value;
-  const staff_no=$("staffNo").value.trim();
-  const full_name=$("staffName").value.trim();
-  const position=$("staffPosition").value.trim();
-  const monthly_salary=Number($("staffSalary").value||0);
-  const phone=$("staffPhone").value.trim();
-
-  if(!staff_no||!full_name||!position){message("staffMessage","Fill in staff number, name, and position.",true);return;}
-  const payload={school_id:currentSchoolId,staff_no,full_name,position,monthly_salary,phone:phone||null};
-  let error=null;
-  if(editId){
-    const res=await db.from("staff").update(payload).eq("id",editId).eq("school_id",currentSchoolId);
-    error=res.error;
-  }else{
-    const res=await db.from("staff").insert(payload);
-    error=res.error;
-  }
-  if(error){message("staffMessage",error.message,true);return;}
-  resetStaffForm();
-  await refreshAll();
-  const successText = editId ? "Staff member updated successfully!" : "Staff member added successfully!";
-  message("staffMessage", successText);
-  alert("✅ " + successText);
-}
-
-function renderStaff(){
-  $("staffBody").innerHTML=staff.map(s=>'<tr><td>'+esc(s.staff_no)+'</td><td style="font-weight:600">'+esc(s.full_name)+'</td><td>'+esc(s.position)+'</td><td>'+money(s.monthly_salary)+'</td><td>'+esc(s.phone||"—")+'</td><td><div class="actions"><button class="secondary" onclick="editStaff(\''+s.id+'\')">Edit</button><button class="danger" onclick="deleteStaff(\''+s.id+'\')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="6">No staff registered.</td></tr>';
-  
-  $("staffSalaryStatusBody").innerHTML=staff.map(s=>'<tr><td>'+esc(s.staff_no)+'</td><td style="font-weight:600">'+esc(s.full_name)+'</td><td>'+esc(s.position)+'</td><td>'+money(staffExpected(s))+'</td><td>'+money(staffPaid(s.id))+'</td><td><b>'+money(staffBalance(s))+'</b></td></tr>').join("")||'<tr><td colspan="6">No staff registered.</td></tr>';
-}
-
-function renderStaffSelect(){
-  $("salaryStaff").innerHTML=staff.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.staff_no)+" - "+esc(s.full_name)+' ('+esc(s.position)+')</option>').join("");
-}
-
-async function deleteStaff(id){
-  const st=staff.find(x=>String(x.id)===String(id));
-  if(!st)return;
-  if(!confirm("Permanently delete teacher "+st.full_name+" AND all associated salary history? This cannot be undone."))return;
-
-  const salRes = await db.from("salary_payments").delete().eq("staff_id",id).eq("school_id",currentSchoolId);
-  if(salRes.error){alert("Failed to delete staff salary history: "+salRes.error.message);return;}
-
-  const {error}=await db.from("staff").delete().eq("id",id).eq("school_id",currentSchoolId);
-  if(error){alert("Error deleting staff: "+error.message);return;}
-  await refreshAll();
-}
-
-async function recordSalary(){
-  const staff_id=$("salaryStaff").value;
-  const amount=Number($("salaryAmount").value);
-  const month=$("salaryMonth").value;
-  const method=$("salaryMethod").value;
-  const reference=$("salaryReference").value.trim();
-
-  if(!staff_id||!amount||!month){message("payrollMessage","Select staff, month and amount.",true);return;}
-  const {error}=await db.from("salary_payments").insert({school_id:currentSchoolId,staff_id,amount,month,method,reference:reference||null,paid_at:new Date().toISOString()});
-  if(error){message("payrollMessage",error.message,true);return;}
-  $("salaryAmount").value="";$("salaryReference").value="";
-  await refreshAll();
-  message("payrollMessage","Salary payment recorded successfully!");
-  alert("✅ Salary payment recorded successfully!");
-}
-
-function renderPayroll(){
-  $("payrollBody").innerHTML=salaries.map(p=>{
-    const st=staff.find(x=>String(x.id)===String(p.staff_id));
-    return '<tr><td>'+readableDate(p.paid_at)+'</td><td style="font-weight:600">'+esc(st?.full_name||"Unknown")+'</td><td>'+esc(p.month)+'</td><td>'+money(p.amount)+'</td><td>'+esc(p.method)+'</td><td>'+esc(p.reference||"—")+'</td></tr>';
-  }).join("")||'<tr><td colspan="6">No salary disbursements recorded.</td></tr>';
-}
-
-function renderAcadClassSelect(){
-  $("acadClassFilter").innerHTML='<option value="">Choose Class</option>'+ALLOWED_CLASSES.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
-}
-
-function renderAcadStudents(){
-  const sel=$("acadClassFilter")?.value||"";
-  const list=activeStudents().filter(s=>!sel||String(s.class_name||"").trim()===sel);
-  $("acadStudentSelect").innerHTML=list.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.admission_no)+" - "+esc(s.full_name)+'</option>').join("");
-}
-
-function renderTeacherClassSelect(){
-  $("teacherClassFilter").innerHTML='<option value="">Choose Class</option>'+ALLOWED_CLASSES.map(c=>'<option value="'+esc(c)+'">'+esc(c)+'</option>').join("");
-}
-
-function renderTeacherStudents(){
-  const sel=$("teacherClassFilter")?.value||"";
-  const list=activeStudents().filter(s=>!sel||String(s.class_name||"").trim()===sel);
-  $("teacherStudentSelect").innerHTML=list.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.admission_no)+" - "+esc(s.full_name)+'</option>').join("");
-}
-
-async function saveSubjectMark(){
-  const subjectKey=$("teacherSubject").value;
-  const student_id=$("teacherStudentSelect").value;
-  const markVal=Number($("teacherMarkInput").value);
-  const remarks=$("teacherRemarksInput").value.trim();
-
-  if(!student_id||isNaN(markVal)){message("teacherMarkMessage","Select a student and enter a valid mark.",true);return;}
-
-  let existing=academics.find(a=>String(a.student_id)===String(student_id));
-  let error=null;
-
-  let scoresObj = existing?.scores || {};
-  scoresObj[subjectKey] = markVal;
-
-  let updatePayload = { scores: scoresObj };
-  if(remarks) updatePayload.teacher_remarks = remarks;
-
-  if(existing){
-    const res=await db.from("academics").update(updatePayload).eq("id", existing.id).eq("school_id", currentSchoolId);
-    error=res.error;
-  }else{
-    let newPayload={ school_id: currentSchoolId, student_id, term: currentTerm, scores: scoresObj };
-    if(remarks) newPayload.teacher_remarks=remarks;
-
-    const res=await db.from("academics").insert(newPayload);
-    error=res.error;
-  }
-
-  if(error){message("teacherMarkMessage", error.message, true);return;}
-  $("teacherMarkInput").value="";$("teacherRemarksInput").value="";
-  await refreshAll();
-  message("teacherMarkMessage","Subject mark saved successfully!");
-  alert("✅ Subject mark saved successfully!");
-}
-
-async function saveAcademics(){
-  const student_id=$("acadStudentSelect").value;
-  if(!student_id){message("acadMessage","Select a student.",true);return;}
-
-  let scoresObj = {};
-  customSubjects.forEach(s => {
-    const valInput = Number($("mark_"+s.id)?.value || 0);
-    scoresObj[s.id] = valInput;
-  });
-
-  const teacher_remarks=$("acadTeacherRemarks").value.trim();
-  const head_remarks=$("acadHeadRemarks").value.trim();
-
-  let existing=academics.find(a=>String(a.student_id)===String(student_id));
-  let payload={school_id:currentSchoolId, student_id, term:currentTerm, scores:scoresObj, teacher_remarks, head_remarks};
-  let error=null, savedData=null;
-
-  if(existing){
-    const res=await db.from("academics").update(payload).eq("id",existing.id).eq("school_id",currentSchoolId).select().single();
-    error=res.error; savedData=res.data;
-  }else{
-    const res=await db.from("academics").insert(payload).select().single();
-    error=res.error; savedData=res.data;
-  }
-
-  if(error){message("acadMessage",error.message,true);return;}
-  customSubjects.forEach(s => { if($("mark_"+s.id)) $("mark_"+s.id).value="0"; });
-  $("acadTeacherRemarks").value=""; $("acadHeadRemarks").value="";
-  await refreshAll();
-  message("acadMessage","Academic report saved successfully!");
-  alert("✅ Academic report saved successfully!");
-  if(confirm("Print official report card?"))printReportCard(savedData);
+               "
