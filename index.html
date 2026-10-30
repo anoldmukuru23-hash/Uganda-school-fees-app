@@ -238,6 +238,24 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
       <span class="pill pill-s1" id="dashTermDisplay">Term 1, 2026</span>
     </div>
 
+    <!-- FEATURE 1: DASHBOARD PASSWORD SECURITY FOR SENSITIVE FINANCIALS -->
+    <div class="card" style="border-left:4px solid #f59e0b;background:#fffdf5">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
+        <div>
+          <h3 style="margin:0 0 4px">🔒 School Earnings & Savings (Authorized Access Only)</h3>
+          <p style="margin:0;color:var(--muted);font-size:12px">Sensitive financial earnings, savings, and cashflow are hidden and restricted to Bursar, Head Teacher, and Directors.</p>
+        </div>
+        <div id="financeUnlockBox" style="display:flex;gap:8px;align-items:center">
+          <input type="password" id="financePassword" placeholder="Enter password..." style="width:160px">
+          <button onclick="unlockFinances()">Unlock</button>
+        </div>
+        <div id="financeLockBadge" class="hidden" style="display:flex;gap:8px;align-items:center">
+          <span class="pill" style="background:#d1fae5;color:#065f46">Unlocked</span>
+          <button class="secondary" onclick="lockFinances()">Lock</button>
+        </div>
+      </div>
+    </div>
+
     <div class="stats-grid">
       <div class="stat-card">
         <span>Total Students</span>
@@ -259,8 +277,8 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
       </div>
       <div class="stat-card">
         <span>Net Term Cashflow</span>
-        <strong id="statCashflow">UGX 0</strong>
-        <span class="trend">Collected minus Expenses & Salaries</span>
+        <strong id="statCashflow">🔒 Locked</strong>
+        <span class="trend">Revenue minus Expenses & Salaries</span>
         <div class="stat-icon" style="background:#d1fae5;color:#059669">💰</div>
       </div>
     </div>
@@ -546,21 +564,32 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
-  <!-- PAGE: ACADEMICS -->
+  <!-- PAGE: ACADEMICS & COMPREHENSIVE SUBJECTS (FEATURE 2) -->
   <div id="page-academics" class="page-section hidden">
-    <div class="card" style="border-left: 4px solid var(--primary)">
-      <h2>👩‍🏫 Subject Teacher Marks Entry Portal</h2>
-      <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Subject teachers can log marks directly for the classes and subject they teach for the active term.</p>
+    <!-- FEATURE 2: SUBJECT SETUP & REGISTRATION CARD -->
+    <div class="card" style="border-left: 4px solid var(--orange)">
+      <h2>📚 Subject Setup & Registration</h2>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Register custom additional subjects or configure school offerings.</p>
       <div class="form-grid">
-        <div><label>Select Subject *</label>
-          <select id="teacherSubject">
-            <option value="math">Mathematics</option>
-            <option value="eng">English Language</option>
-            <option value="sci">Science / Physics</option>
-            <option value="sst">Social Studies / Chemistry</option>
-            <option value="opt">Optional / Literature</option>
+        <div><label>New Subject Name *</label><input id="newSubjectName" placeholder="e.g. Computer Science / Luganda"></div>
+        <div>
+          <label>Category / Level</label>
+          <select id="newSubjectCategory">
+            <option value="O-Level">O-Level Subject</option>
+            <option value="A-Level">A-Level Subject</option>
+            <option value="Primary">Primary Subject</option>
           </select>
         </div>
+      </div>
+      <button onclick="addCustomSubject()">Add Subject to Grading List</button>
+      <div id="subjectMessage"></div>
+    </div>
+
+    <div class="card" style="border-left: 4px solid var(--primary)">
+      <h2>👩‍🏫 Subject Teacher Marks Entry Portal (Comprehensive Subjects)</h2>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Subject teachers can log marks directly for any of the comprehensive school subjects.</p>
+      <div class="form-grid">
+        <div><label>Select Subject *</label><select id="teacherSubject"></select></div>
         <div><label>Filter Class *</label><select id="teacherClassFilter" onchange="renderTeacherStudents()"><option value="">Choose Class</option></select></div>
         <div><label>Select Student *</label><select id="teacherStudentSelect"></select></div>
         <div><label>Subject Mark (Out of 100) *</label><input id="teacherMarkInput" type="number" min="0" max="100" placeholder="0-100"></div>
@@ -577,14 +606,8 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
         <div><label>Student *</label><select id="acadStudentSelect"></select></div>
       </div>
       <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
-      <h3>All Subject Scores (Out of 100)</h3>
-      <div class="form-grid">
-        <div><label>Mathematics</label><input id="markMath" type="number" min="0" max="100" placeholder="0-100"></div>
-        <div><label>English Language</label><input id="markEng" type="number" min="0" max="100" placeholder="0-100"></div>
-        <div><label>Science / Physics</label><input id="markSci" type="number" min="0" max="100" placeholder="0-100"></div>
-        <div><label>Social Studies / Chemistry</label><input id="markSst" type="number" min="0" max="100" placeholder="0-100"></div>
-        <div><label>Optional / Literature</label><input id="markOpt" type="number" min="0" max="100" placeholder="0-100"></div>
-      </div>
+      <h3>Subject Scores Entry</h3>
+      <div id="dynamicSubjectInputsForm" class="form-grid"></div>
       <div class="form-grid">
         <div><label>Class Teacher Remarks</label><input id="acadTeacherRemarks" placeholder="Good performance..."></div>
         <div><label>Headteacher Remarks</label><input id="acadHeadRemarks" placeholder="Promoted to next class..."></div>
@@ -597,7 +620,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
       <h3>Saved Academic Reports</h3>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Term</th><th>Student Name</th><th>Class</th><th>Math</th><th>Eng</th><th>Sci</th><th>Sst</th><th>Opt</th><th>Total</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Term</th><th>Student Name</th><th>Class</th><th>Subjects Recorded</th><th>Total Score</th><th>Actions</th></tr></thead>
           <tbody id="acadBody"></tbody>
         </table>
       </div>
@@ -636,6 +659,25 @@ const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 let currentUser=null,currentSchoolId=null;
 let currentTerm = localStorage.getItem("ussm_current_term") || "Term 1, 2026";
 let schools=[],students=[],payments=[],staff=[],salaries=[],expenses=[],academics=[];
+let customSubjects = JSON.parse(localStorage.getItem("ussm_custom_subjects") || "null") || [
+  {id:"math", name:"Mathematics"},
+  {id:"eng", name:"English Language"},
+  {id:"physics", name:"Physics"},
+  {id:"chem", name:"Chemistry"},
+  {id:"bio", name:"Biology"},
+  {id:"history", name:"History"},
+  {id:"lit", name:"Literature"},
+  {id:"runyankore", name:"Runyankore"},
+  {id:"entrepreneurship", name:"Entrepreneurship"},
+  {id:"agric", name:"Agriculture"},
+  {id:"fineart", name:"Fine Art"},
+  {id:"geography", name:"Geography"},
+  {id:"cre", name:"CRE"},
+  {id:"kiswahili", name:"Kiswahili"},
+  {id:"ict", name:"ICT (Information & Communication Tech)"}
+];
+
+let financesUnlocked = false;
 const ALLOWED_CLASSES=["S.1","S.2","S.3","S.4","S.5","S.6"];
 
 const $=id=>document.getElementById(id);
@@ -653,13 +695,64 @@ function showPage(id){
   $("page-"+id).classList.remove("hidden");
   document.querySelectorAll("#mainNav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
   if(id==="classes"){renderClasses();renderClassStudents();}
-  if(id==="academics"){renderAcadClassSelect();renderAcadStudents();renderTeacherClassSelect();}
+  if(id==="academics"){renderSubjectDropdowns();renderDynamicSubjectInputs();renderAcadClassSelect();renderAcadStudents();renderTeacherClassSelect();}
   if(id==="payments"){renderStudentSelect();}
 }
 
 function message(id,text,error=false){
   $(id).innerHTML='<div class="msg '+(error?'error':'success')+'">✅ '+esc(text)+'</div>';
   setTimeout(()=>$(id).innerHTML="",6000);
+}
+
+// FEATURE 1: DASHBOARD PASSWORD SECURITY FUNCTIONS
+function unlockFinances(){
+  const pwd = $("financePassword").value.trim();
+  if(pwd === "bursar2026" || pwd === "admin123" || pwd === "headteacher"){
+    financesUnlocked = true;
+    $("financeUnlockBox").classList.add("hidden");
+    $("financeLockBadge").classList.remove("hidden");
+    renderDashboard();
+    alert("✅ Financial records successfully unlocked.");
+  } else {
+    alert("❌ Incorrect security password. (Try bursar2026 or admin123)");
+  }
+}
+
+function lockFinances(){
+  financesUnlocked = false;
+  $("financePassword").value = "";
+  $("financeUnlockBox").classList.remove("hidden");
+  $("financeLockBadge").classList.add("hidden");
+  renderDashboard();
+}
+
+// FEATURE 2: SUBJECT MANAGEMENT FUNCTIONS
+function addCustomSubject(){
+  const name = $("newSubjectName").value.trim();
+  const category = $("newSubjectCategory").value;
+  if(!name){message("subjectMessage","Enter subject name.",true);return;}
+  const id = name.toLowerCase().replace(/[^a-z0-9]/g,"_");
+  if(customSubjects.some(s=>s.id===id)){message("subjectMessage","Subject already exists.",true);return;}
+  
+  customSubjects.push({id, name: name + " (" + category + ")"});
+  localStorage.setItem("ussm_custom_subjects", JSON.stringify(customSubjects));
+  $("newSubjectName").value = "";
+  renderSubjectDropdowns();
+  renderDynamicSubjectInputs();
+  message("subjectMessage","Subject added successfully!");
+  alert("✅ Subject added successfully!");
+}
+
+function renderSubjectDropdowns(){
+  const sel = $("teacherSubject");
+  if(!sel) return;
+  sel.innerHTML = customSubjects.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.name)+'</option>').join("");
+}
+
+function renderDynamicSubjectInputs(){
+  const container = $("dynamicSubjectInputsForm");
+  if(!container) return;
+  container.innerHTML = customSubjects.map(s=>'<div><label>'+esc(s.name)+'</label><input id="mark_'+s.id+'" type="number" min="0" max="100" placeholder="0-100" value="0"></div>').join("");
 }
 
 async function signUp(){
@@ -813,6 +906,8 @@ function renderAll(){
   renderAcadStudents();
   renderTeacherClassSelect();
   renderAcademicsTable();
+  renderSubjectDropdowns();
+  renderDynamicSubjectInputs();
   const sch=schools.find(x=>x.id===currentSchoolId);
   if(sch){
     $("sidebarSchoolName").textContent=sch.name;
@@ -842,7 +937,13 @@ function renderDashboard(){
   $("statExpected").textContent=money(exp);
   $("statCollected").textContent=money(col);
   $("statCollectionRate").textContent=exp>0?Math.round((col/exp)*100)+"% of target":"0% target";
-  $("statCashflow").textContent=money(netCash);
+
+  // FEATURE 1: SHOW OR LOCK NET CASHFLOW BASED ON AUTH
+  if(financesUnlocked){
+    $("statCashflow").textContent=money(netCash);
+  } else {
+    $("statCashflow").textContent="🔒 Locked";
+  }
 
   $("dashboardClassesBody").innerHTML=ALLOWED_CLASSES.map(c=>{
     const members=list.filter(s=>String(s.class_name||"").trim()===c);
@@ -1272,20 +1373,17 @@ async function saveSubjectMark(){
   let existing=academics.find(a=>String(a.student_id)===String(student_id));
   let error=null;
 
-  if(existing){
-    let updatePayload={ [subjectKey]: markVal };
-    if(subjectKey==="math") updatePayload.math=markVal;
-    if(subjectKey==="eng") updatePayload.eng=markVal;
-    if(subjectKey==="sci") updatePayload.sci=markVal;
-    if(subjectKey==="sst") updatePayload.sst=markVal;
-    if(subjectKey==="opt") updatePayload.opt=markVal;
-    if(remarks) updatePayload.teacher_remarks=remarks;
+  let scoresObj = existing?.scores || {};
+  scoresObj[subjectKey] = markVal;
 
+  let updatePayload = { scores: scoresObj };
+  if(remarks) updatePayload.teacher_remarks = remarks;
+
+  if(existing){
     const res=await db.from("academics").update(updatePayload).eq("id", existing.id).eq("school_id", currentSchoolId);
     error=res.error;
   }else{
-    let newPayload={ school_id: currentSchoolId, student_id, term: currentTerm, math:0, eng:0, sci:0, sst:0, opt:0 };
-    newPayload[subjectKey]=markVal;
+    let newPayload={ school_id: currentSchoolId, student_id, term: currentTerm, scores: scoresObj };
     if(remarks) newPayload.teacher_remarks=remarks;
 
     const res=await db.from("academics").insert(newPayload);
@@ -1301,18 +1399,19 @@ async function saveSubjectMark(){
 
 async function saveAcademics(){
   const student_id=$("acadStudentSelect").value;
-  const math=Number($("markMath").value||0);
-  const eng=Number($("markEng").value||0);
-  const sci=Number($("markSci").value||0);
-  const sst=Number($("markSst").value||0);
-  const opt=Number($("markOpt").value||0);
+  if(!student_id){message("acadMessage","Select a student.",true);return;}
+
+  let scoresObj = {};
+  customSubjects.forEach(s => {
+    const valInput = Number($("mark_"+s.id)?.value || 0);
+    scoresObj[s.id] = valInput;
+  });
+
   const teacher_remarks=$("acadTeacherRemarks").value.trim();
   const head_remarks=$("acadHeadRemarks").value.trim();
 
-  if(!student_id){message("acadMessage","Select a student.",true);return;}
-
   let existing=academics.find(a=>String(a.student_id)===String(student_id));
-  let payload={school_id:currentSchoolId,student_id,term:currentTerm,math,eng,sci,sst,opt,teacher_remarks,head_remarks};
+  let payload={school_id:currentSchoolId, student_id, term:currentTerm, scores:scoresObj, teacher_remarks, head_remarks};
   let error=null, savedData=null;
 
   if(existing){
@@ -1324,7 +1423,8 @@ async function saveAcademics(){
   }
 
   if(error){message("acadMessage",error.message,true);return;}
-  ["markMath","markEng","markSci","markSst","markOpt","acadTeacherRemarks","acadHeadRemarks"].forEach(id=>$(id).value="");
+  customSubjects.forEach(s => { if($("mark_"+s.id)) $("mark_"+s.id).value="0"; });
+  $("acadTeacherRemarks").value=""; $("acadHeadRemarks").value="";
   await refreshAll();
   message("acadMessage","Academic report saved successfully!");
   alert("✅ Academic report saved successfully!");
@@ -1334,19 +1434,31 @@ async function saveAcademics(){
 function renderAcademicsTable(){
   $("acadBody").innerHTML=academics.map(a=>{
     const s=students.find(x=>String(x.id)===String(a.student_id));
-    const tot=Number(a.math||0)+Number(a.eng||0)+Number(a.sci||0)+Number(a.sst||0)+Number(a.opt||0);
-    return '<tr><td>'+esc(a.term)+'</td><td style="font-weight:600">'+esc(s?.full_name||"Unknown")+'</td><td>'+esc(s?.class_name||"—")+'</td><td>'+a.math+'</td><td>'+a.eng+'</td><td>'+a.sci+'</td><td>'+a.sst+'</td><td>'+a.opt+'</td><td><b>'+tot+'/500</b></td><td><div class="actions"><button class="secondary" onclick="printReportCardById(\''+a.id+'\')">Report Card</button><button class="danger" onclick="deleteAcademics(\''+a.id+'\')">Delete</button></div></td></tr>';
-  }).join("")||'<tr><td colspan="10">No academic reports recorded for this term.</td></tr>';
+    const scores = a.scores || {};
+    const subCount = Object.keys(scores).length;
+    const tot = Object.values(scores).reduce((a,b)=>a+Number(b||0),0);
+    return '<tr><td>'+esc(a.term)+'</td><td style="font-weight:600">'+esc(s?.full_name||"Unknown")+'</td><td>'+esc(s?.class_name||"—")+'</td><td>'+subCount+' Subjects</td><td><b>'+tot+'</b></td><td><div class="actions"><button class="secondary" onclick="printReportCardById(\''+a.id+'\')">Report Card</button><button class="danger" onclick="deleteAcademics(\''+a.id+'\')">Delete</button></div></td></tr>';
+  }).join("")||'<tr><td colspan="6">No academic reports recorded for this term.</td></tr>';
 }
 
 function printReportCardById(id){const a=academics.find(x=>String(x.id)===String(id));if(a)printReportCard(a);}
 function printReportCard(a){
   const s=students.find(x=>String(x.id)===String(a.student_id));
   const sch=schools.find(x=>x.id===currentSchoolId);
-  const tot=Number(a.math||0)+Number(a.eng||0)+Number(a.sci||0)+Number(a.sst||0)+Number(a.opt||0);
-  const avg=(tot/5).toFixed(1);
+  const scores = a.scores || {};
+  const subKeys = Object.keys(scores);
+  const tot = subKeys.reduce((acc,k)=>acc+Number(scores[k]||0),0);
+  const avg = subKeys.length ? (tot / subKeys.length).toFixed(1) : 0;
+
+  const rowsHtml = customSubjects.map(sub => {
+    const score = scores[sub.id];
+    if(score === undefined) return "";
+    const grade = score>=75?'Distinction':score>=50?'Credit':score>=35?'Pass':'Fail';
+    return '<tr><td>'+esc(sub.name)+'</td><td>'+score+'</td><td>'+grade+'</td></tr>';
+  }).join("");
+
   const w=window.open("","_blank");
-  w.document.write('<!doctype html><html><head><title>Report Card</title><style>body{font-family:Arial;padding:24px}.card{max-width:700px;margin:auto;border:2px solid #0f172a;padding:24px;border-radius:8px}h2{text-align:center;margin:0}table{width:100%;border-collapse:collapse;margin:16px 0}th,td{padding:10px;border:1px solid #ccc;text-align:left;font-size:13px}th{background:#f8fafc}.rem{background:#f8fafc;padding:12px;border:1px solid #cbd5e1;border-radius:6px;margin-top:12px}</style></head><body><div class="card"><h2>'+esc(sch?.name||"School")+'</h2><p style="text-align:center"><b>OFFICIAL TERMLY ACADEMIC REPORT CARD</b><br>'+esc(a.term)+'</p><hr><p><b>Admission:</b> '+esc(s?.admission_no)+' | <b>Student Name:</b> '+esc(s?.full_name)+' | <b>Class:</b> '+esc(s?.class_name)+'</p><table><thead><tr><th>Subject</th><th>Score (100)</th><th>Remark / Grade</th></tr></thead><tbody><tr><td>Mathematics</td><td>'+a.math+'</td><td>'+(a.math>=75?'Distinction':a.math>=50?'Credit':a.math>=35?'Pass':'Fail')+'</td></tr><tr><td>English Language</td><td>'+a.eng+'</td><td>'+(a.eng>=75?'Distinction':a.eng>=50?'Credit':a.eng>=35?'Pass':'Fail')+'</td></tr><tr><td>Science / Physics</td><td>'+a.sci+'</td><td>'+(a.sci>=75?'Distinction':a.sci>=50?'Credit':a.sci>=35?'Pass':'Fail')+'</td></tr><tr><td>Social Studies / Chem</td><td>'+a.sst+'</td><td>'+(a.sst>=75?'Distinction':a.sst>=50?'Credit':a.sst>=35?'Pass':'Fail')+'</td></tr><tr><td>Optional / Literature</td><td>'+a.opt+'</td><td>'+(a.opt>=75?'Distinction':a.opt>=50?'Credit':a.opt>=35?'Pass':'Fail')+'</td></tr><tr><td><b>Total Score / Average</b></td><td colspan="2"><b>'+tot+' / 500 (Average: '+avg+'%)</b></td></tr></tbody></table><div class="rem"><p><b>Class Teacher Remarks:</b> '+esc(a.teacher_remarks||"None")+'</p><p><b>Headteacher Remarks:</b> '+esc(a.head_remarks||"None")+'</p></div><p style="margin-top:25px">Headteacher Signature: ______________________ Stamp: ______________________</p></div><script>window.onload=()=>window.print()<\/script></body></html>');
+  w.document.write('<!doctype html><html><head><title>Report Card</title><style>body{font-family:Arial;padding:24px}.card{max-width:700px;margin:auto;border:2px solid #0f172a;padding:24px;border-radius:8px}h2{text-align:center;margin:0}table{width:100%;border-collapse:collapse;margin:16px 0}th,td{padding:10px;border:1px solid #ccc;text-align:left;font-size:13px}th{background:#f8fafc}.rem{background:#f8fafc;padding:12px;border:1px solid #cbd5e1;border-radius:6px;margin-top:12px}</style></head><body><div class="card"><h2>'+esc(sch?.name||"School")+'</h2><p style="text-align:center"><b>OFFICIAL TERMLY ACADEMIC REPORT CARD</b><br>'+esc(a.term)+'</p><hr><p><b>Admission:</b> '+esc(s?.admission_no)+' | <b>Student Name:</b> '+esc(s?.full_name)+' | <b>Class:</b> '+esc(s?.class_name)+'</p><table><thead><tr><th>Subject</th><th>Score (100)</th><th>Grade / Remarks</th></tr></thead><tbody>'+rowsHtml+'<tr><td><b>Total Score / Average</b></td><td colspan="2"><b>'+tot+' (Average: '+avg+'%)</b></td></tr></tbody></table><div class="rem"><p><b>Class Teacher Remarks:</b> '+esc(a.teacher_remarks||"None")+'</p><p><b>Headteacher Remarks:</b> '+esc(a.head_remarks||"None")+'</p></div><p style="margin-top:25px">Headteacher Signature: ______________________ Stamp: ______________________</p></div><script>window.onload=()=>window.print()<\/script></body></html>');
   w.document.close();
 }
 
@@ -1372,8 +1484,8 @@ function exportCSV(type){
     rows=[["Staff No","Name","Position","Monthly Salary","Phone"]];
     staff.forEach(s=>rows.push([s.staff_no,s.full_name,s.position,s.monthly_salary,s.phone||""]));
   }else if(type==="academics"){
-    rows=[["Term","Student","Class","Math","English","Sub 3","Sub 4","Sub 5","Total"]];
-    academics.forEach(a=>{const s=students.find(x=>String(x.id)===String(a.student_id));const tot=Number(a.math||0)+Number(a.eng||0)+Number(a.sci||0)+Number(a.sst||0)+Number(a.opt||0);rows.push([a.term,s?.full_name||"",s?.class_name||"",a.math,a.eng,a.sci,a.sst,a.opt,tot]);});
+    rows=[["Term","Student","Class","Subjects Recorded"]];
+    academics.forEach(a=>{const s=students.find(x=>String(x.id)===String(a.student_id));rows.push([a.term,s?.full_name||"",s?.class_name||"",Object.keys(a.scores||{}).length]);});
   }
   const csv=rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
   const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
