@@ -8,25 +8,6 @@
 <title>Uganda School Manager | School Fees and Administration System</title>
 
 <meta name="description" content="Uganda School Manager helps secondary schools in Uganda manage student records, school fees, payments, staff, payroll, academic marks, reports and school expenses in one system.">
-
-<meta name="keywords" content="Uganda School Manager, school management system Uganda, school fees management Uganda, secondary school software Uganda, student records management, school administration software, school payment tracking">
-
-<meta name="author" content="Uganda School Manager">
-<meta name="robots" content="index, follow">
-<meta name="application-name" content="Uganda School Manager">
-
-<link rel="canonical" href="https://anoldmukuru23-hash.github.io/Uganda-school-fees-app/">
-
-<meta property="og:type" content="website">
-<meta property="og:title" content="Uganda School Manager">
-<meta property="og:description" content="Manage students, school fees, payments, staff, payroll, expenses and academic reports with Uganda School Manager.">
-<meta property="og:url" content="https://anoldmukuru23-hash.github.io/Uganda-school-fees-app/">
-<meta property="og:site_name" content="Uganda School Manager">
-
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Uganda School Manager">
-<meta name="twitter:description" content="A school administration and fees management system for secondary schools in Uganda.">
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
@@ -158,10 +139,10 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
 </div>
 <div class="menu" id="mainNav">
   <button data-page="dashboard" class="active" onclick="showPage('dashboard')">📊 <span>Dashboard</span></button>
-  <button data-page="students" onclick="showPage('students')">🎓 <span>Students</span></button>
+  <button data-page="students" onclick="showPage('students')">🎓 <span>Students & Biodata</span></button>
   <button data-page="classes" onclick="showPage('classes')">🏫 <span>Classes (S.1-S.6)</span></button>
   <button data-page="archived" onclick="showPage('archived')">📁 <span>Archived</span></button>
-  <button data-page="payments" onclick="showPage('payments')">💵 <span>Fees & Payments</span></button>
+  <button data-page="payments" onclick="showPage('payments')">💵 <span>Fees & Communications</span></button>
   <button data-page="expenses" onclick="showPage('expenses')">📉 <span>Expenses</span></button>
   <button data-page="staff" onclick="showPage('staff')">👩‍🏫 <span>Staff / Teachers</span></button>
   <button data-page="payroll" onclick="showPage('payroll')">💰 <span>Payroll</span></button>
@@ -238,12 +219,12 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
       <span class="pill pill-s1" id="dashTermDisplay">Term 1, 2026</span>
     </div>
 
-    <!-- FEATURE 1: DASHBOARD PASSWORD SECURITY FOR SENSITIVE FINANCIALS -->
+    <!-- LOCKED FINANCIALS PASSWORD PANEL -->
     <div class="card" style="border-left:4px solid #f59e0b;background:#fffdf5">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
         <div>
-          <h3 style="margin:0 0 4px">🔒 School Earnings & Savings (Authorized Access Only)</h3>
-          <p style="margin:0;color:var(--muted);font-size:12px">Sensitive financial earnings, savings, and cashflow are hidden and restricted to Bursar, Head Teacher, and Directors.</p>
+          <h3 style="margin:0 0 4px">🔒 Financials & Expected Fees (Authorized Access Only)</h3>
+          <p style="margin:0;color:var(--muted);font-size:12px">Expected fees, collected amounts, and cashflow are secured and restricted to Bursar, Head Teacher, and Directors.</p>
         </div>
         <div id="financeUnlockBox" style="display:flex;gap:8px;align-items:center">
           <input type="password" id="financePassword" placeholder="Enter password..." style="width:160px">
@@ -265,14 +246,14 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
       </div>
       <div class="stat-card">
         <span>Expected School Fees</span>
-        <strong id="statExpected">UGX 0</strong>
+        <strong id="statExpected">🔒 Locked</strong>
         <span class="trend">Total target for term</span>
         <div class="stat-icon" style="background:#ede9fe;color:#7c3aed">📋</div>
       </div>
       <div class="stat-card">
         <span>Fees Collected</span>
-        <strong id="statCollected">UGX 0</strong>
-        <span class="trend" id="statCollectionRate">0% of target</span>
+        <strong id="statCollected">🔒 Locked</strong>
+        <span class="trend" id="statCollectionRate">Secured</span>
         <div class="stat-icon" style="background:#fef3c7;color:#d97706">💵</div>
       </div>
       <div class="stat-card">
@@ -306,16 +287,25 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
-  <!-- PAGE: STUDENTS -->
+  <!-- PAGE: STUDENTS & BIODATA (FEATURE 3) -->
   <div id="page-students" class="page-section hidden">
     <div class="card">
-      <h2 id="studentFormTitle">Student Registration</h2>
+      <h2 id="studentFormTitle">Student Registration & Extended Biodata</h2>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Register complete student profile with level separation, date of birth, gender, boarding status, and A-Level subject combinations.</p>
       <input type="hidden" id="editStudentId">
       <div class="form-grid">
         <div><label>Admission Number *</label><input id="admission" placeholder="e.g. S.1/001"></div>
         <div><label>Student Full Name *</label><input id="studentName" placeholder="Full name"></div>
         <div>
-          <label>Class Level *</label>
+          <label>Education Level *</label>
+          <select id="studentLevel" onchange="toggleLevelFields()">
+            <option value="O-Level">O-Level (S.1 - S.4)</option>
+            <option value="A-Level">A-Level (S.5 - S.6)</option>
+            <option value="Primary">Primary Section</option>
+          </select>
+        </div>
+        <div>
+          <label>Class *</label>
           <select id="studentClass">
             <option value="S.1">Senior 1 (S.1)</option>
             <option value="S.2">Senior 2 (S.2)</option>
@@ -325,8 +315,25 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
             <option value="S.6">Senior 6 (S.6)</option>
           </select>
         </div>
+        <div><label>Date of Birth</label><input id="studentDob" type="date"></div>
+        <div>
+          <label>Gender</label>
+          <select id="studentGender">
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+          </select>
+        </div>
+        <div>
+          <label>Residence Status</label>
+          <select id="studentResidence">
+            <option value="Day">Day Scholar</option>
+            <option value="Boarding">Boarding Student</option>
+          </select>
+        </div>
+        <div id="alevelCombGroup" class="hidden"><label>A-Level Subject Combination</label><input id="studentCombination" placeholder="e.g. HEG/ICT, PCM, BCM"></div>
         <div><label>Expected Term Fees (UGX) *</label><input id="expectedFees" type="number" min="0" placeholder="e.g. 450000" value="0"></div>
         <div><label>Parent WhatsApp Number</label><input id="parentWhatsApp" placeholder="e.g. 256770000000"></div>
+        <div><label>Parent Email Address</label><input id="parentEmail" type="email" placeholder="parent@gmail.com"></div>
       </div>
       <div class="actions">
         <button onclick="saveStudent()">Save Student Record</button>
@@ -342,7 +349,7 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
       </div>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Admission</th><th>Student Name</th><th>Class</th><th>Expected Fees</th><th>Paid</th><th>Balance</th><th>Actions</th></tr></thead>
+          <thead><tr><th>Admission</th><th>Student Name</th><th>Level & Class</th><th>Gender / DOB</th><th>Residence</th><th>Expected Fees</th><th>Paid</th><th>Actions</th></tr></thead>
           <tbody id="studentsBody"></tbody>
         </table>
       </div>
@@ -401,16 +408,31 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
-  <!-- PAGE: PAYMENTS & BULK WHATSAPP BROADCAST -->
+  <!-- PAGE: PAYMENTS & AUTOMATED COMMUNICATIONS (FEATURE 4) -->
   <div id="page-payments" class="page-section hidden">
     <div class="card" style="border-left: 4px solid var(--green)">
-      <h2>📢 Bulk WhatsApp Broadcast Center (Parent Meetings & Circulars)</h2>
-      <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Send a WhatsApp notification message to all parents simultaneously (e.g., for general meetings, visitation days, or fee deadlines).</p>
+      <h2>📢 Automated Parent Communications & Broadcast Center (WhatsApp & Email)</h2>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Send automated or direct messages and emails to a single parent, whole class, or the entire school.</p>
+      
       <div class="form-grid">
         <div>
-          <label>Target Class Group</label>
-          <select id="bulkBroadcastClass">
-            <option value="">All Classes (Entire School S.1 - S.6)</option>
+          <label>Communication Channel</label>
+          <select id="commChannel">
+            <option value="whatsapp">WhatsApp Message</option>
+            <option value="email">Email Notification</option>
+          </select>
+        </div>
+        <div>
+          <label>Target Scope</label>
+          <select id="commScope" onchange="toggleCommTarget()">
+            <option value="school">Whole School (All Parents)</option>
+            <option value="class">Specific Class Group</option>
+            <option value="single">Single Student Parent</option>
+          </select>
+        </div>
+        <div id="commClassGroupWrapper" class="hidden">
+          <label>Select Class</label>
+          <select id="commTargetClass">
             <option value="S.1">Senior 1 (S.1)</option>
             <option value="S.2">Senior 2 (S.2)</option>
             <option value="S.3">Senior 3 (S.3)</option>
@@ -419,13 +441,21 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
             <option value="S.6">Senior 6 (S.6)</option>
           </select>
         </div>
+        <div id="commStudentGroupWrapper" class="hidden">
+          <label>Select Student</label>
+          <select id="commTargetStudent"></select>
+        </div>
       </div>
       <div>
-        <label>Broadcast Message *</label>
-        <textarea id="bulkBroadcastMessage" rows="3" placeholder="Dear Parents, you are cordially invited to our termly general meeting this Friday starting at 10:00 AM..."></textarea>
+        <label>Message Subject / Heading</label>
+        <input id="commSubject" placeholder="e.g. Urgent Notice: Termly General Meeting & Fees Deadline">
       </div>
-      <button style="margin-top:12px;background:#25d366" onclick="sendBulkWhatsAppBroadcast()">🚀 Launch Bulk WhatsApp Broadcast</button>
-      <div id="bulkBroadcastMessageStatus"></div>
+      <div style="margin-top:10px">
+        <label>Message Body Content *</label>
+        <textarea id="commMessageBody" rows="4" placeholder="Dear Parent/Guardian, you are kindly reminded about..."></textarea>
+      </div>
+      <button style="margin-top:12px;background:var(--primary)" onclick="dispatchParentCommunication()">🚀 Send Automated Communication</button>
+      <div id="commMessageStatus"></div>
     </div>
 
     <div class="card">
@@ -564,9 +594,8 @@ label{font-size:12px;font-weight:600;color:#475569;display:block;margin-bottom:4
     </div>
   </div>
 
-  <!-- PAGE: ACADEMICS & COMPREHENSIVE SUBJECTS (FEATURE 2) -->
+  <!-- PAGE: ACADEMICS -->
   <div id="page-academics" class="page-section hidden">
-    <!-- FEATURE 2: SUBJECT SETUP & REGISTRATION CARD -->
     <div class="card" style="border-left: 4px solid var(--orange)">
       <h2>📚 Subject Setup & Registration</h2>
       <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Register custom additional subjects or configure school offerings.</p>
@@ -696,7 +725,7 @@ function showPage(id){
   document.querySelectorAll("#mainNav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
   if(id==="classes"){renderClasses();renderClassStudents();}
   if(id==="academics"){renderSubjectDropdowns();renderDynamicSubjectInputs();renderAcadClassSelect();renderAcadStudents();renderTeacherClassSelect();}
-  if(id==="payments"){renderStudentSelect();}
+  if(id==="payments"){renderStudentSelect();renderCommStudentSelect();}
 }
 
 function message(id,text,error=false){
@@ -704,7 +733,7 @@ function message(id,text,error=false){
   setTimeout(()=>$(id).innerHTML="",6000);
 }
 
-// FEATURE 1: DASHBOARD PASSWORD SECURITY FUNCTIONS
+// DASHBOARD PASSWORD SECURITY FUNCTIONS
 function unlockFinances(){
   const pwd = $("financePassword").value.trim();
   if(pwd === "bursar2026" || pwd === "admin123" || pwd === "headteacher"){
@@ -726,7 +755,102 @@ function lockFinances(){
   renderDashboard();
 }
 
-// FEATURE 2: SUBJECT MANAGEMENT FUNCTIONS
+// FEATURE 3: LEVEL & BIODATA TOGGLES
+function toggleLevelFields(){
+  const lvl = $("studentLevel").value;
+  const combGroup = $("alevelCombGroup");
+  if(lvl === "A-Level"){
+    combGroup.classList.remove("hidden");
+  } else {
+    combGroup.classList.add("hidden");
+    $("studentCombination").value = "";
+  }
+}
+
+// FEATURE 4: AUTOMATED COMMUNICATIONS & BROADCASTS
+function toggleCommTarget(){
+  const scope = $("commScope").value;
+  const classWrap = $("commClassGroupWrapper");
+  const studentWrap = $("commStudentGroupWrapper");
+  classWrap.classList.add("hidden");
+  studentWrap.classList.add("hidden");
+
+  if(scope === "class"){
+    classWrap.classList.remove("hidden");
+  } else if(scope === "single"){
+    studentWrap.classList.remove("hidden");
+    renderCommStudentSelect();
+  }
+}
+
+function renderCommStudentSelect(){
+  const sel = $("commTargetStudent");
+  if(!sel) return;
+  const list = activeStudents();
+  sel.innerHTML = list.map(s=>'<option value="'+esc(s.id)+'">'+esc(s.admission_no)+" - "+esc(s.full_name)+" ("+esc(s.class_name)+")</option>").join("") || '<option value="">No students found</option>';
+}
+
+function dispatchParentCommunication(){
+  const channel = $("commChannel").value;
+  const scope = $("commScope").value;
+  const targetClass = $("commTargetClass").value;
+  const targetStudentId = $("commTargetStudent").value;
+  const subject = $("commSubject").value.trim();
+  const body = $("commMessageBody").value.trim();
+
+  if(!body){alert("Please enter message body content.");return;}
+
+  const sch = schools.find(x=>x.id===currentSchoolId);
+  const schoolName = sch?.name || "School";
+
+  let recipients = [];
+  if(scope === "school"){
+    recipients = activeStudents();
+  } else if(scope === "class"){
+    recipients = activeStudents().filter(s => String(s.class_name||"").trim() === targetClass);
+  } else if(scope === "single"){
+    const st = students.find(x=>String(x.id)===String(targetStudentId));
+    if(st) recipients = [st];
+  }
+
+  if(!recipients.length){
+    alert("No students/parents found for the selected recipient filter.");
+    return;
+  }
+
+  let countTriggered = 0;
+  if(channel === "whatsapp"){
+    const validRecipients = recipients.filter(s => s.parent_whatsapp && String(s.parent_whatsapp).replace(/\D/g,"").length >= 9);
+    if(!validRecipients.length){alert("None of the selected recipients have a valid WhatsApp phone number.");return;}
+    if(!confirm("Ready to open WhatsApp tabs for " + validRecipients.length + " parents?")) return;
+
+    validRecipients.forEach((s, idx) => {
+      const phone = String(s.parent_whatsapp).replace(/\D/g,"");
+      const text = "*" + (subject || "SCHOOL CIRCULAR") + "*\n" +
+                   "School: " + schoolName + "\n" +
+                   "Student: " + s.full_name + " (" + s.class_name + ")\n\n" +
+                   body + "\n\nRegards, " + schoolName;
+      setTimeout(() => {
+        window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(text), "_blank");
+      }, idx * 500);
+      countTriggered++;
+    });
+  } else {
+    // Email channel
+    const validRecipients = recipients.filter(s => s.parent_email && s.parent_email.includes("@"));
+    if(!validRecipients.length){alert("None of the selected recipients have a valid parent email address recorded.");return;}
+    
+    // Trigger bulk mailto or window open for email
+    const emails = validRecipients.map(s => s.parent_email).join(",");
+    const mailtoLink = "mailto:" + emails + "?subject=" + encodeURIComponent(subject || "School Circular - " + schoolName) + "&body=" + encodeURIComponent(body);
+    window.location.href = mailtoLink;
+    countTriggered = validRecipients.length;
+  }
+
+  message("commMessageStatus", "Successfully dispatched communication to " + countTriggered + " parents!");
+  alert("✅ Communication dispatched successfully!");
+}
+
 function addCustomSubject(){
   const name = $("newSubjectName").value.trim();
   const category = $("newSubjectCategory").value;
@@ -908,6 +1032,7 @@ function renderAll(){
   renderAcademicsTable();
   renderSubjectDropdowns();
   renderDynamicSubjectInputs();
+  renderCommStudentSelect();
   const sch=schools.find(x=>x.id===currentSchoolId);
   if(sch){
     $("sidebarSchoolName").textContent=sch.name;
@@ -934,14 +1059,17 @@ function renderDashboard(){
   const netCash=col - (totalExp + totalSal);
 
   $("statStudents").textContent=list.length;
-  $("statExpected").textContent=money(exp);
-  $("statCollected").textContent=money(col);
-  $("statCollectionRate").textContent=exp>0?Math.round((col/exp)*100)+"% of target":"0% target";
 
-  // FEATURE 1: SHOW OR LOCK NET CASHFLOW BASED ON AUTH
+  // EXPECTED AND COLLECTED FEES LOCKED UNLESS UNLOCKED
   if(financesUnlocked){
+    $("statExpected").textContent=money(exp);
+    $("statCollected").textContent=money(col);
+    $("statCollectionRate").textContent=exp>0?Math.round((col/exp)*100)+"% of target":"0% target";
     $("statCashflow").textContent=money(netCash);
   } else {
+    $("statExpected").textContent="🔒 Locked";
+    $("statCollected").textContent="🔒 Locked";
+    $("statCollectionRate").textContent="Secured";
     $("statCashflow").textContent="🔒 Locked";
   }
 
@@ -949,14 +1077,14 @@ function renderDashboard(){
     const members=list.filter(s=>String(s.class_name||"").trim()===c);
     const ex=members.reduce((a,s)=>a+expected(s),0);
     const cl=members.reduce((a,s)=>a+paid(s.id),0);
-    return '<tr><td><span class="pill pill-'+c.toLowerCase().replace(".","")+'">'+c+'</span></td><td>'+members.length+' Students</td><td>'+money(ex)+'</td><td>'+money(cl)+'</td><td><span class="pill" style="background:#d1fae5;color:#065f46">Active</span></td></tr>';
+    return '<tr><td><span class="pill pill-'+c.toLowerCase().replace(".","")+'">'+c+'</span></td><td>'+members.length+' Students</td><td>'+(financesUnlocked?money(ex):'🔒 Locked')+'</td><td>'+(financesUnlocked?money(cl):'🔒 Locked')+'</td><td><span class="pill" style="background:#d1fae5;color:#065f46">Active</span></td></tr>';
   }).join("");
 }
 
 function renderStudents(){
   const q=($("studentSearch")?.value||"").toLowerCase();
   const list=activeStudents().filter(s=>[s.admission_no,s.full_name,s.class_name].some(v=>String(v||"").toLowerCase().includes(q)));
-  $("studentsBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td style="font-weight:600">'+esc(s.full_name)+'</td><td><span class="pill pill-'+String(s.class_name||"s1").toLowerCase().replace(".","")+'">'+esc(s.class_name)+'</span></td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td><td><div class="actions"><button class="secondary" onclick="editStudent(\''+s.id+'\')">Edit</button><button class="secondary" onclick="archiveStudent(\''+s.id+'\')">Archive</button><button class="danger" onclick="deleteStudent(\''+s.id+'\')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="7">No students registered yet.</td></tr>';
+  $("studentsBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td style="font-weight:600">'+esc(s.full_name)+'</td><td>'+esc(s.education_level||"O-Level")+' / <span class="pill pill-'+String(s.class_name||"s1").toLowerCase().replace(".","")+'">'+esc(s.class_name)+'</span></td><td>'+esc(s.gender||"—")+' / '+esc(s.dob||"—")+'</td><td>'+esc(s.residence||"Day")+'</td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td><div class="actions"><button class="secondary" onclick="editStudent(\''+s.id+'\')">Edit</button><button class="secondary" onclick="archiveStudent(\''+s.id+'\')">Archive</button><button class="danger" onclick="deleteStudent(\''+s.id+'\')">Delete</button></div></td></tr>').join("")||'<tr><td colspan="8">No students registered yet.</td></tr>';
 }
 
 function editStudent(id){
@@ -965,9 +1093,16 @@ function editStudent(id){
   $("editStudentId").value=s.id;
   $("admission").value=s.admission_no||"";
   $("studentName").value=s.full_name||"";
+  $("studentLevel").value=s.education_level||"O-Level";
+  toggleLevelFields();
   $("studentClass").value=s.class_name||"S.1";
+  $("studentDob").value=s.dob||"";
+  $("studentGender").value=s.gender||"Female";
+  $("studentResidence").value=s.residence||"Day";
+  $("studentCombination").value=s.subject_combination||"";
   $("expectedFees").value=expected(s);
   $("parentWhatsApp").value=s.parent_whatsapp||"";
+  $("parentEmail").value=s.parent_email||"";
   $("studentFormTitle").textContent="Edit Student: "+s.full_name;
   $("cancelStudentEdit").classList.remove("hidden");
   window.scrollTo({top:0,behavior:"smooth"});
@@ -977,10 +1112,17 @@ function resetStudentForm(){
   $("editStudentId").value="";
   $("admission").value="";
   $("studentName").value="";
+  $("studentLevel").value="O-Level";
+  toggleLevelFields();
   $("studentClass").value="S.1";
+  $("studentDob").value="";
+  $("studentGender").value="Female";
+  $("studentResidence").value="Day";
+  $("studentCombination").value="";
   $("expectedFees").value="0";
   $("parentWhatsApp").value="";
-  $("studentFormTitle").textContent="Student Registration";
+  $("parentEmail").value="";
+  $("studentFormTitle").textContent="Student Registration & Extended Biodata";
   $("cancelStudentEdit").classList.add("hidden");
   $("studentMessage").innerHTML="";
 }
@@ -989,13 +1131,33 @@ async function saveStudent(){
   const editId=$("editStudentId").value;
   const admission_no=$("admission").value.trim();
   const full_name=$("studentName").value.trim();
+  const education_level=$("studentLevel").value;
   const class_name=$("studentClass").value;
+  const dob=$("studentDob").value;
+  const gender=$("studentGender").value;
+  const residence=$("studentResidence").value;
+  const subject_combination=$("studentCombination").value.trim();
   const fees=Number($("expectedFees").value||0);
   const parent_whatsapp=$("parentWhatsApp").value.trim();
+  const parent_email=$("parentEmail").value.trim();
 
   if(!admission_no||!full_name){message("studentMessage","Enter admission number and full name.",true);return;}
 
-  const payload={school_id:currentSchoolId,admission_no,full_name,class_name,fees_expected:fees,parent_whatsapp:parent_whatsapp||null};
+  const payload={
+    school_id:currentSchoolId,
+    admission_no,
+    full_name,
+    education_level,
+    class_name,
+    dob:dob||null,
+    gender,
+    residence,
+    subject_combination:subject_combination||null,
+    fees_expected:fees,
+    parent_whatsapp:parent_whatsapp||null,
+    parent_email:parent_email||null
+  };
+
   let error=null;
   if(editId){
     const res=await db.from("students").update(payload).eq("id",editId).eq("school_id",currentSchoolId);
@@ -1087,7 +1249,7 @@ function renderClassStudents(){
   const sel=$("classFilter")?.value||"";
   const q=($("classStudentSearch")?.value||"").toLowerCase();
   const list=activeStudents().filter(s=>(!sel||String(s.class_name||"").trim()===sel)&&[s.admission_no,s.full_name].some(v=>String(v||"").toLowerCase().includes(q)));
-  $("classStudentsBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td style="font-weight:600">'+esc(s.full_name)+'</td><td><span class="pill pill-'+String(s.class_name||"s1").toLowerCase().replace(".","")+'">'+esc(s.class_name)+'</span></td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td></tr>').join("")||'<tr><td colspan="6">No students found.</td></tr>';
+  $("classStudentsBody").innerHTML=list.map(s=>'<tr><td>'+esc(s.admission_no)+'</td><td style="font-weight:600">'+esc(s.full_name)+'</td><td>'+esc(s.class_name)+'</td><td>'+money(expected(s))+'</td><td>'+money(paid(s.id))+'</td><td>'+money(balance(s))+'</td></tr>').join("")||'<tr><td colspan="6">No students found.</td></tr>';
 }
 
 function renderPaymentClass(){
@@ -1164,42 +1326,6 @@ function whatsappById(id){
   const p = payments.find(x=>String(x.id)===String(id));
   const s = p && students.find(x=>String(x.id)===String(p.student_id));
   if(p && s) sendWhatsAppPayment(s, p);
-}
-
-function sendBulkWhatsAppBroadcast(){
-  const targetClass = $("bulkBroadcastClass").value;
-  const customMsg = $("bulkBroadcastMessage").value.trim();
-  if(!customMsg){alert("Please enter a broadcast message to send.");return;}
-
-  const sch = schools.find(x=>x.id===currentSchoolId);
-  const schoolName = sch?.name || "School";
-
-  const recipients = activeStudents().filter(s => {
-    const matchesClass = !targetClass || String(s.class_name || "").trim() === targetClass;
-    const hasPhone = Boolean(s.parent_whatsapp && String(s.parent_whatsapp).replace(/\D/g,"").length >= 9);
-    return matchesClass && hasPhone;
-  });
-
-  if(!recipients.length){
-    alert("No active parents with valid WhatsApp numbers found for the selected filter.");
-    return;
-  }
-
-  if(!confirm("Ready to send bulk WhatsApp messages to " + recipients.length + " parents? Tabs will open sequentially.")) return;
-
-  recipients.forEach((s, index) => {
-    const phone = String(s.parent_whatsapp).replace(/\D/g,"");
-    const fullText = "📢 CIRCULAR FROM *" + schoolName + "*\n" +
-                     "Student: " + s.full_name + " (" + s.class_name + ")\n\n" +
-                     customMsg + "\n\n" +
-                     "Thank you for choosing *" + schoolName + "*";
-
-    setTimeout(() => {
-      window.open("https://wa.me/" + phone + "?text=" + encodeURIComponent(fullText), "_blank");
-    }, index * 600);
-  });
-
-  message("bulkBroadcastMessageStatus", "Successfully triggered " + recipients.length + " WhatsApp parent messages!");
 }
 
 function renderPayments(){
@@ -1429,93 +1555,3 @@ async function saveAcademics(){
   message("acadMessage","Academic report saved successfully!");
   alert("✅ Academic report saved successfully!");
   if(confirm("Print official report card?"))printReportCard(savedData);
-}
-
-function renderAcademicsTable(){
-  $("acadBody").innerHTML=academics.map(a=>{
-    const s=students.find(x=>String(x.id)===String(a.student_id));
-    const scores = a.scores || {};
-    const subCount = Object.keys(scores).length;
-    const tot = Object.values(scores).reduce((a,b)=>a+Number(b||0),0);
-    return '<tr><td>'+esc(a.term)+'</td><td style="font-weight:600">'+esc(s?.full_name||"Unknown")+'</td><td>'+esc(s?.class_name||"—")+'</td><td>'+subCount+' Subjects</td><td><b>'+tot+'</b></td><td><div class="actions"><button class="secondary" onclick="printReportCardById(\''+a.id+'\')">Report Card</button><button class="danger" onclick="deleteAcademics(\''+a.id+'\')">Delete</button></div></td></tr>';
-  }).join("")||'<tr><td colspan="6">No academic reports recorded for this term.</td></tr>';
-}
-
-function printReportCardById(id){const a=academics.find(x=>String(x.id)===String(id));if(a)printReportCard(a);}
-function printReportCard(a){
-  const s=students.find(x=>String(x.id)===String(a.student_id));
-  const sch=schools.find(x=>x.id===currentSchoolId);
-  const scores = a.scores || {};
-  const subKeys = Object.keys(scores);
-  const tot = subKeys.reduce((acc,k)=>acc+Number(scores[k]||0),0);
-  const avg = subKeys.length ? (tot / subKeys.length).toFixed(1) : 0;
-
-  const rowsHtml = customSubjects.map(sub => {
-    const score = scores[sub.id];
-    if(score === undefined) return "";
-    const grade = score>=75?'Distinction':score>=50?'Credit':score>=35?'Pass':'Fail';
-    return '<tr><td>'+esc(sub.name)+'</td><td>'+score+'</td><td>'+grade+'</td></tr>';
-  }).join("");
-
-  const w=window.open("","_blank");
-  w.document.write('<!doctype html><html><head><title>Report Card</title><style>body{font-family:Arial;padding:24px}.card{max-width:700px;margin:auto;border:2px solid #0f172a;padding:24px;border-radius:8px}h2{text-align:center;margin:0}table{width:100%;border-collapse:collapse;margin:16px 0}th,td{padding:10px;border:1px solid #ccc;text-align:left;font-size:13px}th{background:#f8fafc}.rem{background:#f8fafc;padding:12px;border:1px solid #cbd5e1;border-radius:6px;margin-top:12px}</style></head><body><div class="card"><h2>'+esc(sch?.name||"School")+'</h2><p style="text-align:center"><b>OFFICIAL TERMLY ACADEMIC REPORT CARD</b><br>'+esc(a.term)+'</p><hr><p><b>Admission:</b> '+esc(s?.admission_no)+' | <b>Student Name:</b> '+esc(s?.full_name)+' | <b>Class:</b> '+esc(s?.class_name)+'</p><table><thead><tr><th>Subject</th><th>Score (100)</th><th>Grade / Remarks</th></tr></thead><tbody>'+rowsHtml+'<tr><td><b>Total Score / Average</b></td><td colspan="2"><b>'+tot+' (Average: '+avg+'%)</b></td></tr></tbody></table><div class="rem"><p><b>Class Teacher Remarks:</b> '+esc(a.teacher_remarks||"None")+'</p><p><b>Headteacher Remarks:</b> '+esc(a.head_remarks||"None")+'</p></div><p style="margin-top:25px">Headteacher Signature: ______________________ Stamp: ______________________</p></div><script>window.onload=()=>window.print()<\/script></body></html>');
-  w.document.close();
-}
-
-async function deleteAcademics(id){
-  if(!confirm("Delete this academic report?"))return;
-  const {error}=await db.from("academics").delete().eq("id",id).eq("school_id",currentSchoolId);
-  if(error){alert("Error deleting record: "+error.message);return;}
-  await refreshAll();
-}
-
-function exportCSV(type){
-  let rows=[];
-  if(type==="students"){
-    rows=[["Admission","Name","Class","Expected Fees","Paid","Balance","Status"]];
-    students.forEach(s=>rows.push([s.admission_no,s.full_name,s.class_name,expected(s),paid(s.id),balance(s),s.status||"Active"]));
-  }else if(type==="payments"){
-    rows=[["Date","Receipt","Student","Class","Amount","Method","Reference"]];
-    payments.forEach(p=>{const s=students.find(x=>String(x.id)===String(p.student_id));rows.push([readableDate(p.paid_at),receiptNo(p),s?.full_name||"",s?.class_name||"",p.amount,p.method,p.reference||""]);});
-  }else if(type==="expenses"){
-    rows=[["Date","Title","Category","Amount","Method"]];
-    expenses.forEach(e=>rows.push([e.date,e.title,e.category,e.amount,e.method]));
-  }else if(type==="staff"){
-    rows=[["Staff No","Name","Position","Monthly Salary","Phone"]];
-    staff.forEach(s=>rows.push([s.staff_no,s.full_name,s.position,s.monthly_salary,s.phone||""]));
-  }else if(type==="academics"){
-    rows=[["Term","Student","Class","Subjects Recorded"]];
-    academics.forEach(a=>{const s=students.find(x=>String(x.id)===String(a.student_id));rows.push([a.term,s?.full_name||"",s?.class_name||"",Object.keys(a.scores||{}).length]);});
-  }
-  const csv=rows.map(r=>r.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
-  const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement("a");a.href=url;a.download=type+"_export_"+new Date().toISOString().slice(0,10)+".csv";
-  document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
-}
-
-function handleGlobalSearch(q){
-  q=q.toLowerCase();
-  if(!q)return;
-  if(q.includes("s.")||q.includes("class")){showPage("classes");}
-  else if(q.includes("pay")||q.includes("fee")){showPage("payments");}
-  else if(q.includes("staff")||q.includes("teacher")){showPage("staff");}
-  else{showPage("students");$("studentSearch").value=q;renderStudents();}
-}
-
-db.auth.onAuthStateChange((event)=>{
-  if(event==="SIGNED_OUT"){
-    currentUser=null;currentSchoolId=null;
-    $("app").classList.add("hidden");
-    $("loginScreen").classList.remove("hidden");
-  }
-});
-
-(async()=>{
-  const {data}=await db.auth.getSession();
-  if(data.session)await startApp(data.session.user);
-  else $("loginScreen").classList.remove("hidden");
-})();
-</script>
-</body>
-</html>
